@@ -1,5 +1,14 @@
 import type { NextConfig } from 'next'
 
-const nextConfig: NextConfig = {}
+const isGithubPages = process.env.GITHUB_PAGES === 'true'
+const basePath = isGithubPages ? '/yumi-site' : ''
+
+const nextConfig: NextConfig = {
+  output: 'export',
+  basePath,
+  assetPrefix: basePath ? `${basePath}/` : undefined,
+  trailingSlash: true,
+  images: { unoptimized: true },
+}
 
 export default nextConfig

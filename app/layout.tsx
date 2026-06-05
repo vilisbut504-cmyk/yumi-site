@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: 'ЮМИ — премиальный сухой корм для собак в Санкт-Петербурге',
   description:
     'ЮМИ — бренд премиального сухого корма для собак. Подбор будущего рациона по возрасту, весу, активности и особенностям собаки. Запуск в Санкт-Петербурге.',
-  metadataBase: new URL('https://yumi-pet.ru'),
+  metadataBase: new URL('https://vilisbut504-cmyk.github.io/yumi-site'),
   openGraph: {
     title: 'ЮМИ — премиальный сухой корм для собак в Санкт-Петербурге',
     description:
