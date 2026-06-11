@@ -28,7 +28,8 @@ export function Header() {
     <header className="header">
       <div className="container header__inner">
         <a href="#" className="header__logo" onClick={closeMenu} aria-label="ЮМИ — на главную">
-          <BrandLogo height={56} priority />
+          <BrandLogo variant="mark" height={44} priority />
+          <span className="header__wordmark">ЮМИ</span>
         </a>
 
         <nav className="header__nav" aria-label="Основная навигация">

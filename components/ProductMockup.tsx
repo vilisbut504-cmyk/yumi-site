@@ -2,25 +2,21 @@ import Image from 'next/image'
 import { asset } from '@/lib/asset'
 
 interface ProductMockupProps {
-  shortName: string
-  bg?: string
-  accent?: string
+  slug: string
+  bg: string
+  alt: string
 }
 
-export function ProductMockup({ shortName, bg = '#EDE0D0', accent = '#681B1A' }: ProductMockupProps) {
+export function ProductMockup({ slug, bg, alt }: ProductMockupProps) {
   return (
-    <div className="pkg-mockup" style={{ background: bg }}>
-      <div className="pkg-mockup__bag" style={{ borderColor: accent }}>
-        <Image
-          src={asset('/logo-yumi-mark.png')}
-          alt=""
-          width={64}
-          height={64}
-          className="pkg-mockup__mark"
-        />
-        <span className="pkg-mockup__line-name">{shortName}</span>
-      </div>
-      <div className="pkg-mockup__accent" style={{ background: accent }} />
+    <div className="line-visual" style={{ background: bg }}>
+      <Image
+        src={asset(`/lines/${slug}.png`)}
+        alt={alt}
+        width={420}
+        height={320}
+        className="line-visual__img"
+      />
     </div>
   )
 }

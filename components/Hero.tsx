@@ -12,13 +12,9 @@ const FEATURES = [
 export function Hero() {
   return (
     <section className="hero" id="top">
-      <div className="hero__bg-shape" aria-hidden />
-      <div className="hero__bg-arc" aria-hidden />
-      <div className="hero__bg-city" aria-hidden />
-
       <div className="container hero__grid">
         <div className="hero__content">
-          <p className="eyebrow">Здоровый корм для собак · Санкт-Петербург</p>
+          <p className="eyebrow">Премиальный сухой корм · Санкт-Петербург</p>
           <h1 className="hero__title">ЮМИ — премиальный сухой корм для собак</h1>
           <p className="hero__sub">
             Понятные рационы для ежедневного питания: по возрасту, размеру, активности
@@ -45,12 +41,13 @@ export function Hero() {
         </div>
 
         <div className="hero__visual">
-          <div className="hero__dog-glow" aria-hidden />
+          <div className="hero__arc" aria-hidden />
+          <div className="hero__glow" aria-hidden />
           <Image
-            src={asset('/hero-dog.png')}
-            alt="Золотистый ретривер"
-            width={800}
-            height={1131}
+            src={asset('/hero-dog.jpg')}
+            alt="Золотистый ретривер на фоне Санкт-Петербурга"
+            width={700}
+            height={705}
             className="hero__dog"
             priority
           />
