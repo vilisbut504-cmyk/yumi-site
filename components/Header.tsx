@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { BrandLogo } from '@/components/BrandLogo'
 
 const NAV_LINKS = [
   { href: '#about', label: 'О бренде' },
@@ -33,7 +34,9 @@ export function Header() {
   return (
     <header className={`header${scrolled ? ' scrolled' : ''}`}>
       <div className="container header__inner">
-        <a href="#" className="header__logo" onClick={closeMenu}>ЮМИ</a>
+        <a href="#" className="header__logo" onClick={closeMenu} aria-label="ЮМИ — на главную">
+          <BrandLogo width={40} height={40} priority />
+        </a>
 
         <nav className="header__nav" aria-label="Основная навигация">
           {NAV_LINKS.map((link) => (

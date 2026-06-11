@@ -1,3 +1,5 @@
+import { getLineById, PRODUCT_LINES_MAP, type ProductLine } from '@/lib/lines'
+
 export type DogAge = 'puppy' | 'adult' | 'senior'
 export type DogWeight = 'under5' | '5to15' | '15to30' | 'over30'
 export type DogActivity = 'low' | 'medium' | 'high'
@@ -18,52 +20,17 @@ export interface QuizAnswers {
   comment: string
 }
 
-export interface ProductLine {
-  id: string
-  name: string
-  tagline: string
-}
+export type { ProductLine }
 
-export const PRODUCT_LINES: Record<string, ProductLine> = {
-  puppy: {
-    id: 'puppy',
-    name: 'ЮМИ Puppy',
-    tagline: 'Для щенков в период роста.',
-  },
-  sensitive: {
-    id: 'sensitive',
-    name: 'ЮМИ Sensitive',
-    tagline: 'Для собак с чувствительным пищеварением.',
-  },
-  small: {
-    id: 'small',
-    name: 'ЮМИ Small Breed',
-    tagline: 'Для маленьких пород.',
-  },
-  large: {
-    id: 'large',
-    name: 'ЮМИ Large Breed',
-    tagline: 'Для крупных собак.',
-  },
-  active: {
-    id: 'active',
-    name: 'ЮМИ Active',
-    tagline: 'Для активных собак.',
-  },
-  adult: {
-    id: 'adult',
-    name: 'ЮМИ Adult',
-    tagline: 'Для ежедневного питания взрослых собак.',
-  },
-}
-
-export function recommendLine(answers: Pick<QuizAnswers, 'age' | 'weight' | 'activity' | 'feature'>): ProductLine {
-  if (answers.age === 'puppy') return PRODUCT_LINES.puppy
-  if (answers.feature === 'sensitive') return PRODUCT_LINES.sensitive
-  if (answers.weight === 'under5' || answers.weight === '5to15') return PRODUCT_LINES.small
-  if (answers.weight === 'over30') return PRODUCT_LINES.large
-  if (answers.activity === 'high') return PRODUCT_LINES.active
-  return PRODUCT_LINES.adult
+export function recommendLine(
+  answers: Pick<QuizAnswers, 'age' | 'weight' | 'activity' | 'feature'>,
+): ProductLine {
+  if (answers.age === 'puppy') return PRODUCT_LINES_MAP.puppy
+  if (answers.feature === 'sensitive') return PRODUCT_LINES_MAP.sensitive
+  if (answers.weight === 'under5' || answers.weight === '5to15') return PRODUCT_LINES_MAP.small
+  if (answers.weight === 'over30') return PRODUCT_LINES_MAP.large
+  if (answers.activity === 'high') return PRODUCT_LINES_MAP.active
+  return PRODUCT_LINES_MAP.adult
 }
 
 export function validatePhone(phone: string): boolean {
@@ -73,4 +40,8 @@ export function validatePhone(phone: string): boolean {
 
 export function validateName(name: string): boolean {
   return name.trim().length >= 2
+}
+
+export function getLineName(id: string): string {
+  return getLineById(id)?.name ?? 'ЮМИ Adult'
 }

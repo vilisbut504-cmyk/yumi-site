@@ -1,3 +1,5 @@
+import { BrandLogo } from '@/components/BrandLogo'
+
 const POINTS = [
   'Предварительные заявки',
   'Будущая система подбора',
@@ -25,8 +27,7 @@ export function Trust() {
           <a href="#contacts" className="btn btn-primary">Вступить в список ожидания</a>
         </div>
         <div className="trust__visual">
-          <h3>ЮМИ</h3>
-          <p>premium dog food · spb</p>
+          <BrandLogo width={220} height={220} />
         </div>
       </div>
     </section>

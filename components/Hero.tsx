@@ -1,3 +1,5 @@
+import { BrandLogo } from '@/components/BrandLogo'
+
 export function Hero() {
   return (
     <section className="hero" id="top">
@@ -26,15 +28,13 @@ export function Hero() {
         <div className="hero__visual" aria-hidden="true">
           <div className="hero__circle hero__circle--1" />
           <div className="hero__circle hero__circle--2" />
-          <div className="hero__package">
-            <span className="hero__package-brand">ЮМИ</span>
-            <span className="hero__package-sub">premium dog food</span>
+          <div className="hero__logo-wrap">
+            <BrandLogo width={300} height={300} priority />
           </div>
-          <div className="hero__bowl" />
-          <span className="hero__kibble" style={{ top: '18%', right: '22%' }} />
-          <span className="hero__kibble" style={{ top: '72%', right: '18%', width: 6, height: 6 }} />
-          <span className="hero__kibble" style={{ top: '65%', left: '28%', width: 5, height: 5 }} />
-          <span className="hero__kibble" style={{ top: '30%', left: '15%', width: 7, height: 7 }} />
+          <span className="hero__accent-dot" style={{ top: '18%', right: '22%' }} />
+          <span className="hero__accent-dot" style={{ top: '72%', right: '18%', width: 6, height: 6 }} />
+          <span className="hero__accent-dot" style={{ top: '65%', left: '28%', width: 5, height: 5 }} />
+          <span className="hero__accent-dot" style={{ top: '30%', left: '15%', width: 7, height: 7 }} />
         </div>
       </div>
     </section>

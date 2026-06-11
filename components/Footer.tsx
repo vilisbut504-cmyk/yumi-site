@@ -1,3 +1,5 @@
+import { BrandLogo } from '@/components/BrandLogo'
+
 const NAV = [
   { href: '#about', label: 'О бренде' },
   { href: '#lines', label: 'Линейки' },
@@ -14,7 +16,9 @@ export function Footer() {
       <div className="container">
         <div className="footer__top">
           <div>
-            <div className="footer__logo">ЮМИ</div>
+            <div className="footer__logo">
+              <BrandLogo width={56} height={56} />
+            </div>
             <p className="footer__desc">Премиальный сухой корм для собак</p>
             <p className="footer__city">Санкт-Петербург</p>
           </div>
