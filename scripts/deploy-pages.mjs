@@ -22,7 +22,7 @@ try {
   execSync('git init && git checkout -b gh-pages', { cwd: tmp, stdio: 'inherit' })
   execSync('git add -A && git commit -m "Deploy static site to GitHub Pages"', { cwd: tmp, stdio: 'inherit' })
   execSync(`git remote add origin ${remote}`, { cwd: tmp, stdio: 'inherit' })
-  execSync('git push -f origin gh-pages', { cwd: tmp, stdio: 'inherit' })
+  execSync('git -c http.postBuffer=524288000 push -f origin gh-pages', { cwd: tmp, stdio: 'inherit' })
 
   console.log('\nDeployed: https://vilisbut504-cmyk.github.io/yumi-site/')
 } finally {
