@@ -1,23 +1,25 @@
+import { IconBuilding, IconCheck, IconCrown, IconSliders } from '@/components/ui/Icons'
+
 const CARDS = [
   {
-    icon: '01',
+    icon: IconSliders,
     title: 'Понятный подбор',
-    text: 'Корм выбирается не случайно, а по параметрам собаки.',
+    text: 'Рацион подбирается по ключевым параметрам вашей собаки. Никакой сложности и догадок.',
   },
   {
-    icon: '02',
+    icon: IconCrown,
     title: 'Премиальный подход',
-    text: 'Акцент на состав, ежедневное питание и удобство владельца.',
+    text: 'Качественные ингредиенты, продуманные рецептуры и забота о ежедневном питании.',
   },
   {
-    icon: '03',
+    icon: IconCheck,
     title: 'Без хаоса в выборе',
-    text: 'Логичные линейки вместо десятков непонятных позиций.',
+    text: 'Только необходимые линейки и понятные решения для разных потребностей.',
   },
   {
-    icon: '04',
+    icon: IconBuilding,
     title: 'Для города',
-    text: 'Сервис и доставка под владельцев собак в Санкт-Петербурге.',
+    text: 'Создано в Санкт-Петербурге с учётом темпа жизни и потребностей городских собак.',
   },
 ]
 
@@ -26,17 +28,19 @@ export function WhyYumi() {
     <section className="section why" id="about">
       <div className="container">
         <div className="section-header center">
-          <p className="eyebrow">Философия бренда</p>
           <h2>Почему ЮМИ</h2>
         </div>
-        <div className="card-grid why__grid">
-          {CARDS.map((card) => (
-            <div key={card.title} className="card why__card">
-              <div className="why__icon">{card.icon}</div>
-              <h3>{card.title}</h3>
-              <p>{card.text}</p>
-            </div>
-          ))}
+        <div className="why__grid">
+          {CARDS.map((card) => {
+            const Icon = card.icon
+            return (
+              <article key={card.title} className="why__card">
+                <div className="why__icon"><Icon /></div>
+                <h3>{card.title}</h3>
+                <p>{card.text}</p>
+              </article>
+            )
+          })}
         </div>
       </div>
     </section>

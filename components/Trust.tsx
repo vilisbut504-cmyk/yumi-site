@@ -1,5 +1,3 @@
-import { BrandLogo } from '@/components/BrandLogo'
-
 const POINTS = [
   'Предварительные заявки',
   'Будущая система подбора',
@@ -13,7 +11,6 @@ export function Trust() {
     <section className="section trust">
       <div className="container trust__inner">
         <div>
-          <p className="eyebrow">Запуск</p>
           <h2>ЮМИ готовится к запуску в Санкт-Петербурге</h2>
           <p className="trust__text">
             Мы формируем первые линейки сухого корма для собак и собираем ранний
@@ -24,10 +21,7 @@ export function Trust() {
               <li key={point}>{point}</li>
             ))}
           </ul>
-          <a href="#contacts" className="btn btn-primary">Вступить в список ожидания</a>
-        </div>
-        <div className="trust__visual">
-          <BrandLogo width={220} height={220} />
+          <a href="#lead" className="btn btn-primary">Вступить в список ожидания</a>
         </div>
       </div>
     </section>

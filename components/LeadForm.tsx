@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { validateName, validatePhone } from '@/lib/quiz'
+import { IconPaw } from '@/components/ui/Icons'
 
 interface FormData {
   name: string
@@ -10,6 +11,7 @@ interface FormData {
   dogAge: string
   dogWeight: string
   comment: string
+  website: string
 }
 
 const INITIAL: FormData = {
@@ -19,6 +21,7 @@ const INITIAL: FormData = {
   dogAge: '',
   dogWeight: '',
   comment: '',
+  website: '',
 }
 
 export function LeadForm() {
@@ -28,6 +31,8 @@ export function LeadForm() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    if (form.website) return
+
     const nextErrors: Partial<Record<keyof FormData, string>> = {}
     if (!validateName(form.name)) nextErrors.name = 'Введите имя (минимум 2 символа)'
     if (!validatePhone(form.phone)) nextErrors.phone = 'Введите корректный телефон'
@@ -41,11 +46,14 @@ export function LeadForm() {
   }
 
   return (
-    <section className="section lead" id="contacts">
+    <section className="section lead" id="lead">
       <div className="container">
         <div className="section-header center">
-          <p className="eyebrow">Контакты</p>
           <h2>Оставить заявку на запуск ЮМИ</h2>
+          <p>
+            Мы сообщим о старте продаж, будущих линейках и пробных фасовках
+            в Санкт-Петербурге.
+          </p>
         </div>
         <div className="lead__wrap">
           {submitted ? (
@@ -55,73 +63,47 @@ export function LeadForm() {
             </div>
           ) : (
             <form onSubmit={handleSubmit}>
+              <input
+                type="text"
+                name="website"
+                value={form.website}
+                onChange={(e) => update('website', e.target.value)}
+                className="hp-field"
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden
+              />
               <div className="lead__grid">
                 <div className="form-group">
                   <label className="form-label" htmlFor="lead-name">Имя</label>
-                  <input
-                    id="lead-name"
-                    className="form-input"
-                    value={form.name}
-                    onChange={(e) => update('name', e.target.value)}
-                    placeholder="Ваше имя"
-                  />
+                  <input id="lead-name" className="form-input" value={form.name} onChange={(e) => update('name', e.target.value)} />
                   {errors.name && <p className="form-error">{errors.name}</p>}
                 </div>
                 <div className="form-group">
                   <label className="form-label" htmlFor="lead-phone">Телефон</label>
-                  <input
-                    id="lead-phone"
-                    className="form-input"
-                    type="tel"
-                    value={form.phone}
-                    onChange={(e) => update('phone', e.target.value)}
-                    placeholder="+7 (___) ___-__-__"
-                  />
+                  <input id="lead-phone" className="form-input" type="tel" value={form.phone} onChange={(e) => update('phone', e.target.value)} placeholder="+7" />
                   {errors.phone && <p className="form-error">{errors.phone}</p>}
                 </div>
                 <div className="form-group">
                   <label className="form-label" htmlFor="lead-dog">Имя собаки</label>
-                  <input
-                    id="lead-dog"
-                    className="form-input"
-                    value={form.dogName}
-                    onChange={(e) => update('dogName', e.target.value)}
-                    placeholder="Кличка"
-                  />
+                  <input id="lead-dog" className="form-input" value={form.dogName} onChange={(e) => update('dogName', e.target.value)} />
                 </div>
                 <div className="form-group">
                   <label className="form-label" htmlFor="lead-age">Возраст собаки</label>
-                  <input
-                    id="lead-age"
-                    className="form-input"
-                    value={form.dogAge}
-                    onChange={(e) => update('dogAge', e.target.value)}
-                    placeholder="Например, 2 года"
-                  />
+                  <input id="lead-age" className="form-input" value={form.dogAge} onChange={(e) => update('dogAge', e.target.value)} />
                 </div>
                 <div className="form-group">
                   <label className="form-label" htmlFor="lead-weight">Вес собаки</label>
-                  <input
-                    id="lead-weight"
-                    className="form-input"
-                    value={form.dogWeight}
-                    onChange={(e) => update('dogWeight', e.target.value)}
-                    placeholder="Например, 12 кг"
-                  />
+                  <input id="lead-weight" className="form-input" value={form.dogWeight} onChange={(e) => update('dogWeight', e.target.value)} />
                 </div>
                 <div className="form-group full">
                   <label className="form-label" htmlFor="lead-comment">Комментарий</label>
-                  <textarea
-                    id="lead-comment"
-                    className="form-textarea"
-                    value={form.comment}
-                    onChange={(e) => update('comment', e.target.value)}
-                    placeholder="Пожелания, вопросы, особенности собаки"
-                  />
+                  <textarea id="lead-comment" className="form-textarea" value={form.comment} onChange={(e) => update('comment', e.target.value)} />
                 </div>
               </div>
-              <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: 8 }}>
+              <button type="submit" className="btn btn-primary btn-wide">
                 Оставить заявку
+                <IconPaw />
               </button>
             </form>
           )}

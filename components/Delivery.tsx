@@ -10,7 +10,6 @@ export function Delivery() {
     <section className="section delivery" id="delivery">
       <div className="container delivery__inner">
         <div>
-          <p className="eyebrow">Логистика</p>
           <h2>Доставка по Санкт-Петербургу</h2>
           <p className="delivery__text">
             Условия доставки будут опубликованы после утверждения ассортимента и

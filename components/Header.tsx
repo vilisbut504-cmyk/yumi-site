@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { BrandLogo } from '@/components/BrandLogo'
+import { IconPaw } from '@/components/ui/Icons'
 
 const NAV_LINKS = [
   { href: '#about', label: 'О бренде' },
@@ -10,19 +11,11 @@ const NAV_LINKS = [
   { href: '#quality', label: 'Качество' },
   { href: '#delivery', label: 'Доставка' },
   { href: '#faq', label: 'FAQ' },
-  { href: '#contacts', label: 'Контакты' },
+  { href: '#lead', label: 'Контакты' },
 ]
 
 export function Header() {
-  const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40)
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : ''
@@ -32,10 +25,10 @@ export function Header() {
   const closeMenu = () => setMenuOpen(false)
 
   return (
-    <header className={`header${scrolled ? ' scrolled' : ''}`}>
+    <header className="header">
       <div className="container header__inner">
         <a href="#" className="header__logo" onClick={closeMenu} aria-label="ЮМИ — на главную">
-          <BrandLogo width={40} height={40} priority />
+          <BrandLogo height={56} priority />
         </a>
 
         <nav className="header__nav" aria-label="Основная навигация">
@@ -46,7 +39,10 @@ export function Header() {
           ))}
         </nav>
 
-        <a href="#quiz" className="btn btn-primary header__cta">Подобрать корм</a>
+        <a href="#quiz" className="btn btn-primary header__cta">
+          Подобрать корм
+          <IconPaw />
+        </a>
 
         <button
           type="button"
@@ -55,24 +51,13 @@ export function Header() {
           aria-expanded={menuOpen}
           onClick={() => setMenuOpen((v) => !v)}
         >
-          <span />
-          <span />
-          <span />
+          <span /><span /><span />
         </button>
       </div>
 
-      <nav
-        className={`header__mobile${menuOpen ? ' open' : ''}`}
-        aria-label="Мобильная навигация"
-        hidden={!menuOpen}
-      >
+      <nav className={`header__mobile${menuOpen ? ' open' : ''}`} hidden={!menuOpen}>
         {NAV_LINKS.map((link) => (
-          <a
-            key={link.href}
-            href={link.href}
-            className="header__mobile-link"
-            onClick={closeMenu}
-          >
+          <a key={link.href} href={link.href} className="header__mobile-link" onClick={closeMenu}>
             {link.label}
           </a>
         ))}

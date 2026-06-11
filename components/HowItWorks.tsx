@@ -1,23 +1,35 @@
+import { IconCheck, IconEnvelope, IconHeart, IconSliders, IconStar } from '@/components/ui/Icons'
+
 const STEPS = [
   {
-    title: 'Пройдите короткий подбор',
-    text: 'Ответьте на несколько вопросов о вашей собаке.',
+    num: '01',
+    icon: IconSliders,
+    title: 'Пройдите подбор',
+    text: 'Ответьте на несколько простых вопросов о вашей собаке.',
   },
   {
-    title: 'Получите предварительную рекомендацию',
-    text: 'Система предложит подходящую линейку ЮМИ.',
+    num: '02',
+    icon: IconCheck,
+    title: 'Получите рекомендацию',
+    text: 'Мы подберём подходящую будущую линейку ЮМИ.',
   },
   {
-    title: 'Оставьте заявку на запуск',
-    text: 'Мы сообщим, когда линейка будет готова.',
+    num: '03',
+    icon: IconEnvelope,
+    title: 'Узнайте о запуске',
+    text: 'Оставьте контакты — мы сообщим, когда корм появится в продаже.',
   },
   {
-    title: 'Получите инструкцию по переходу',
-    text: 'Рекомендации по плавному переходу на новый рацион.',
+    num: '04',
+    icon: IconStar,
+    title: 'Будьте уверены в качестве',
+    text: 'Премиальный подход и прозрачная коммуникация на каждом этапе.',
   },
   {
-    title: 'Подберите фасовку',
-    text: 'Выберите удобный формат после утверждения линейки.',
+    num: '05',
+    icon: IconHeart,
+    title: 'Забота каждый день',
+    text: 'Ежедневное питание для здоровья, энергии и спокойствия владельца.',
   },
 ]
 
@@ -26,17 +38,20 @@ export function HowItWorks() {
     <section className="section how" id="how">
       <div className="container">
         <div className="section-header center">
-          <p className="eyebrow">Процесс</p>
-          <h2>Как начать с ЮМИ</h2>
+          <h2>Как это работает</h2>
         </div>
-        <div className="how__steps">
-          {STEPS.map((step, i) => (
-            <div key={step.title} className="how__step">
-              <div className="how__step-num">{String(i + 1).padStart(2, '0')}</div>
-              <h3>{step.title}</h3>
-              <p>{step.text}</p>
-            </div>
-          ))}
+        <div className="how__track">
+          {STEPS.map((step) => {
+            const Icon = step.icon
+            return (
+              <article key={step.title} className="how__step">
+                <div className="how__step-num">{step.num}</div>
+                <div className="how__step-icon"><Icon /></div>
+                <h3>{step.title}</h3>
+                <p>{step.text}</p>
+              </article>
+            )
+          })}
         </div>
       </div>
     </section>
