@@ -1,6 +1,5 @@
 import Image from 'next/image'
-import fs from 'fs'
-import path from 'path'
+import { asset } from '@/lib/asset'
 import { IconEnvelope, IconLaunch, IconLines, IconPaw, IconSliders, IconStar } from '@/components/ui/Icons'
 
 const FEATURES = [
@@ -11,8 +10,6 @@ const FEATURES = [
 ]
 
 export function Hero() {
-  const hasDog = fs.existsSync(path.join(process.cwd(), 'public', 'hero-dog.png'))
-
   return (
     <section className="hero" id="top">
       <div className="hero__bg-shape" aria-hidden />
@@ -49,18 +46,14 @@ export function Hero() {
 
         <div className="hero__visual">
           <div className="hero__dog-glow" aria-hidden />
-          {hasDog ? (
-            <Image
-              src="/hero-dog.png"
-              alt="Собака породы золотистый ретривер"
-              width={520}
-              height={640}
-              className="hero__dog"
-              priority
-            />
-          ) : (
-            <div className="hero__dog-fallback" aria-hidden />
-          )}
+          <Image
+            src={asset('/hero-dog.png')}
+            alt="Золотистый ретривер"
+            width={800}
+            height={1131}
+            className="hero__dog"
+            priority
+          />
         </div>
       </div>
     </section>

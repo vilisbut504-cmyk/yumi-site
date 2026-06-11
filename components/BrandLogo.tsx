@@ -1,7 +1,5 @@
 import Image from 'next/image'
-
-const LOGO_FULL = '/logo-yumi-full.png'
-const LOGO_MARK = '/logo-yumi-mark.png'
+import { asset } from '@/lib/asset'
 
 interface BrandLogoProps {
   variant?: 'full' | 'mark'
@@ -16,7 +14,7 @@ export function BrandLogo({
   height,
   priority = false,
 }: BrandLogoProps) {
-  const src = variant === 'mark' ? LOGO_MARK : LOGO_FULL
+  const src = variant === 'mark' ? asset('/logo-yumi-mark.png') : asset('/logo-yumi-full.png')
   const defaultHeight = variant === 'mark' ? 72 : 56
   const h = height ?? defaultHeight
   const w = variant === 'mark' ? h : Math.round(h * 2.8)
@@ -31,8 +29,4 @@ export function BrandLogo({
       priority={priority}
     />
   )
-}
-
-export function BrandLogoText({ className = '' }: { className?: string }) {
-  return <span className={`brand-logo-text ${className}`}>ЮМИ</span>
 }
