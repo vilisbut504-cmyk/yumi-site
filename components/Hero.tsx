@@ -1,12 +1,13 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import { asset } from '@/lib/asset'
-import { IconEnvelope, IconLaunch, IconLines, IconPaw, IconSliders, IconStar } from '@/components/ui/Icons'
+import { IconCheck, IconHeart, IconPaw, IconStar } from '@/components/ui/Icons'
 
 const FEATURES = [
-  { icon: IconSliders, label: 'Подбор по параметрам' },
-  { icon: IconLines, label: 'Будущие линейки' },
-  { icon: IconStar, label: 'Премиальный подход' },
-  { icon: IconLaunch, label: 'Запуск в Санкт-Петербурге' },
+  { icon: IconCheck, label: '100% натуральный состав' },
+  { icon: IconStar, label: 'Сушка без соли и консервантов' },
+  { icon: IconHeart, label: 'Для поощрения и жевания' },
+  { icon: IconPaw, label: 'Доставка по Санкт-Петербургу' },
 ]
 
 export function Hero() {
@@ -14,21 +15,20 @@ export function Hero() {
     <section className="hero" id="top">
       <div className="container hero__grid">
         <div className="hero__content">
-          <p className="eyebrow">Премиальный сухой корм · Санкт-Петербург</p>
-          <h1 className="hero__title">ЮМИ — премиальный сухой корм для собак</h1>
+          <p className="eyebrow">Натуральные лакомства · Санкт-Петербург</p>
+          <h1 className="hero__title">ЮМИ — натуральные сушёные лакомства для собак</h1>
           <p className="hero__sub">
-            Понятные рационы для ежедневного питания: по возрасту, размеру, активности
-            и особенностям вашей собаки.
+            Сушёные мясные продукты и жевательные лакомства из качественного сырья.
+            Дополнение к основному рациону для поощрения, дрессировки и долгого жевания.
           </p>
           <div className="hero__btns">
-            <a href="#quiz" className="btn btn-primary">
-              Подобрать корм
+            <Link href="/catalog" className="btn btn-primary">
+              Перейти в каталог
               <IconPaw />
-            </a>
-            <a href="#lead" className="btn btn-secondary">
-              Узнать о запуске
-              <IconEnvelope />
-            </a>
+            </Link>
+            <Link href="/#picker" className="btn btn-secondary">
+              Подобрать лакомство
+            </Link>
           </div>
           <div className="hero__features">
             {FEATURES.map(({ icon: Icon, label }) => (
@@ -45,7 +45,7 @@ export function Hero() {
           <div className="hero__glow" aria-hidden />
           <Image
             src={asset('/hero-dog.jpg')}
-            alt="Золотистый ретривер на фоне Санкт-Петербурга"
+            alt="Собака с натуральным лакомством ЮМИ"
             width={700}
             height={705}
             className="hero__dog"

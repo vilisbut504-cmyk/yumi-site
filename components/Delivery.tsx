@@ -1,8 +1,8 @@
 const TAGS = [
   'Санкт-Петербург',
-  'Курьерская доставка в разработке',
-  'Пробные фасовки обсуждаются',
-  'Уведомление о запуске для ранних заявок',
+  'Курьерская доставка',
+  'Самовывоз по согласованию',
+  'Оплата при получении',
 ]
 
 export function Delivery() {
@@ -10,10 +10,12 @@ export function Delivery() {
     <section className="section delivery" id="delivery">
       <div className="container delivery__inner">
         <div>
+          <p className="eyebrow">Доставка</p>
           <h2>Доставка по Санкт-Петербургу</h2>
           <p className="delivery__text">
-            Условия доставки будут опубликованы после утверждения ассортимента и
-            фасовок. На первом этапе ЮМИ планирует запуск в Санкт-Петербурге.
+            Привозим натуральные лакомства по Санкт-Петербургу курьером. Возможен
+            самовывоз по согласованию. Оплата производится при получении —
+            онлайн-оплата не требуется.
           </p>
           <div className="delivery__tags">
             {TAGS.map((tag) => (
@@ -23,7 +25,7 @@ export function Delivery() {
         </div>
         <div className="delivery__map">
           <span>Санкт-Петербург</span>
-          <small>запуск в разработке</small>
+          <small>доставка и самовывоз</small>
         </div>
       </div>
     </section>

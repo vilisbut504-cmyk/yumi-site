@@ -1,25 +1,25 @@
-import { IconBuilding, IconCheck, IconCrown, IconSliders } from '@/components/ui/Icons'
+import { IconCheck, IconCrown, IconHeart, IconPaw } from '@/components/ui/Icons'
 
 const CARDS = [
   {
-    icon: IconSliders,
-    title: 'Понятный подбор',
-    text: 'Рацион подбирается по ключевым параметрам вашей собаки. Никакой сложности и догадок.',
+    icon: IconCheck,
+    title: 'Натуральный состав',
+    text: 'Только мясо и субпродукты, высушенные без соли, сахара и консервантов.',
   },
   {
     icon: IconCrown,
     title: 'Премиальный подход',
-    text: 'Качественные ингредиенты, продуманные рецептуры и забота о ежедневном питании.',
+    text: 'Тщательный отбор сырья и бережная сушка, сохраняющая вкус и текстуру.',
   },
   {
-    icon: IconCheck,
-    title: 'Без хаоса в выборе',
-    text: 'Только необходимые линейки и понятные решения для разных потребностей.',
+    icon: IconPaw,
+    title: 'Для разных задач',
+    text: 'Лакомства для дрессировки, поощрения и продукты для долгого жевания.',
   },
   {
-    icon: IconBuilding,
-    title: 'Для города',
-    text: 'Создано в Санкт-Петербурге с учётом темпа жизни и потребностей городских собак.',
+    icon: IconHeart,
+    title: 'Дополнение к рациону',
+    text: 'Не является заменой основного рациона — даётся дополнительно и дозированно.',
   },
 ]
 
@@ -28,6 +28,7 @@ export function WhyYumi() {
     <section className="section why" id="about">
       <div className="container">
         <div className="section-header center">
+          <p className="eyebrow">О бренде</p>
           <h2>Почему ЮМИ</h2>
         </div>
         <div className="why__grid">

@@ -1,12 +1,12 @@
 import { Header } from '@/components/Header'
 import { Hero } from '@/components/Hero'
+import { PopularProducts } from '@/components/PopularProducts'
+import { CategoryGrid } from '@/components/CategoryGrid'
 import { WhyYumi } from '@/components/WhyYumi'
-import { Audience } from '@/components/Audience'
-import { FutureLines } from '@/components/FutureLines'
-import { Quiz } from '@/components/Quiz'
+import { TreatPicker } from '@/components/TreatPicker'
 import { Quality } from '@/components/Quality'
 import { HowItWorks } from '@/components/HowItWorks'
-import { Trust } from '@/components/Trust'
+import { KnowledgeTeaser } from '@/components/KnowledgeTeaser'
 import { Delivery } from '@/components/Delivery'
 import { FAQ } from '@/components/FAQ'
 import { LeadForm } from '@/components/LeadForm'
@@ -18,13 +18,13 @@ export default function HomePage() {
       <Header />
       <main>
         <Hero />
+        <PopularProducts />
+        <CategoryGrid />
         <WhyYumi />
-        <Audience />
-        <FutureLines />
-        <Quiz />
+        <TreatPicker />
         <Quality />
         <HowItWorks />
-        <Trust />
+        <KnowledgeTeaser />
         <Delivery />
         <FAQ />
         <LeadForm />

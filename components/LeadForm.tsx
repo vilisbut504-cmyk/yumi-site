@@ -49,17 +49,18 @@ export function LeadForm() {
     <section className="section lead" id="lead">
       <div className="container">
         <div className="section-header center">
-          <h2>Оставить заявку на запуск ЮМИ</h2>
+          <p className="eyebrow">Контакты</p>
+          <h2>Остались вопросы?</h2>
           <p>
-            Мы сообщим о старте продаж, будущих линейках и пробных фасовках
-            в Санкт-Петербурге.
+            Оставьте контакты — поможем подобрать натуральные лакомства под вашу
+            собаку и подскажем по заказу и доставке по Санкт-Петербургу.
           </p>
         </div>
         <div className="lead__wrap">
           {submitted ? (
             <div className="form-success">
-              Спасибо. Мы сохранили заявку в демо-режиме и сообщим о запуске ЮМИ
-              в Санкт-Петербурге.
+              Спасибо. Мы получили заявку в демо-режиме и свяжемся с вами,
+              чтобы помочь с подбором и заказом.
             </div>
           ) : (
             <form onSubmit={handleSubmit}>

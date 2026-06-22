@@ -1,14 +1,15 @@
+import Link from 'next/link'
 import { BrandLogo } from '@/components/BrandLogo'
 import { IconEnvelope, IconHeart, IconPin } from '@/components/ui/Icons'
 
 const NAV = [
-  { href: '#about', label: 'О бренде' },
-  { href: '#lines', label: 'Линейки' },
-  { href: '#quiz', label: 'Подбор' },
-  { href: '#quality', label: 'Качество' },
-  { href: '#delivery', label: 'Доставка' },
-  { href: '#faq', label: 'FAQ' },
-  { href: '#lead', label: 'Контакты' },
+  { href: '/catalog', label: 'Каталог' },
+  { href: '/#categories', label: 'Категории' },
+  { href: '/#picker', label: 'Подбор лакомства' },
+  { href: '/knowledge', label: 'База знаний' },
+  { href: '/#delivery', label: 'Доставка' },
+  { href: '/#faq', label: 'FAQ' },
+  { href: '/cart', label: 'Корзина' },
 ]
 
 export function Footer() {
@@ -28,24 +29,24 @@ export function Footer() {
             <BrandLogo variant="mark" height={64} />
           </div>
           <div className="footer__premium-item">
-            <span>Будущие линейки — уже скоро</span>
+            <span>Натуральная сушка и жевательные продукты</span>
           </div>
           <div className="footer__premium-item">
             <IconEnvelope />
-            <span>Следите за запуском</span>
+            <span>Поможем с подбором</span>
           </div>
         </div>
 
         <div className="footer__grid">
           <div>
             <p className="footer__brand-name">ЮМИ</p>
-            <p className="footer__desc">Премиальный сухой корм для собак</p>
+            <p className="footer__desc">Натуральные сушёные лакомства и жевательные продукты для собак</p>
             <p className="footer__city">Санкт-Петербург</p>
           </div>
           <div>
             <p className="footer__heading">Навигация</p>
             {NAV.map((link) => (
-              <a key={link.href} href={link.href} className="footer__link">{link.label}</a>
+              <Link key={link.href} href={link.href} className="footer__link">{link.label}</Link>
             ))}
           </div>
           <div>
@@ -57,8 +58,9 @@ export function Footer() {
 
         <div className="footer__bottom">
           <p>
-            Сайт является концепцией бренда на этапе подготовки запуска. Ассортимент,
-            цены и условия доставки будут опубликованы после утверждения.
+            Лакомство не является заменой основного рациона. Наблюдайте за собакой
+            во время жевания. При чувствительном пищеварении вводите новый продукт
+            постепенно.
           </p>
           <p>© {new Date().getFullYear()} ЮМИ</p>
         </div>

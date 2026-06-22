@@ -1,0 +1,288 @@
+{
+  "generatedAt": "2026-06-22T16:05:24.604Z",
+  "products": [
+    {
+      "category": "baranina",
+      "slug": "legkoe-barane",
+      "imagePaths": [
+        "/products/baranina/legkoe-barane/01.webp"
+      ]
+    },
+    {
+      "category": "baranina",
+      "slug": "noga-baranya-sushenaya",
+      "imagePaths": [
+        "/products/baranina/noga-baranya-sushenaya/01.webp"
+      ]
+    },
+    {
+      "category": "baranina",
+      "slug": "rubec-baraniy",
+      "imagePaths": [
+        "/products/baranina/rubec-baraniy/01.webp"
+      ]
+    },
+    {
+      "category": "baranina",
+      "slug": "traheya-baranya-sushenaya",
+      "imagePaths": [
+        "/products/baranina/traheya-baranya-sushenaya/01.webp"
+      ]
+    },
+    {
+      "category": "govyadina",
+      "slug": "aorta-govyazhya",
+      "imagePaths": [
+        "/products/govyadina/aorta-govyazhya/01.webp",
+        "/products/govyadina/aorta-govyazhya/02.webp"
+      ]
+    },
+    {
+      "category": "govyadina",
+      "slug": "hryashch-lopatochnyy",
+      "imagePaths": [
+        "/products/govyadina/hryashch-lopatochnyy/01.webp"
+      ]
+    },
+    {
+      "category": "govyadina",
+      "slug": "hvost-govyazhiy-sushenyy",
+      "imagePaths": [
+        "/products/govyadina/hvost-govyazhiy-sushenyy/01.webp",
+        "/products/govyadina/hvost-govyazhiy-sushenyy/02.webp"
+      ]
+    },
+    {
+      "category": "govyadina",
+      "slug": "kaltyk-govyazhiy",
+      "imagePaths": [
+        "/products/govyadina/kaltyk-govyazhiy/01.webp"
+      ]
+    },
+    {
+      "category": "govyadina",
+      "slug": "kolenki-govyazhi-sushenye",
+      "imagePaths": [
+        "/products/govyadina/kolenki-govyazhi-sushenye/01.webp"
+      ]
+    },
+    {
+      "category": "govyadina",
+      "slug": "legkoe-govyazhe-1x1",
+      "imagePaths": [
+        "/products/govyadina/legkoe-govyazhe-1x1/01.webp"
+      ]
+    },
+    {
+      "category": "govyadina",
+      "slug": "myaso-govyadiny-kusochki",
+      "imagePaths": [
+        "/products/govyadina/myaso-govyadiny-kusochki/01.webp"
+      ]
+    },
+    {
+      "category": "govyadina",
+      "slug": "myaso-pishchevoda-govyazhe",
+      "imagePaths": [
+        "/products/govyadina/myaso-pishchevoda-govyazhe/01.webp"
+      ]
+    },
+    {
+      "category": "govyadina",
+      "slug": "noga-govyazhya-sushenaya",
+      "imagePaths": [
+        "/products/govyadina/noga-govyazhya-sushenaya/01.webp"
+      ]
+    },
+    {
+      "category": "govyadina",
+      "slug": "nosy-govyazhi",
+      "imagePaths": [
+        "/products/govyadina/nosy-govyazhi/01.webp"
+      ]
+    },
+    {
+      "category": "govyadina",
+      "slug": "nosy-govyazhi-s-sherstyu",
+      "imagePaths": [
+        "/products/govyadina/nosy-govyazhi-s-sherstyu/01.webp"
+      ]
+    },
+    {
+      "category": "govyadina",
+      "slug": "pechen-govyazhya",
+      "imagePaths": [
+        "/products/govyadina/pechen-govyazhya/01.webp"
+      ]
+    },
+    {
+      "category": "govyadina",
+      "slug": "pechen-govyazhya-1x1",
+      "imagePaths": [
+        "/products/govyadina/pechen-govyazhya-1x1/01.webp"
+      ]
+    },
+    {
+      "category": "govyadina",
+      "slug": "rubec-govyazhiy-sushenyy",
+      "imagePaths": [
+        "/products/govyadina/rubec-govyazhiy-sushenyy/01.webp"
+      ]
+    },
+    {
+      "category": "govyadina",
+      "slug": "semenniki-kusochki-sushenye",
+      "imagePaths": [
+        "/products/govyadina/semenniki-kusochki-sushenye/01.webp"
+      ]
+    },
+    {
+      "category": "govyadina",
+      "slug": "serdce-govyazhe-sushenoe",
+      "imagePaths": [
+        "/products/govyadina/serdce-govyazhe-sushenoe/01.webp"
+      ]
+    },
+    {
+      "category": "govyadina",
+      "slug": "traheya-govyazhya",
+      "imagePaths": [
+        "/products/govyadina/traheya-govyazhya/01.webp"
+      ]
+    },
+    {
+      "category": "govyadina",
+      "slug": "traheya-rakushki",
+      "imagePaths": [
+        "/products/govyadina/traheya-rakushki/01.webp"
+      ]
+    },
+    {
+      "category": "govyadina",
+      "slug": "ushi-govyazhi",
+      "imagePaths": [
+        "/products/govyadina/ushi-govyazhi/01.webp"
+      ]
+    },
+    {
+      "category": "govyadina",
+      "slug": "vymya-govyazhe",
+      "imagePaths": [
+        "/products/govyadina/vymya-govyazhe/01.webp"
+      ]
+    },
+    {
+      "category": "govyadina",
+      "slug": "vymya-sushenoe",
+      "imagePaths": [
+        "/products/govyadina/vymya-sushenoe/01.webp"
+      ]
+    },
+    {
+      "category": "govyadina",
+      "slug": "zhilka-govyazhya",
+      "imagePaths": [
+        "/products/govyadina/zhilka-govyazhya/01.webp"
+      ]
+    },
+    {
+      "category": "krolik",
+      "slug": "lapy-krolika",
+      "imagePaths": [
+        "/products/krolik/lapy-krolika/01.webp"
+      ]
+    },
+    {
+      "category": "krolik",
+      "slug": "ushi-krolika",
+      "imagePaths": [
+        "/products/krolik/ushi-krolika/01.webp"
+      ]
+    },
+    {
+      "category": "pechenye",
+      "slug": "pechenye-iz-indeyki",
+      "imagePaths": [
+        "/products/pechenye/pechenye-iz-indeyki/01.webp"
+      ]
+    },
+    {
+      "category": "pechenye",
+      "slug": "pechenye-iz-krolika",
+      "imagePaths": [
+        "/products/pechenye/pechenye-iz-krolika/01.webp"
+      ]
+    },
+    {
+      "category": "ptica",
+      "slug": "golovy-indeyki-sushenye",
+      "imagePaths": [
+        "/products/ptica/golovy-indeyki-sushenye/01.webp"
+      ]
+    },
+    {
+      "category": "ptica",
+      "slug": "golovy-perepelinye",
+      "imagePaths": [
+        "/products/ptica/golovy-perepelinye/01.webp"
+      ]
+    },
+    {
+      "category": "ptica",
+      "slug": "golovy-utinye-sushenye",
+      "imagePaths": [
+        "/products/ptica/golovy-utinye-sushenye/01.webp"
+      ]
+    },
+    {
+      "category": "ptica",
+      "slug": "lapki-utinye",
+      "imagePaths": [
+        "/products/ptica/lapki-utinye/01.webp"
+      ]
+    },
+    {
+      "category": "ptica",
+      "slug": "myaso-indeyki-1x1",
+      "imagePaths": [
+        "/products/ptica/myaso-indeyki-1x1/01.webp"
+      ]
+    },
+    {
+      "category": "ptica",
+      "slug": "myaso-indeyki-sushenoe",
+      "imagePaths": [
+        "/products/ptica/myaso-indeyki-sushenoe/01.webp"
+      ]
+    },
+    {
+      "category": "ptica",
+      "slug": "serdechki-kurinye",
+      "imagePaths": [
+        "/products/ptica/serdechki-kurinye/01.webp"
+      ]
+    },
+    {
+      "category": "ptica",
+      "slug": "sheya-indeyki-sushenaya",
+      "imagePaths": [
+        "/products/ptica/sheya-indeyki-sushenaya/01.webp"
+      ]
+    },
+    {
+      "category": "ptica",
+      "slug": "utinye-zheludki",
+      "imagePaths": [
+        "/products/ptica/utinye-zheludki/01.webp"
+      ]
+    },
+    {
+      "category": "svinina",
+      "slug": "ushi-svinye",
+      "imagePaths": [
+        "/products/svinina/ushi-svinye/01.webp"
+      ]
+    }
+  ],
+  "unsorted": []
+}

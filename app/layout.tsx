@@ -1,15 +1,16 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { CartProvider } from '@/components/CartProvider'
 
 export const metadata: Metadata = {
-  title: 'ЮМИ — премиальный сухой корм для собак в Санкт-Петербурге',
+  title: 'ЮМИ — натуральные сушёные лакомства для собак в Санкт-Петербурге',
   description:
-    'ЮМИ — бренд премиального сухого корма для собак. Подбор будущего рациона по возрасту, размеру, активности и особенностям собаки. Запуск в Санкт-Петербурге.',
+    'ЮМИ — премиальные натуральные сушёные лакомства и жевательные продукты для собак. Говядина, баранина, птица, кролик, свинина, печенье. Доставка по Санкт-Петербургу.',
   metadataBase: new URL('https://vilisbut504-cmyk.github.io/yumi-site'),
   openGraph: {
-    title: 'ЮМИ — премиальный сухой корм для собак в Санкт-Петербурге',
+    title: 'ЮМИ — натуральные сушёные лакомства для собак',
     description:
-      'ЮМИ — бренд премиального сухого корма для собак. Подбор будущего рациона по возрасту, размеру, активности и особенностям собаки. Запуск в Санкт-Петербурге.',
+      'Премиальные натуральные сушёные лакомства и жевательные продукты для собак. Дополнение к основному рациону.',
     locale: 'ru_RU',
     type: 'website',
     siteName: 'ЮМИ',
@@ -19,7 +20,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ru">
-      <body>{children}</body>
+      <body>
+        <CartProvider>{children}</CartProvider>
+      </body>
     </html>
   )
 }
