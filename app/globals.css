@@ -892,6 +892,7 @@ ul { list-style: none; }
 .pcard__price { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px; }
 .pcard__price-now { font-family: 'Cormorant Garamond', serif; font-size: 24px; color: var(--color-burgundy); font-weight: 600; }
 .pcard__price-per { font-size: 12px; color: var(--color-muted); }
+.pcard__price-kg { font-size: 12px; color: var(--color-muted); flex-basis: 100%; }
 .pcard__price-old { font-size: 12px; color: var(--color-muted); text-decoration: line-through; }
 .pcard__btn { padding: 11px 18px; }
 .pcard__btn.is-added { background: var(--color-gold); border-color: var(--color-gold); }
@@ -1001,9 +1002,10 @@ ul { list-style: none; }
 .pdp__image { aspect-ratio: 1 / 1; }
 .pdp__title { margin: 8px 0 14px; }
 .pdp__short { color: var(--color-muted); line-height: 1.75; margin-bottom: 20px; }
-.pdp__price { display: flex; align-items: baseline; gap: 12px; margin-bottom: 24px; }
+.pdp__price { display: flex; align-items: baseline; flex-wrap: wrap; gap: 12px; margin-bottom: 24px; }
 .pdp__price-now { font-family: 'Cormorant Garamond', serif; font-size: 38px; font-weight: 600; color: var(--color-burgundy); }
 .pdp__price-old { font-size: 16px; color: var(--color-muted); text-decoration: line-through; }
+.pdp__price-kg { font-size: 14px; color: var(--color-muted); }
 .pdp__weight { font-size: 14px; color: var(--color-muted); }
 .pdp__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 26px; }
 .pdp__add { padding: 14px 30px; }

@@ -74,10 +74,10 @@ export default async function ProductPage({
 
               <div className="pdp__price">
                 <span className="pdp__price-now">{formatPrice(product.price)}</span>
-                {product.oldPrice ? (
-                  <span className="pdp__price-old">{formatPrice(product.oldPrice)}</span>
-                ) : null}
                 <span className="pdp__weight">/ {product.weight}</span>
+                {product.unit === 'weight' && product.pricePerKg ? (
+                  <span className="pdp__price-kg">{formatPrice(product.pricePerKg)} / кг</span>
+                ) : null}
               </div>
 
               <ProductDetailActions product={product} />

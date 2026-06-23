@@ -21,7 +21,6 @@ export function ProductCard({ product }: { product: Product }) {
     <article className="pcard">
       <Link href={`/catalog/${product.slug}`} className="pcard__media" aria-label={product.name}>
         <ProductImage imagePaths={product.imagePaths} alt={product.name} />
-        {product.oldPrice ? <span className="pcard__sale">Скидка</span> : null}
       </Link>
       <div className="pcard__body">
         <p className="pcard__cat">
@@ -42,8 +41,8 @@ export function ProductCard({ product }: { product: Product }) {
           <div className="pcard__price">
             <span className="pcard__price-now">{formatPrice(product.price)}</span>
             <span className="pcard__price-per">/ {product.weight}</span>
-            {product.oldPrice ? (
-              <span className="pcard__price-old">{formatPrice(product.oldPrice)}</span>
+            {product.unit === 'weight' && product.pricePerKg ? (
+              <span className="pcard__price-kg">{formatPrice(product.pricePerKg)} / кг</span>
             ) : null}
           </div>
           <button

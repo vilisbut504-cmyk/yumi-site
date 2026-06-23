@@ -18,6 +18,10 @@
 .DS_Store
 *.pem
 
+# internal source data (содержит закупку/себестоимость — не публиковать)
+/data/
+*.xlsx
+
 # debug
 npm-debug.log*
 yarn-debug.log*
