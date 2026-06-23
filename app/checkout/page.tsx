@@ -6,9 +6,12 @@ import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { useCart } from '@/components/CartProvider'
 import { validateName, validatePhone } from '@/lib/quiz'
+import { PhoneInput } from '@/components/PhoneInput'
+import { PHONE_INITIAL } from '@/lib/phone'
 import {
   buildCheckoutPayload,
   formatPrice,
+  packLabel,
   type DeliveryMethod,
   type PaymentMethod,
 } from '@/lib/cart'
@@ -27,7 +30,7 @@ interface FormState {
 
 const INITIAL: FormState = {
   name: '',
-  phone: '',
+  phone: PHONE_INITIAL,
   email: '',
   city: 'Санкт-Петербург',
   address: '',
@@ -145,7 +148,7 @@ export default function CheckoutPage() {
                       </div>
                       <div className="form-group">
                         <label className="form-label" htmlFor="co-phone">Телефон</label>
-                        <input id="co-phone" className="form-input" type="tel" value={form.phone} placeholder="+7" onChange={(e) => update('phone', e.target.value)} />
+                        <PhoneInput id="co-phone" value={form.phone} onChange={(v) => update('phone', v)} />
                         {errors.phone && <p className="form-error">{errors.phone}</p>}
                       </div>
                       <div className="form-group full">
@@ -189,12 +192,16 @@ export default function CheckoutPage() {
                         <input type="radio" name="payment" checked={form.payment === 'cash_on_delivery'} onChange={() => update('payment', 'cash_on_delivery')} />
                         <span><strong>Наличными при получении</strong></span>
                       </label>
-                      <label className={`checkout__option${form.payment === 'card_on_delivery' ? ' selected' : ''}`}>
-                        <input type="radio" name="payment" checked={form.payment === 'card_on_delivery'} onChange={() => update('payment', 'card_on_delivery')} />
-                        <span><strong>Картой при получении</strong></span>
+                      <label className={`checkout__option${form.payment === 'bank_transfer_on_delivery' ? ' selected' : ''}`}>
+                        <input type="radio" name="payment" checked={form.payment === 'bank_transfer_on_delivery'} onChange={() => update('payment', 'bank_transfer_on_delivery')} />
+                        <span><strong>Переводом на карту при получении</strong></span>
                       </label>
                     </div>
-                    <p className="checkout__hint">Онлайн-оплата не подключена. Оплата производится при получении заказа.</p>
+                    <p className="checkout__hint">
+                      Онлайн-оплаты на сайте пока нет. После оформления заказа менеджер
+                      свяжется с вами для подтверждения состава заказа, доставки и способа
+                      оплаты.
+                    </p>
                   </fieldset>
 
                   <div className="form-group">
@@ -208,7 +215,7 @@ export default function CheckoutPage() {
                   <ul className="checkout__items">
                     {items.map((item) => (
                       <li key={item.id}>
-                        <span>{item.name} × {item.qty}</span>
+                        <span>{item.name} · {packLabel(item)}</span>
                         <strong>{formatPrice(item.price * item.qty)}</strong>
                       </li>
                     ))}

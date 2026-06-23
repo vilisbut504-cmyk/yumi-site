@@ -8,7 +8,7 @@ import { ProductCard } from '@/components/ProductCard'
 import { ProductDetailActions } from '@/components/ProductDetailActions'
 import { formatPrice } from '@/lib/cart'
 import {
-  getAllProducts,
+  getActiveProducts,
   getProductBySlug,
   getRelatedProducts,
 } from '@/src/lib/products'
@@ -16,7 +16,7 @@ import {
 export const dynamicParams = false
 
 export function generateStaticParams() {
-  return getAllProducts().map((p) => ({ slug: p.slug }))
+  return getActiveProducts().map((p) => ({ slug: p.slug }))
 }
 
 export async function generateMetadata({
@@ -85,6 +85,9 @@ export default async function ProductPage({
               <ul className="pdp__specs">
                 <li><span>Категория</span><strong>{product.category}</strong></li>
                 <li><span>Белок</span><strong>{product.protein}</strong></li>
+                {product.format ? (
+                  <li><span>Формат</span><strong>{product.format}</strong></li>
+                ) : null}
                 <li><span>Текстура</span><strong>{product.texture}</strong></li>
                 <li><span>Твёрдость</span><strong>{product.hardness}</strong></li>
                 <li><span>Размер собаки</span><strong>{product.dogSizes.join(', ')}</strong></li>

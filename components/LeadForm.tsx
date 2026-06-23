@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 import { validateName, validatePhone } from '@/lib/quiz'
+import { PhoneInput } from '@/components/PhoneInput'
+import { PHONE_INITIAL } from '@/lib/phone'
 import { IconPaw } from '@/components/ui/Icons'
 
 interface FormData {
@@ -16,7 +18,7 @@ interface FormData {
 
 const INITIAL: FormData = {
   name: '',
-  phone: '',
+  phone: PHONE_INITIAL,
   dogName: '',
   dogAge: '',
   dogWeight: '',
@@ -82,7 +84,7 @@ export function LeadForm() {
                 </div>
                 <div className="form-group">
                   <label className="form-label" htmlFor="lead-phone">Телефон</label>
-                  <input id="lead-phone" className="form-input" type="tel" value={form.phone} onChange={(e) => update('phone', e.target.value)} placeholder="+7" />
+                  <PhoneInput id="lead-phone" value={form.phone} onChange={(v) => update('phone', v)} />
                   {errors.phone && <p className="form-error">{errors.phone}</p>}
                 </div>
                 <div className="form-group">

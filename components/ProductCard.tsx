@@ -24,11 +24,15 @@ export function ProductCard({ product }: { product: Product }) {
         {product.oldPrice ? <span className="pcard__sale">Скидка</span> : null}
       </Link>
       <div className="pcard__body">
-        <p className="pcard__cat">{product.category} · {product.weight}</p>
+        <p className="pcard__cat">
+          {product.category}
+          {product.format ? ` · ${product.format}` : ''}
+        </p>
         <h3 className="pcard__name">
           <Link href={`/catalog/${product.slug}`}>{product.name}</Link>
         </h3>
         <p className="pcard__desc">{product.shortDescription}</p>
+        <p className="pcard__pack">Фасовка: {product.weight}</p>
         <div className="pcard__meta">
           {product.tags.slice(0, 2).map((tag) => (
             <span key={tag} className="pcard__tag">{tag}</span>
@@ -37,6 +41,7 @@ export function ProductCard({ product }: { product: Product }) {
         <div className="pcard__footer">
           <div className="pcard__price">
             <span className="pcard__price-now">{formatPrice(product.price)}</span>
+            <span className="pcard__price-per">/ {product.weight}</span>
             {product.oldPrice ? (
               <span className="pcard__price-old">{formatPrice(product.oldPrice)}</span>
             ) : null}

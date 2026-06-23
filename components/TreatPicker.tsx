@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import { ProductCard } from '@/components/ProductCard'
 import { IconPaw } from '@/components/ui/Icons'
-import { getAllProducts } from '@/src/lib/products'
+import { getActiveProducts } from '@/src/lib/products'
 
 const PROTEINS = ['Говядина', 'Баранина', 'Индейка', 'Кролик', 'Свинина']
 const SIZES = ['Малые', 'Средние', 'Крупные']
@@ -41,7 +41,7 @@ function Chips({
 }
 
 export function TreatPicker() {
-  const products = getAllProducts()
+  const products = getActiveProducts()
   const [protein, setProtein] = useState<string | null>(null)
   const [size, setSize] = useState<string | null>(null)
   const [purpose, setPurpose] = useState<string | null>(null)

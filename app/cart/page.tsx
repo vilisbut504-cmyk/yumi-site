@@ -5,7 +5,7 @@ import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { ProductImage } from '@/components/ProductImage'
 import { useCart } from '@/components/CartProvider'
-import { formatPrice } from '@/lib/cart'
+import { formatPrice, packLabel } from '@/lib/cart'
 
 export default function CartPage() {
   const { items, subtotal, mounted, setQty, removeItem } = useCart()
@@ -40,7 +40,7 @@ export default function CartPage() {
                       </Link>
                       <div className="cart__info">
                         <Link href={`/catalog/${item.slug}`} className="cart__name">{item.name}</Link>
-                        <p className="cart__weight">{item.weight}</p>
+                        <p className="cart__weight">{packLabel(item)} · {formatPrice(item.price)} / {item.weight}</p>
                         <button type="button" className="cart__remove" onClick={() => removeItem(item.id)}>
                           Удалить
                         </button>

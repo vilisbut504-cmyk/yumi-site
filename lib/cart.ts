@@ -1,4 +1,4 @@
-import type { Product } from '@/src/lib/products'
+import type { Product, ProductUnit } from '@/src/lib/products'
 
 export interface CartItem {
   id: string
@@ -6,6 +6,7 @@ export interface CartItem {
   name: string
   price: number
   weight: string
+  unit: ProductUnit
   image: string
   qty: number
 }
@@ -15,13 +16,16 @@ export interface CartLineForPayload {
   slug: string
   name: string
   weight: string
+  unit: ProductUnit
+  qtyLabel: string
   price: number
   qty: number
   total: number
 }
 
 export type DeliveryMethod = 'courier_spb' | 'pickup'
-export type PaymentMethod = 'cash_on_delivery' | 'card_on_delivery'
+export type PaymentMethod = 'cash_on_delivery' | 'bank_transfer_on_delivery'
+export type PaymentStatus = 'pending'
 
 export interface CheckoutCustomer {
   name: string
@@ -38,14 +42,15 @@ export interface CheckoutDelivery {
 
 /**
  * Payload готовится для будущей интеграции (CRM / приём заказов).
- * Онлайн-оплата НЕ подключена: payment.online = false.
+ * Онлайн-оплата НЕ подключена: payment.online = false, status = 'pending'.
  */
 export interface CheckoutPayload {
   customer: CheckoutCustomer
   delivery: CheckoutDelivery
   payment: {
-    method: PaymentMethod
     online: false
+    method: PaymentMethod
+    status: PaymentStatus
   }
   items: CartLineForPayload[]
   totals: {
@@ -56,6 +61,16 @@ export interface CheckoutPayload {
   createdAt: string
 }
 
+/** Подпись количества: «2 × 100 г» или «2 × 1 шт». */
+export function packLabel(item: Pick<CartItem, 'qty' | 'weight'>): string {
+  return `${item.qty} × ${item.weight}`
+}
+
+/** Подпись единицы фасовки: «100 г» или «1 шт». */
+export function unitLabel(weight: string): string {
+  return weight
+}
+
 export function cartItemFromProduct(product: Product, qty = 1): CartItem {
   return {
     id: product.id,
@@ -63,6 +78,7 @@ export function cartItemFromProduct(product: Product, qty = 1): CartItem {
     name: product.name,
     price: product.price,
     weight: product.weight,
+    unit: product.unit,
     image: product.imagePaths[0] ?? '',
     qty,
   }
@@ -91,6 +107,8 @@ export function buildCheckoutPayload(
     slug: item.slug,
     name: item.name,
     weight: item.weight,
+    unit: item.unit,
+    qtyLabel: packLabel(item),
     price: item.price,
     qty: item.qty,
     total: item.price * item.qty,
@@ -99,7 +117,7 @@ export function buildCheckoutPayload(
   return {
     customer,
     delivery,
-    payment: { method: payment, online: false },
+    payment: { online: false, method: payment, status: 'pending' },
     items: lines,
     totals: {
       itemsCount: cartCount(items),

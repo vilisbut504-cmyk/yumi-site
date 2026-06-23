@@ -6,60 +6,140 @@ import type { Product } from '@/src/lib/products'
 
 type SortKey = 'popular' | 'price-asc' | 'price-desc'
 
+type Group = 'category' | 'protein' | 'purposes' | 'dogSizes' | 'hardness' | 'format'
+
+type Selected = Record<Group, string[]>
+
+const EMPTY_SELECTED: Selected = {
+  category: [],
+  protein: [],
+  purposes: [],
+  dogSizes: [],
+  hardness: [],
+  format: [],
+}
+
+function norm(value: string): string {
+  return value
+    .normalize('NFC')
+    .toLowerCase()
+    .replace(/ё/g, 'е')
+    .replace(/[×х]/g, 'x')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
 function uniqueSorted(values: string[]): string[] {
-  return Array.from(new Set(values)).sort((a, b) => a.localeCompare(b, 'ru'))
+  return Array.from(new Set(values.filter(Boolean))).sort((a, b) =>
+    a.localeCompare(b, 'ru'),
+  )
 }
 
 export function CatalogClient({ products }: { products: Product[] }) {
-  const [category, setCategory] = useState<string>('all')
-  const [protein, setProtein] = useState<string>('all')
-  const [dogSize, setDogSize] = useState<string>('all')
-  const [purpose, setPurpose] = useState<string>('all')
-  const [hardness, setHardness] = useState<string>('all')
+  const [search, setSearch] = useState('')
+  const [selected, setSelected] = useState<Selected>(EMPTY_SELECTED)
+  const [priceMin, setPriceMin] = useState('')
+  const [priceMax, setPriceMax] = useState('')
   const [sort, setSort] = useState<SortKey>('popular')
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const cat = params.get('category')
     const pur = params.get('purpose')
-    if (cat) setCategory(cat)
-    if (pur) setPurpose(pur)
+    setSelected((prev) => ({
+      ...prev,
+      category: cat ? [cat] : prev.category,
+      purposes: pur ? [pur] : prev.purposes,
+    }))
   }, [])
 
-  const categories = useMemo(() => uniqueSorted(products.map((p) => p.category)), [products])
-  const proteins = useMemo(() => uniqueSorted(products.map((p) => p.protein)), [products])
-  const sizes = useMemo(() => uniqueSorted(products.flatMap((p) => p.dogSizes)), [products])
-  const purposes = useMemo(() => uniqueSorted(products.flatMap((p) => p.purposes)), [products])
-  const hardnesses = useMemo(() => uniqueSorted(products.map((p) => p.hardness)), [products])
+  const options = useMemo(
+    () => ({
+      category: uniqueSorted(products.map((p) => p.category)),
+      protein: uniqueSorted(products.map((p) => p.protein)),
+      purposes: uniqueSorted(products.flatMap((p) => p.purposes)),
+      dogSizes: uniqueSorted(products.flatMap((p) => p.dogSizes)),
+      hardness: uniqueSorted(products.map((p) => p.hardness)),
+      format: uniqueSorted(products.map((p) => p.format)),
+    }),
+    [products],
+  )
 
-  const filtered = useMemo(() => {
-    const result = products.filter((p) => {
-      if (category !== 'all' && p.category !== category) return false
-      if (protein !== 'all' && p.protein !== protein) return false
-      if (dogSize !== 'all' && !p.dogSizes.includes(dogSize)) return false
-      if (purpose !== 'all' && !p.purposes.includes(purpose)) return false
-      if (hardness !== 'all' && p.hardness !== hardness) return false
-      return true
-    })
-    if (sort === 'price-asc') result.sort((a, b) => a.price - b.price)
-    if (sort === 'price-desc') result.sort((a, b) => b.price - a.price)
-    if (sort === 'popular') {
-      result.sort((a, b) => Number(b.isFeatured) - Number(a.isFeatured))
+  const priceBounds = useMemo(() => {
+    const prices = products.map((p) => p.price).filter((n) => n > 0)
+    return {
+      min: prices.length ? Math.min(...prices) : 0,
+      max: prices.length ? Math.max(...prices) : 0,
     }
-    return result
-  }, [products, category, protein, dogSize, purpose, hardness, sort])
+  }, [products])
 
-  const reset = () => {
-    setCategory('all')
-    setProtein('all')
-    setDogSize('all')
-    setPurpose('all')
-    setHardness('all')
-    setSort('popular')
+  const toggle = (group: Group, value: string) => {
+    setSelected((prev) => {
+      const set = prev[group]
+      return {
+        ...prev,
+        [group]: set.includes(value)
+          ? set.filter((v) => v !== value)
+          : [...set, value],
+      }
+    })
   }
 
+  const filtered = useMemo(() => {
+    const tokens = norm(search).split(' ').filter(Boolean)
+    const min = priceMin ? Number(priceMin) : null
+    const max = priceMax ? Number(priceMax) : null
+
+    const result = products.filter((p) => {
+      // поиск: все токены должны встретиться (название, slug, белок, формат, назначение)
+      if (tokens.length) {
+        const haystack = norm(
+          [p.name, p.slug, p.protein, p.format, p.category, ...p.purposes, ...p.tags].join(
+            ' ',
+          ),
+        )
+        if (!tokens.every((t) => haystack.includes(t))) return false
+      }
+      // OR внутри группы, AND между группами
+      if (selected.category.length && !selected.category.includes(p.category)) return false
+      if (selected.protein.length && !selected.protein.includes(p.protein)) return false
+      if (selected.hardness.length && !selected.hardness.includes(p.hardness)) return false
+      if (selected.format.length && !selected.format.includes(p.format)) return false
+      if (
+        selected.purposes.length &&
+        !selected.purposes.some((v) => p.purposes.includes(v))
+      )
+        return false
+      if (
+        selected.dogSizes.length &&
+        !selected.dogSizes.some((v) => p.dogSizes.includes(v))
+      )
+        return false
+      if (min !== null && p.price < min) return false
+      if (max !== null && p.price > max) return false
+      return true
+    })
+
+    if (sort === 'price-asc') result.sort((a, b) => a.price - b.price)
+    else if (sort === 'price-desc') result.sort((a, b) => b.price - a.price)
+    else result.sort((a, b) => Number(b.isFeatured) - Number(a.isFeatured))
+
+    return result
+  }, [products, search, selected, priceMin, priceMax, sort])
+
   const activeCount =
-    [category, protein, dogSize, purpose, hardness].filter((v) => v !== 'all').length
+    (Object.keys(selected) as Group[]).reduce((n, g) => n + selected[g].length, 0) +
+    (search ? 1 : 0) +
+    (priceMin ? 1 : 0) +
+    (priceMax ? 1 : 0)
+
+  const reset = () => {
+    setSearch('')
+    setSelected(EMPTY_SELECTED)
+    setPriceMin('')
+    setPriceMax('')
+    setSort('popular')
+  }
 
   return (
     <div className="catalog">
@@ -73,16 +153,57 @@ export function CatalogClient({ products }: { products: Product[] }) {
           )}
         </div>
 
-        <FilterSelect label="Категория" value={category} onChange={setCategory} options={categories} />
-        <FilterSelect label="Белок" value={protein} onChange={setProtein} options={proteins} />
-        <FilterSelect label="Размер собаки" value={dogSize} onChange={setDogSize} options={sizes} />
-        <FilterSelect label="Назначение" value={purpose} onChange={setPurpose} options={purposes} />
-        <FilterSelect label="Твёрдость" value={hardness} onChange={setHardness} options={hardnesses} />
+        <div className="catalog__filter">
+          <span className="form-label">Поиск</span>
+          <input
+            className="form-input"
+            type="search"
+            placeholder="Название, белок, формат…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+
+        <ChipGroup label="Категория" group="category" options={options.category} selected={selected.category} onToggle={toggle} />
+        <ChipGroup label="Белок" group="protein" options={options.protein} selected={selected.protein} onToggle={toggle} />
+        <ChipGroup label="Назначение" group="purposes" options={options.purposes} selected={selected.purposes} onToggle={toggle} />
+        <ChipGroup label="Размер собаки" group="dogSizes" options={options.dogSizes} selected={selected.dogSizes} onToggle={toggle} />
+        <ChipGroup label="Жёсткость" group="hardness" options={options.hardness} selected={selected.hardness} onToggle={toggle} />
+        <ChipGroup label="Формат" group="format" options={options.format} selected={selected.format} onToggle={toggle} />
+
+        <div className="catalog__filter">
+          <span className="form-label">
+            Цена, ₽ {priceBounds.max ? `(${priceBounds.min}–${priceBounds.max})` : ''}
+          </span>
+          <div className="catalog__price">
+            <input
+              className="form-input"
+              type="number"
+              inputMode="numeric"
+              placeholder="от"
+              min={0}
+              value={priceMin}
+              onChange={(e) => setPriceMin(e.target.value)}
+            />
+            <span>—</span>
+            <input
+              className="form-input"
+              type="number"
+              inputMode="numeric"
+              placeholder="до"
+              min={0}
+              value={priceMax}
+              onChange={(e) => setPriceMax(e.target.value)}
+            />
+          </div>
+        </div>
       </aside>
 
       <div className="catalog__main">
         <div className="catalog__bar">
-          <p className="catalog__count">Найдено: {filtered.length}</p>
+          <p className="catalog__count">
+            Показано {filtered.length} из {products.length} товаров
+          </p>
           <label className="catalog__sort">
             <span>Сортировка</span>
             <select
@@ -105,7 +226,8 @@ export function CatalogClient({ products }: { products: Product[] }) {
           </div>
         ) : (
           <div className="catalog__empty">
-            <p>По выбранным фильтрам ничего не найдено.</p>
+            <p className="catalog__empty-title">Ничего не найдено</p>
+            <p>Попробуйте изменить запрос или сбросить фильтры.</p>
             <button type="button" className="btn btn-secondary" onClick={reset}>
               Сбросить фильтры
             </button>
@@ -116,28 +238,36 @@ export function CatalogClient({ products }: { products: Product[] }) {
   )
 }
 
-function FilterSelect({
+function ChipGroup({
   label,
-  value,
-  onChange,
+  group,
   options,
+  selected,
+  onToggle,
 }: {
   label: string
-  value: string
-  onChange: (v: string) => void
+  group: Group
   options: string[]
+  selected: string[]
+  onToggle: (group: Group, value: string) => void
 }) {
+  if (options.length === 0) return null
   return (
     <div className="catalog__filter">
       <span className="form-label">{label}</span>
-      <select className="form-input" value={value} onChange={(e) => onChange(e.target.value)}>
-        <option value="all">Все</option>
+      <div className="catalog__chips">
         {options.map((opt) => (
-          <option key={opt} value={opt}>
+          <button
+            key={opt}
+            type="button"
+            className={`catalog__chip${selected.includes(opt) ? ' is-active' : ''}`}
+            aria-pressed={selected.includes(opt)}
+            onClick={() => onToggle(group, opt)}
+          >
             {opt}
-          </option>
+          </button>
         ))}
-      </select>
+      </div>
     </div>
   )
 }

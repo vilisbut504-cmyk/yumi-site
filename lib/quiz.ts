@@ -1,6 +1,7 @@
+import { isCompletePhone } from '@/lib/phone'
+
 export function validatePhone(phone: string): boolean {
-  const digits = phone.replace(/\D/g, '')
-  return digits.length >= 10 && digits.length <= 12
+  return isCompletePhone(phone)
 }
 
 export function validateName(name: string): boolean {

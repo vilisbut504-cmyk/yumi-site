@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { CatalogClient } from '@/components/CatalogClient'
-import { getAllProducts } from '@/src/lib/products'
+import { getActiveProducts } from '@/src/lib/products'
 
 export const metadata: Metadata = {
   title: 'Каталог натуральных лакомств для собак — ЮМИ',
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 }
 
 export default function CatalogPage() {
-  const products = getAllProducts()
+  const products = getActiveProducts()
   return (
     <>
       <Header />

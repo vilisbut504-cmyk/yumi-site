@@ -1,10 +1,10 @@
 import Link from 'next/link'
 import { ProductCard } from '@/components/ProductCard'
-import { getFeaturedProducts, getAllProducts } from '@/src/lib/products'
+import { getFeaturedProducts, getActiveProducts } from '@/src/lib/products'
 
 export function PopularProducts() {
   const featured = getFeaturedProducts()
-  const items = featured.length > 0 ? featured : getAllProducts().slice(0, 4)
+  const items = featured.length > 0 ? featured : getActiveProducts().slice(0, 4)
 
   return (
     <section className="section" id="popular">
