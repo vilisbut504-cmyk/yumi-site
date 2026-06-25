@@ -5,9 +5,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start -H 0.0.0.0 -p 3000",
+    "start": "node server.js",
     "prepare:images": "node scripts/prepare-product-images.mjs",
     "import:products": "node scripts/import-products-from-excel.mjs",
+    "amocrm:inspect": "node scripts/amocrm-inspect.mjs",
     "deploy:pages": "node scripts/deploy-pages.mjs"
   },
   "dependencies": {

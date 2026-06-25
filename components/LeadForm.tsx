@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { validateName, validatePhone } from '@/lib/quiz'
 import { PhoneInput } from '@/components/PhoneInput'
 import { PHONE_INITIAL } from '@/lib/phone'
+import { submitLead } from '@/lib/orderSubmit'
 import { IconPaw } from '@/components/ui/Icons'
 
 interface FormData {
@@ -29,22 +30,47 @@ const INITIAL: FormData = {
 export function LeadForm() {
   const [form, setForm] = useState<FormData>(INITIAL)
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({})
+  const [submitError, setSubmitError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (form.website) return
+    if (form.website || submitting) return
 
     const nextErrors: Partial<Record<keyof FormData, string>> = {}
     if (!validateName(form.name)) nextErrors.name = 'Введите имя (минимум 2 символа)'
     if (!validatePhone(form.phone)) nextErrors.phone = 'Введите корректный телефон'
     setErrors(nextErrors)
-    if (Object.keys(nextErrors).length === 0) setSubmitted(true)
+    if (Object.keys(nextErrors).length > 0) return
+
+    setSubmitting(true)
+    setSubmitError('')
+    try {
+      await submitLead({
+        customer: {
+          name: form.name,
+          phone: form.phone,
+          comment: form.comment || undefined,
+        },
+        dog: {
+          name: form.dogName || undefined,
+          age: form.dogAge || undefined,
+          weight: form.dogWeight || undefined,
+        },
+      })
+      setSubmitted(true)
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : 'Не удалось отправить заявку')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   const update = (field: keyof FormData, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }))
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: undefined }))
+    if (submitError) setSubmitError('')
   }
 
   return (
@@ -61,8 +87,8 @@ export function LeadForm() {
         <div className="lead__wrap">
           {submitted ? (
             <div className="form-success">
-              Спасибо. Мы получили заявку в демо-режиме и свяжемся с вами,
-              чтобы помочь с подбором и заказом.
+              Заявка отправлена. Менеджер свяжется с вами для подтверждения состава
+              заказа, доставки и способа оплаты.
             </div>
           ) : (
             <form onSubmit={handleSubmit}>
@@ -104,8 +130,9 @@ export function LeadForm() {
                   <textarea id="lead-comment" className="form-textarea" value={form.comment} onChange={(e) => update('comment', e.target.value)} />
                 </div>
               </div>
-              <button type="submit" className="btn btn-primary btn-wide">
-                Оставить заявку
+              {submitError && <p className="form-error">{submitError}</p>}
+              <button type="submit" className="btn btn-primary btn-wide" disabled={submitting}>
+                {submitting ? 'Отправляем…' : 'Оставить заявку'}
                 <IconPaw />
               </button>
             </form>

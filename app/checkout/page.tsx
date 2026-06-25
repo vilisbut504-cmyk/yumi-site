@@ -8,13 +8,8 @@ import { useCart } from '@/components/CartProvider'
 import { validateName, validatePhone } from '@/lib/quiz'
 import { PhoneInput } from '@/components/PhoneInput'
 import { PHONE_INITIAL } from '@/lib/phone'
-import {
-  buildCheckoutPayload,
-  formatPrice,
-  packLabel,
-  type DeliveryMethod,
-  type PaymentMethod,
-} from '@/lib/cart'
+import { formatPrice, packLabel, type DeliveryMethod, type PaymentMethod } from '@/lib/cart'
+import { buildOrderPayloadFromCheckout, submitOrder } from '@/lib/orderSubmit'
 
 interface FormState {
   name: string
@@ -44,16 +39,19 @@ export default function CheckoutPage() {
   const { items, subtotal, mounted, clear } = useCart()
   const [form, setForm] = useState<FormState>(INITIAL)
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({})
+  const [submitError, setSubmitError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
   const [done, setDone] = useState(false)
 
   const update = (field: keyof FormState, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }))
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: undefined }))
+    if (submitError) setSubmitError('')
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (form.website) return
+    if (form.website || submitting) return
 
     const next: Partial<Record<keyof FormState, string>> = {}
     if (!validateName(form.name)) next.name = 'Введите имя'
@@ -64,28 +62,31 @@ export default function CheckoutPage() {
     setErrors(next)
     if (Object.keys(next).length > 0) return
 
-    const payload = buildCheckoutPayload(
+    const payload = buildOrderPayloadFromCheckout(
       items,
       {
         name: form.name,
         phone: form.phone,
         email: form.email,
         comment: form.comment,
-      },
-      {
-        method: form.delivery,
         city: form.city,
         address: form.address,
       },
+      form.delivery,
       form.payment,
     )
 
-    // Payload готов для будущей интеграции (CRM/приём заказов).
-    // Онлайн-оплата и amoCRM пока не подключены.
-    console.log('YUMI checkout payload:', payload)
-
-    clear()
-    setDone(true)
+    setSubmitting(true)
+    setSubmitError('')
+    try {
+      await submitOrder(payload)
+      clear()
+      setDone(true)
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : 'Не удалось отправить заказ')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   if (done) {
@@ -95,10 +96,10 @@ export default function CheckoutPage() {
         <main>
           <section className="section">
             <div className="container checkout-done">
-              <h1>Заявка оформлена</h1>
+              <h1>Заявка отправлена</h1>
               <p>
-                Спасибо! Заказ сохранён в демо-режиме. Менеджер свяжется с вами для
-                подтверждения. Оплата — при получении, онлайн-оплата не требуется.
+                Заявка отправлена. Менеджер свяжется с вами для подтверждения состава
+                заказа, доставки и способа оплаты.
               </p>
               <Link href="/catalog" className="btn btn-primary">Вернуться в каталог</Link>
             </div>
@@ -208,6 +209,8 @@ export default function CheckoutPage() {
                     <label className="form-label" htmlFor="co-comment">Комментарий к заказу</label>
                     <textarea id="co-comment" className="form-textarea" value={form.comment} onChange={(e) => update('comment', e.target.value)} />
                   </div>
+
+                  {submitError && <p className="form-error">{submitError}</p>}
                 </div>
 
                 <aside className="checkout__summary">
@@ -224,7 +227,9 @@ export default function CheckoutPage() {
                     <span>Итого</span>
                     <strong>{formatPrice(subtotal)}</strong>
                   </div>
-                  <button type="submit" className="btn btn-primary btn-wide">Оформить заказ</button>
+                  <button type="submit" className="btn btn-primary btn-wide" disabled={submitting}>
+                    {submitting ? 'Отправляем…' : 'Оформить заказ'}
+                  </button>
                   <p className="cart__note">Нажимая кнопку, вы оставляете заявку. Менеджер свяжется для подтверждения.</p>
                 </aside>
               </form>

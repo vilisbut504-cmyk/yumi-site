@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { CartProvider } from '@/components/CartProvider'
+import { UtmCapture } from '@/components/UtmCapture'
 
 export const metadata: Metadata = {
   title: 'ЮМИ — натуральные сушёные лакомства для собак в Санкт-Петербурге',
@@ -21,7 +22,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ru">
       <body>
-        <CartProvider>{children}</CartProvider>
+        <CartProvider>
+          <UtmCapture />
+          {children}
+        </CartProvider>
       </body>
     </html>
   )
