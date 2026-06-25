@@ -12,7 +12,7 @@ try {
   execSync('npm run build', {
     cwd: root,
     stdio: 'inherit',
-    env: { ...process.env, GITHUB_PAGES: 'true' },
+    env: { ...process.env, DEPLOY_TARGET: 'github-pages' },
   })
 
   const remote = execSync('git remote get-url origin', { cwd: root, encoding: 'utf8' }).trim()

@@ -1,12 +1,12 @@
 import type { NextConfig } from 'next'
 
-const isGithubPages = process.env.GITHUB_PAGES === 'true'
+const deployTarget = process.env.DEPLOY_TARGET || 'timeweb'
+const isGithubPages = deployTarget === 'github-pages'
 const basePath = isGithubPages ? '/yumi-site' : ''
 
 const nextConfig: NextConfig = {
-  output: 'export',
-  basePath,
-  assetPrefix: basePath ? `${basePath}/` : undefined,
+  ...(isGithubPages ? { output: 'export' as const } : {}),
+  ...(basePath ? { basePath, assetPrefix: `${basePath}/` } : {}),
   trailingSlash: true,
   images: { unoptimized: true },
   env: {
