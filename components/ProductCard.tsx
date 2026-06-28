@@ -21,6 +21,7 @@ export function ProductCard({ product }: { product: Product }) {
     <article className="pcard">
       <Link href={`/catalog/${product.slug}`} className="pcard__media" aria-label={product.name}>
         <ProductImage imagePaths={product.imagePaths} alt={product.name} />
+        <span className="pcard__badge">Скидка первым клиентам в корзине</span>
       </Link>
       <div className="pcard__body">
         <p className="pcard__cat">

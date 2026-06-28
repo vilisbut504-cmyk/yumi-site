@@ -2,6 +2,7 @@ import type { CartItem, DeliveryMethod, PaymentMethod } from './cart'
 import { cartSubtotal } from './cart'
 import type { OrderPayload } from '@/src/lib/orderPayload'
 import { getUtmForPayload, getPageContext } from '@/src/lib/utm'
+import { calculateOrderTotal, getDeliveryPrice, isCourier } from '@/src/lib/pricing'
 
 export function buildOrderPayloadFromCheckout(
   items: CartItem[],
@@ -17,6 +18,8 @@ export function buildOrderPayloadFromCheckout(
   payment: PaymentMethod,
 ): OrderPayload {
   const subtotal = cartSubtotal(items)
+  const deliveryPrice = getDeliveryPrice(deliveryMethod)
+  const totals = calculateOrderTotal({ subtotal, deliveryPrice })
 
   return {
     source: 'checkout',
@@ -30,8 +33,7 @@ export function buildOrderPayloadFromCheckout(
     },
     delivery: {
       method: deliveryMethod,
-      address:
-        deliveryMethod === 'courier_spb' ? customer.address.trim() || undefined : undefined,
+      address: isCourier(deliveryMethod) ? customer.address.trim() || undefined : undefined,
     },
     payment: {
       online: false,
@@ -47,8 +49,12 @@ export function buildOrderPayloadFromCheckout(
       price: item.price,
     })),
     totals: {
-      subtotal,
-      total: subtotal,
+      subtotal: totals.subtotal,
+      discountPercent: totals.discountPercent,
+      discountAmount: totals.discountAmount,
+      subtotalAfterDiscount: totals.subtotalAfterDiscount,
+      delivery: totals.deliveryPrice,
+      total: totals.total,
     },
     utm: getUtmForPayload(),
     page: getPageContext(),

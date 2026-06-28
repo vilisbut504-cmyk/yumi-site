@@ -46,7 +46,14 @@ function buildLeadPayload(body: LeadRequestBody): OrderPayload {
       status: 'pending',
     },
     items: [],
-    totals: { subtotal: 0, total: 0 },
+    totals: {
+      subtotal: 0,
+      discountPercent: 0,
+      discountAmount: 0,
+      subtotalAfterDiscount: 0,
+      delivery: 0,
+      total: 0,
+    },
     utm: body.utm ?? {},
     page: body.page ?? { url: '' },
   }

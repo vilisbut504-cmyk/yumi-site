@@ -6,6 +6,7 @@ import { Footer } from '@/components/Footer'
 import { ProductImage } from '@/components/ProductImage'
 import { useCart } from '@/components/CartProvider'
 import { formatPrice, packLabel } from '@/lib/cart'
+import { calculateStarterDiscount, STARTER_DISCOUNT_NOTE } from '@/src/lib/pricing'
 
 export default function CartPage() {
   const { items, subtotal, mounted, setQty, removeItem } = useCart()
@@ -57,14 +58,36 @@ export default function CartPage() {
 
                 <aside className="cart__summary">
                   <h2>Итого</h2>
-                  <div className="cart__summary-row">
-                    <span>Товары</span>
-                    <strong>{formatPrice(subtotal)}</strong>
-                  </div>
-                  <div className="cart__summary-row cart__summary-row--muted">
-                    <span>Доставка</span>
-                    <span>рассчитывается при оформлении</span>
-                  </div>
+                  {(() => {
+                    const d = calculateStarterDiscount(subtotal)
+                    return (
+                      <>
+                        <div className="cart__summary-row">
+                          <span>Стоимость товаров</span>
+                          <strong>{formatPrice(d.subtotalAfterDiscount + d.discountAmount)}</strong>
+                        </div>
+                        {d.percent > 0 && (
+                          <>
+                            <div className="cart__summary-row cart__summary-row--discount">
+                              <span>Скидка первым клиентам {d.percent}%</span>
+                              <span>−{formatPrice(d.discountAmount)}</span>
+                            </div>
+                            <div className="cart__summary-row">
+                              <span>Итого товары со скидкой</span>
+                              <strong>{formatPrice(d.subtotalAfterDiscount)}</strong>
+                            </div>
+                          </>
+                        )}
+                        <div className="cart__summary-row cart__summary-row--muted">
+                          <span>Доставка</span>
+                          <span>рассчитывается при оформлении</span>
+                        </div>
+                        {d.percent > 0 && (
+                          <p className="cart__note">{STARTER_DISCOUNT_NOTE}</p>
+                        )}
+                      </>
+                    )
+                  })()}
                   <Link href="/checkout" className="btn btn-primary btn-wide">Оформить заказ</Link>
                   <Link href="/catalog" className="btn btn-ghost btn-wide">Продолжить покупки</Link>
                   <p className="cart__note">Онлайн-оплата не подключена. Оплата при получении.</p>

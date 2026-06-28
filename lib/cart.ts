@@ -1,4 +1,5 @@
 import type { Product, ProductUnit } from '@/src/lib/products'
+import type { DeliveryMethod } from '@/src/lib/pricing'
 
 export interface CartItem {
   id: string
@@ -23,7 +24,7 @@ export interface CartLineForPayload {
   total: number
 }
 
-export type DeliveryMethod = 'courier_spb' | 'pickup'
+export type { DeliveryMethod }
 export type PaymentMethod = 'cash_on_delivery' | 'bank_transfer_on_delivery'
 export type PaymentStatus = 'pending'
 

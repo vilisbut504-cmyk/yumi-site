@@ -6,6 +6,12 @@ import type {
   PaymentMethod,
   DeliveryMethod,
 } from './orderPayload'
+import {
+  calculateOrderTotal,
+  getDeliveryLabel,
+  getDeliveryPrice,
+  isCourier,
+} from './pricing'
 
 export function normalizePhone(phone: string): string {
   return canonicalPhone(phone)
@@ -29,7 +35,7 @@ export function validateOrderPayload(payload: OrderPayload): string | null {
   if (payload.source === 'checkout') {
     if (!payload.items.length) return 'Корзина пуста'
     if (payload.totals.total <= 0) return 'Сумма заказа должна быть больше 0'
-    if (payload.delivery.method === 'courier_spb') {
+    if (isCourier(payload.delivery.method)) {
       const addr = payload.delivery.address || payload.customer.address || ''
       if (addr.trim().length < 5) return 'Укажите адрес доставки'
     }
@@ -40,11 +46,6 @@ export function validateOrderPayload(payload: OrderPayload): string | null {
 const PAYMENT_LABELS: Record<PaymentMethod, string> = {
   cash_on_delivery: 'Наличными при получении',
   bank_transfer_on_delivery: 'Переводом на карту при получении',
-}
-
-const DELIVERY_LABELS: Record<DeliveryMethod, string> = {
-  courier_spb: 'Курьер по Санкт-Петербургу',
-  pickup: 'Самовывоз',
 }
 
 const SOURCE_LABELS: Record<OrderSource, string> = {
@@ -78,6 +79,15 @@ export function buildLeadNote(payload: OrderPayload): string {
   const deliveryAddr =
     delivery.address || customer.address || (delivery.method === 'pickup' ? 'Самовывоз' : '—')
 
+  const discountLine =
+    totals.discountPercent > 0
+      ? [
+          `Скидка первым клиентам: ${totals.discountPercent}%`,
+          `Сумма скидки: −${formatMoney(totals.discountAmount)}`,
+          `Итого товары со скидкой: ${formatMoney(totals.subtotalAfterDiscount)}`,
+        ]
+      : ['Скидка первым клиентам: 0%']
+
   return [
     'Новый заказ с сайта ЮМИ',
     '',
@@ -91,7 +101,7 @@ export function buildLeadNote(payload: OrderPayload): string {
     `Адрес: ${line(customer.address)}`,
     '',
     'Доставка:',
-    `Способ: ${DELIVERY_LABELS[delivery.method]}`,
+    `Способ: ${getDeliveryLabel(delivery.method)}`,
     `Адрес: ${line(deliveryAddr)}`,
     `Желаемое время: ${line(delivery.preferredTime)}`,
     '',
@@ -104,9 +114,10 @@ export function buildLeadNote(payload: OrderPayload): string {
     itemLines,
     '',
     'Итого:',
-    `Подытог: ${formatMoney(totals.subtotal)}`,
-    `Доставка: ${totals.delivery != null ? formatMoney(totals.delivery) : '—'}`,
-    `Итого: ${formatMoney(totals.total)}`,
+    `Стоимость товаров: ${formatMoney(totals.subtotal)}`,
+    ...discountLine,
+    `Доставка: ${formatMoney(totals.delivery)}`,
+    `Итого к оплате: ${formatMoney(totals.total)}`,
     '',
     'UTM:',
     `source: ${line(utm.source)}`,
@@ -124,10 +135,28 @@ export function buildLeadNote(payload: OrderPayload): string {
   ].join('\n')
 }
 
+const VALID_DELIVERY: DeliveryMethod[] = ['pickup', 'courier_kad', 'courier_outside_kad']
+
 export function sanitizeOrderPayload(raw: unknown): OrderPayload | null {
   if (!raw || typeof raw !== 'object') return null
   const p = raw as Partial<OrderPayload>
   if (!p.customer || !p.delivery || !p.payment || !p.totals || !p.page) return null
+
+  const deliveryMethod: DeliveryMethod = VALID_DELIVERY.includes(
+    p.delivery.method as DeliveryMethod,
+  )
+    ? (p.delivery.method as DeliveryMethod)
+    : 'pickup'
+
+  const items = Array.isArray(p.items)
+    ? (p.items.map((item) => sanitizeItem(item)).filter(Boolean) as OrderItem[])
+    : []
+
+  // Итоги ВСЕГДА пересчитываем на сервере из состава корзины и способа доставки,
+  // чтобы клиент не мог прислать произвольную сумму.
+  const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0)
+  const deliveryPrice = getDeliveryPrice(deliveryMethod)
+  const totals = calculateOrderTotal({ subtotal, deliveryPrice })
 
   return {
     source: (p.source as OrderSource) || 'checkout',
@@ -140,7 +169,7 @@ export function sanitizeOrderPayload(raw: unknown): OrderPayload | null {
       comment: p.customer.comment ? String(p.customer.comment).trim() : undefined,
     },
     delivery: {
-      method: p.delivery.method === 'pickup' ? 'pickup' : 'courier_spb',
+      method: deliveryMethod,
       address: p.delivery.address ? String(p.delivery.address).trim() : undefined,
       preferredTime: p.delivery.preferredTime
         ? String(p.delivery.preferredTime).trim()
@@ -154,13 +183,14 @@ export function sanitizeOrderPayload(raw: unknown): OrderPayload | null {
           : 'cash_on_delivery',
       status: 'pending',
     },
-    items: Array.isArray(p.items)
-      ? p.items.map((item) => sanitizeItem(item)).filter(Boolean) as OrderItem[]
-      : [],
+    items,
     totals: {
-      subtotal: Number(p.totals.subtotal) || 0,
-      delivery: p.totals.delivery != null ? Number(p.totals.delivery) : undefined,
-      total: Number(p.totals.total) || 0,
+      subtotal: totals.subtotal,
+      discountPercent: totals.discountPercent,
+      discountAmount: totals.discountAmount,
+      subtotalAfterDiscount: totals.subtotalAfterDiscount,
+      delivery: totals.deliveryPrice,
+      total: totals.total,
     },
     utm: {
       source: p.utm?.source,

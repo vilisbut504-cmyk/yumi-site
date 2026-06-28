@@ -1,6 +1,8 @@
+import type { DeliveryMethod } from './pricing'
+
 export type OrderSource = 'checkout' | 'lead_form' | 'treat_picker'
 
-export type DeliveryMethod = 'courier_spb' | 'pickup'
+export type { DeliveryMethod }
 export type PaymentMethod = 'cash_on_delivery' | 'bank_transfer_on_delivery'
 export type ProductUnit = 'weight' | 'piece'
 
@@ -38,7 +40,10 @@ export interface OrderItem {
 
 export interface OrderTotals {
   subtotal: number
-  delivery?: number
+  discountPercent: number
+  discountAmount: number
+  subtotalAfterDiscount: number
+  delivery: number
   total: number
 }
 

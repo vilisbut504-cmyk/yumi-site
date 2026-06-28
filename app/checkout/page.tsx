@@ -10,6 +10,13 @@ import { PhoneInput } from '@/components/PhoneInput'
 import { PHONE_INITIAL } from '@/lib/phone'
 import { formatPrice, packLabel, type DeliveryMethod, type PaymentMethod } from '@/lib/cart'
 import { buildOrderPayloadFromCheckout, submitOrder } from '@/lib/orderSubmit'
+import {
+  DELIVERY_OPTIONS,
+  calculateOrderTotal,
+  getDeliveryPrice,
+  isCourier,
+  STARTER_DISCOUNT_NOTE,
+} from '@/src/lib/pricing'
 
 interface FormState {
   name: string
@@ -30,7 +37,7 @@ const INITIAL: FormState = {
   city: 'Санкт-Петербург',
   address: '',
   comment: '',
-  delivery: 'courier_spb',
+  delivery: 'courier_kad',
   payment: 'cash_on_delivery',
   website: '',
 }
@@ -56,7 +63,7 @@ export default function CheckoutPage() {
     const next: Partial<Record<keyof FormState, string>> = {}
     if (!validateName(form.name)) next.name = 'Введите имя'
     if (!validatePhone(form.phone)) next.phone = 'Введите корректный телефон'
-    if (form.delivery === 'courier_spb' && form.address.trim().length < 5) {
+    if (isCourier(form.delivery) && form.address.trim().length < 5) {
       next.address = 'Укажите адрес доставки'
     }
     setErrors(next)
@@ -110,6 +117,11 @@ export default function CheckoutPage() {
     )
   }
 
+  const totals = calculateOrderTotal({
+    subtotal,
+    deliveryPrice: getDeliveryPrice(form.delivery),
+  })
+
   return (
     <>
       <Header />
@@ -162,16 +174,25 @@ export default function CheckoutPage() {
                   <fieldset className="checkout__block">
                     <legend>Доставка</legend>
                     <div className="checkout__options">
-                      <label className={`checkout__option${form.delivery === 'courier_spb' ? ' selected' : ''}`}>
-                        <input type="radio" name="delivery" checked={form.delivery === 'courier_spb'} onChange={() => update('delivery', 'courier_spb')} />
-                        <span><strong>Курьер по Санкт-Петербургу</strong><small>Адресная доставка</small></span>
-                      </label>
-                      <label className={`checkout__option${form.delivery === 'pickup' ? ' selected' : ''}`}>
-                        <input type="radio" name="delivery" checked={form.delivery === 'pickup'} onChange={() => update('delivery', 'pickup')} />
-                        <span><strong>Самовывоз</strong><small>По согласованию</small></span>
-                      </label>
+                      {DELIVERY_OPTIONS.map((opt) => (
+                        <label
+                          key={opt.method}
+                          className={`checkout__option${form.delivery === opt.method ? ' selected' : ''}`}
+                        >
+                          <input
+                            type="radio"
+                            name="delivery"
+                            checked={form.delivery === opt.method}
+                            onChange={() => update('delivery', opt.method)}
+                          />
+                          <span>
+                            <strong>{opt.label}</strong>
+                            <small>{opt.hint} · {opt.price === 0 ? 'бесплатно' : formatPrice(opt.price)}</small>
+                          </span>
+                        </label>
+                      ))}
                     </div>
-                    {form.delivery === 'courier_spb' && (
+                    {isCourier(form.delivery) && (
                       <>
                         <div className="form-group">
                           <label className="form-label" htmlFor="co-city">Город</label>
@@ -223,10 +244,35 @@ export default function CheckoutPage() {
                       </li>
                     ))}
                   </ul>
-                  <div className="checkout__total">
-                    <span>Итого</span>
-                    <strong>{formatPrice(subtotal)}</strong>
+                  <div className="checkout__summary-rows">
+                    <div className="checkout__summary-row">
+                      <span>Стоимость товаров</span>
+                      <span>{formatPrice(totals.subtotal)}</span>
+                    </div>
+                    {totals.discountPercent > 0 && (
+                      <>
+                        <div className="checkout__summary-row checkout__summary-row--discount">
+                          <span>Скидка первым клиентам {totals.discountPercent}%</span>
+                          <span>−{formatPrice(totals.discountAmount)}</span>
+                        </div>
+                        <div className="checkout__summary-row">
+                          <span>Итого товары со скидкой</span>
+                          <span>{formatPrice(totals.subtotalAfterDiscount)}</span>
+                        </div>
+                      </>
+                    )}
+                    <div className="checkout__summary-row">
+                      <span>Доставка</span>
+                      <span>{totals.deliveryPrice === 0 ? 'бесплатно' : formatPrice(totals.deliveryPrice)}</span>
+                    </div>
                   </div>
+                  <div className="checkout__total">
+                    <span>Итого к оплате</span>
+                    <strong>{formatPrice(totals.total)}</strong>
+                  </div>
+                  {totals.discountPercent > 0 && (
+                    <p className="checkout__discount-note">{STARTER_DISCOUNT_NOTE}</p>
+                  )}
                   <button type="submit" className="btn btn-primary btn-wide" disabled={submitting}>
                     {submitting ? 'Отправляем…' : 'Оформить заказ'}
                   </button>

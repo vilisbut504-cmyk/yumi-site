@@ -8,6 +8,7 @@
     "start": "node server.js",
     "prepare:images": "node scripts/prepare-product-images.mjs",
     "import:products": "node scripts/import-products-from-excel.mjs",
+    "import:yuma": "node scripts/import-yuma-catalog.mjs",
     "amocrm:inspect": "node scripts/amocrm-inspect.mjs",
     "deploy:pages": "node scripts/deploy-pages.mjs"
   },

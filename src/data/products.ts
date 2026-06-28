@@ -1,8 +1,9 @@
-// ВНИМАНИЕ: файл сгенерирован scripts/import-products-from-excel.mjs.
-// Не редактируйте вручную — запустите: npm run import:products
+// ВНИМАНИЕ: файл сгенерирован scripts/import-yuma-catalog.mjs.
+// Не редактируйте вручную — запустите: npm run import:yuma
 //
-// Публичные цены (наценка 30%) импортированы из data/Юми Сушка (1).xlsx.
-// В файле нет закупки, себестоимости, упаковки, маржи, цен конкурентов и поставщика.
+// Публичные цены сайта (за 100 г и за 1 кг) импортированы из data/import/Проект ЮМА.xlsx
+// (колонки G и H). Закупочные/внутренние цены (колонки D/E) НЕ импортируются
+// и нигде в проекте не хранятся.
 
 export type ProductHardness = 'мягкое' | 'среднее' | 'плотное' | 'жевательное'
 export type ProductUnit = 'weight' | 'piece'
@@ -43,9 +44,9 @@ const USE_DEFAULT =
 
 const RAW = [
   {
-    "id": "rubec-govyazhiy-sushenyy",
-    "slug": "rubec-govyazhiy-sushenyy",
-    "name": "Рубец говяжий сушёный",
+    "id": "aorta-trubka",
+    "slug": "aorta-trubka",
+    "name": "Аорта трубка",
     "category": "Говядина",
     "protein": "Говядина",
     "purposes": [
@@ -62,15 +63,15 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 169,
-    "price100g": 169,
-    "pricePerKg": 1690,
+    "price": 195,
+    "price100g": 195,
+    "pricePerKg": 1950,
     "status": "active",
     "imagePaths": [
-      "/products/govyadina/rubec-govyazhiy-sushenyy/01.webp"
+      "/products/govyadina/aorta-trubka/01.webp"
     ],
     "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% говяжий рубец. Без добавок, соли и консервантов.",
+    "composition": "Аорта трубка. Без искусственных добавок, соли и консервантов.",
     "tags": [
       "Говядина",
       "Натуральное"
@@ -78,183 +79,14 @@ const RAW = [
     "isFeatured": true
   },
   {
-    "id": "legkoe-govyazhe-plastiny",
-    "slug": "legkoe-govyazhe-plastiny",
-    "name": "Лёгкое говяжье сушёное, пластины",
-    "category": "Говядина",
-    "protein": "Говядина",
-    "purposes": [
-      "Поощрение",
-      "Дрессировка"
-    ],
-    "dogSizes": [
-      "Малые",
-      "Средние",
-      "Крупные"
-    ],
-    "texture": "Лёгкое, воздушное",
-    "hardness": "мягкое",
-    "format": "пластины",
-    "unit": "weight",
-    "weight": "100 г",
-    "price": 182,
-    "price100g": 182,
-    "pricePerKg": 1820,
-    "status": "active",
-    "imagePaths": [],
-    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% говяжье лёгкое. Без добавок и консервантов.",
-    "tags": [
-      "Говядина",
-      "Натуральное"
-    ],
-    "isFeatured": false
-  },
-  {
-    "id": "legkoe-govyazhe-2-5",
-    "slug": "legkoe-govyazhe-2-5",
-    "name": "Лёгкое говяжье сушёное, 2,5×2,5 см",
-    "category": "Говядина",
-    "protein": "Говядина",
-    "purposes": [
-      "Поощрение",
-      "Дрессировка"
-    ],
-    "dogSizes": [
-      "Малые",
-      "Средние",
-      "Крупные"
-    ],
-    "texture": "Лёгкое, воздушное",
-    "hardness": "мягкое",
-    "format": "2,5×2,5 см",
-    "unit": "weight",
-    "weight": "100 г",
-    "price": 182,
-    "price100g": 182,
-    "pricePerKg": 1820,
-    "status": "active",
-    "imagePaths": [],
-    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% говяжье лёгкое. Без добавок и консервантов.",
-    "tags": [
-      "Говядина",
-      "Натуральное"
-    ],
-    "isFeatured": false
-  },
-  {
-    "id": "legkoe-govyazhe-1x1",
-    "slug": "legkoe-govyazhe-1x1",
-    "name": "Лёгкое говяжье сушёное, кубики 1×1",
+    "id": "aorta-chipsy",
+    "slug": "aorta-chipsy",
+    "name": "Аорта чипсы",
     "category": "Говядина",
     "protein": "Говядина",
     "purposes": [
       "Дрессировка",
       "Поощрение"
-    ],
-    "dogSizes": [
-      "Малые",
-      "Средние",
-      "Крупные"
-    ],
-    "texture": "Лёгкое, воздушное",
-    "hardness": "мягкое",
-    "format": "кубики 1×1",
-    "unit": "weight",
-    "weight": "100 г",
-    "price": 182,
-    "price100g": 182,
-    "pricePerKg": 1820,
-    "status": "active",
-    "imagePaths": [
-      "/products/govyadina/legkoe-govyazhe-1x1/01.webp"
-    ],
-    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% говяжье лёгкое. Без добавок и консервантов.",
-    "tags": [
-      "Говядина",
-      "Натуральное"
-    ],
-    "isFeatured": true
-  },
-  {
-    "id": "serdce-govyazhe-sushenoe",
-    "slug": "serdce-govyazhe-sushenoe",
-    "name": "Сердце говяжье сушёное",
-    "category": "Говядина",
-    "protein": "Говядина",
-    "purposes": [
-      "Поощрение",
-      "Дрессировка"
-    ],
-    "dogSizes": [
-      "Малые",
-      "Средние",
-      "Крупные"
-    ],
-    "texture": "Плотное, мясное",
-    "hardness": "среднее",
-    "format": "",
-    "unit": "weight",
-    "weight": "100 г",
-    "price": 260,
-    "price100g": 260,
-    "pricePerKg": 2600,
-    "status": "active",
-    "imagePaths": [
-      "/products/govyadina/serdce-govyazhe-sushenoe/01.webp"
-    ],
-    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% говяжье сердце. Без добавок и консервантов.",
-    "tags": [
-      "Говядина",
-      "Натуральное"
-    ],
-    "isFeatured": false
-  },
-  {
-    "id": "kolenki-govyazhi-sushenye",
-    "slug": "kolenki-govyazhi-sushenye",
-    "name": "Коленки говяжьи сушёные",
-    "category": "Говядина",
-    "protein": "Говядина",
-    "purposes": [
-      "Длительное жевание",
-      "Для занятости"
-    ],
-    "dogSizes": [
-      "Средние",
-      "Крупные"
-    ],
-    "texture": "Плотное, хрустящее",
-    "hardness": "плотное",
-    "format": "",
-    "unit": "weight",
-    "weight": "100 г",
-    "price": 156,
-    "price100g": 156,
-    "pricePerKg": 1560,
-    "status": "active",
-    "imagePaths": [
-      "/products/govyadina/kolenki-govyazhi-sushenye/01.webp"
-    ],
-    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% говяжьи коленные хрящи. Без добавок и консервантов.",
-    "tags": [
-      "Говядина",
-      "Натуральное"
-    ],
-    "isFeatured": false
-  },
-  {
-    "id": "myaso-pishchevoda-govyazhe",
-    "slug": "myaso-pishchevoda-govyazhe",
-    "name": "Мясо пищевода говяжье сушёное",
-    "category": "Говядина",
-    "protein": "Говядина",
-    "purposes": [
-      "Длительное жевание"
     ],
     "dogSizes": [
       "Малые",
@@ -266,82 +98,15 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 247,
-    "price100g": 247,
-    "pricePerKg": 2470,
-    "status": "active",
+    "price": 0,
+    "price100g": null,
+    "pricePerKg": null,
+    "status": "no_price",
     "imagePaths": [
-      "/products/govyadina/myaso-pishchevoda-govyazhe/01.webp"
+      "/products/govyadina/aorta-chipsy/01.webp"
     ],
     "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% говяжий пищевод. Без добавок и консервантов.",
-    "tags": [
-      "Говядина",
-      "Натуральное"
-    ],
-    "isFeatured": false
-  },
-  {
-    "id": "myaso-govyadiny-kusochki",
-    "slug": "myaso-govyadiny-kusochki",
-    "name": "Мясо говядины сушёное, кубики 1×1",
-    "category": "Говядина",
-    "protein": "Говядина",
-    "purposes": [
-      "Дрессировка",
-      "Поощрение"
-    ],
-    "dogSizes": [
-      "Малые",
-      "Средние",
-      "Крупные"
-    ],
-    "texture": "Плотное, мясное",
-    "hardness": "среднее",
-    "format": "кубики 1×1",
-    "unit": "weight",
-    "weight": "100 г",
-    "price": 312,
-    "price100g": 312,
-    "pricePerKg": 3120,
-    "status": "active",
-    "imagePaths": [
-      "/products/govyadina/myaso-govyadiny-kusochki/01.webp"
-    ],
-    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% мясо говядины. Без добавок и консервантов.",
-    "tags": [
-      "Говядина",
-      "Натуральное"
-    ],
-    "isFeatured": false
-  },
-  {
-    "id": "bychiy-koren-ulitka",
-    "slug": "bychiy-koren-ulitka",
-    "name": "Бычий корень сушёный, улитка",
-    "category": "Говядина",
-    "protein": "Говядина",
-    "purposes": [
-      "Длительное жевание",
-      "Для занятости"
-    ],
-    "dogSizes": [
-      "Средние",
-      "Крупные"
-    ],
-    "texture": "Плотное, хрустящее",
-    "hardness": "плотное",
-    "format": "улитка",
-    "unit": "weight",
-    "weight": "100 г",
-    "price": 429,
-    "price100g": 429,
-    "pricePerKg": 4290,
-    "status": "active",
-    "imagePaths": [],
-    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% говяжий бычий корень. Без добавок и консервантов.",
+    "composition": "Аорта чипсы. Без искусственных добавок, соли и консервантов.",
     "tags": [
       "Говядина",
       "Натуральное"
@@ -351,7 +116,7 @@ const RAW = [
   {
     "id": "bychiy-koren-10-15",
     "slug": "bychiy-koren-10-15",
-    "name": "Бычий корень сушёный, 10–15 см",
+    "name": "Бычий корень",
     "category": "Говядина",
     "protein": "Говядина",
     "purposes": [
@@ -362,28 +127,30 @@ const RAW = [
       "Средние",
       "Крупные"
     ],
-    "texture": "Плотное, хрустящее",
+    "texture": "Плотное, твёрдое",
     "hardness": "плотное",
-    "format": "10–15 см",
+    "format": "10-15",
     "unit": "weight",
     "weight": "100 г",
-    "price": 429,
-    "price100g": 429,
-    "pricePerKg": 4290,
+    "price": 450,
+    "price100g": 450,
+    "pricePerKg": 4500,
     "status": "active",
-    "imagePaths": [],
+    "imagePaths": [
+      "/products/govyadina/bychiy-koren-10-15/01.webp"
+    ],
     "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% говяжий бычий корень. Без добавок и консервантов.",
+    "composition": "Бычий корень. Без искусственных добавок, соли и консервантов.",
     "tags": [
       "Говядина",
       "Натуральное"
     ],
-    "isFeatured": false
+    "isFeatured": true
   },
   {
     "id": "bychiy-koren-20-25",
     "slug": "bychiy-koren-20-25",
-    "name": "Бычий корень сушёный, 20–25 см",
+    "name": "Бычий корень",
     "category": "Говядина",
     "protein": "Говядина",
     "purposes": [
@@ -394,53 +161,157 @@ const RAW = [
       "Средние",
       "Крупные"
     ],
-    "texture": "Плотное, хрустящее",
+    "texture": "Плотное, твёрдое",
     "hardness": "плотное",
-    "format": "20–25 см",
+    "format": "20-25",
     "unit": "weight",
     "weight": "100 г",
-    "price": 429,
-    "price100g": 429,
-    "pricePerKg": 4290,
+    "price": 450,
+    "price100g": 450,
+    "pricePerKg": 4500,
     "status": "active",
-    "imagePaths": [],
+    "imagePaths": [
+      "/products/govyadina/bychiy-koren-20-25/01.webp"
+    ],
     "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% говяжий бычий корень. Без добавок и консервантов.",
+    "composition": "Бычий корень. Без искусственных добавок, соли и консервантов.",
     "tags": [
       "Говядина",
       "Натуральное"
     ],
-    "isFeatured": false
+    "isFeatured": true
   },
   {
-    "id": "zhilka-govyazhya",
-    "slug": "zhilka-govyazhya",
-    "name": "Жилка говяжья сушёная",
+    "id": "bychiy-koren-ulitka-bublik",
+    "slug": "bychiy-koren-ulitka-bublik",
+    "name": "Бычий корень улитка бублик",
     "category": "Говядина",
     "protein": "Говядина",
     "purposes": [
       "Длительное жевание",
       "Для занятости"
+    ],
+    "dogSizes": [
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Плотное, твёрдое",
+    "hardness": "плотное",
+    "format": "",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 450,
+    "price100g": 450,
+    "pricePerKg": 4500,
+    "status": "active",
+    "imagePaths": [],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Бычий корень улитка бублик. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Говядина",
+      "Натуральное"
+    ],
+    "isFeatured": true
+  },
+  {
+    "id": "vymya-kusochki-1x1",
+    "slug": "vymya-kusochki-1x1",
+    "name": "Вымя кусочки",
+    "category": "Говядина",
+    "protein": "Говядина",
+    "purposes": [
+      "Длительное жевание",
+      "Поощрение"
     ],
     "dogSizes": [
       "Малые",
       "Средние",
       "Крупные"
     ],
-    "texture": "Плотное, хрустящее",
-    "hardness": "плотное",
+    "texture": "Волокнистое, упругое",
+    "hardness": "жевательное",
+    "format": "1×1",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 150,
+    "price100g": 150,
+    "pricePerKg": 1500,
+    "status": "active",
+    "imagePaths": [
+      "/products/govyadina/vymya-kusochki-1x1/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Вымя кусочки. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Говядина",
+      "Натуральное"
+    ],
+    "isFeatured": true
+  },
+  {
+    "id": "vymya-sushenoe-plastiny",
+    "slug": "vymya-sushenoe-plastiny",
+    "name": "Вымя сушеное пластины",
+    "category": "Говядина",
+    "protein": "Говядина",
+    "purposes": [
+      "Длительное жевание",
+      "Поощрение"
+    ],
+    "dogSizes": [
+      "Малые",
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Волокнистое, упругое",
+    "hardness": "жевательное",
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 195,
-    "price100g": 195,
-    "pricePerKg": 1950,
+    "price": 150,
+    "price100g": 150,
+    "pricePerKg": 1500,
+    "status": "active",
+    "imagePaths": [
+      "/products/govyadina/vymya-sushenoe-plastiny/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Вымя сушеное пластины. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Говядина",
+      "Натуральное"
+    ],
+    "isFeatured": true
+  },
+  {
+    "id": "zhilka-govyazhya",
+    "slug": "zhilka-govyazhya",
+    "name": "Жилка говяжья",
+    "category": "Говядина",
+    "protein": "Говядина",
+    "purposes": [
+      "Длительное жевание",
+      "Поощрение"
+    ],
+    "dogSizes": [
+      "Малые",
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Волокнистое, упругое",
+    "hardness": "жевательное",
+    "format": "",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 180,
+    "price100g": 180,
+    "pricePerKg": 1800,
     "status": "active",
     "imagePaths": [
       "/products/govyadina/zhilka-govyazhya/01.webp"
     ],
     "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% говяжьи сухожилия. Без добавок и консервантов.",
+    "composition": "Жилка говяжья. Без искусственных добавок, соли и консервантов.",
     "tags": [
       "Говядина",
       "Натуральное"
@@ -448,185 +319,13 @@ const RAW = [
     "isFeatured": false
   },
   {
-    "id": "hryashch-lopatochnyy",
-    "slug": "hryashch-lopatochnyy",
-    "name": "Хрящ говяжий лопаточный сушёный",
-    "category": "Говядина",
-    "protein": "Говядина",
-    "purposes": [
-      "Длительное жевание"
-    ],
-    "dogSizes": [
-      "Малые",
-      "Средние",
-      "Крупные"
-    ],
-    "texture": "Плотное, хрустящее",
-    "hardness": "плотное",
-    "format": "",
-    "unit": "weight",
-    "weight": "100 г",
-    "price": 182,
-    "price100g": 182,
-    "pricePerKg": 1820,
-    "status": "active",
-    "imagePaths": [
-      "/products/govyadina/hryashch-lopatochnyy/01.webp"
-    ],
-    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% говяжий хрящ. Без добавок и консервантов.",
-    "tags": [
-      "Говядина",
-      "Натуральное"
-    ],
-    "isFeatured": false
-  },
-  {
-    "id": "traheya-govyazhya-trubka",
-    "slug": "traheya-govyazhya-trubka",
-    "name": "Трахея говяжья сушёная, трубка",
+    "id": "kaltyk",
+    "slug": "kaltyk",
+    "name": "Калтык",
     "category": "Говядина",
     "protein": "Говядина",
     "purposes": [
       "Длительное жевание",
-      "Для занятости"
-    ],
-    "dogSizes": [
-      "Малые",
-      "Средние",
-      "Крупные"
-    ],
-    "texture": "Волокнистое, упругое",
-    "hardness": "жевательное",
-    "format": "трубка",
-    "unit": "weight",
-    "weight": "100 г",
-    "price": 208,
-    "price100g": 208,
-    "pricePerKg": 2080,
-    "status": "active",
-    "imagePaths": [],
-    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% говяжья трахея. Без добавок и консервантов.",
-    "tags": [
-      "Говядина",
-      "Натуральное"
-    ],
-    "isFeatured": false
-  },
-  {
-    "id": "traheya-rakushki",
-    "slug": "traheya-rakushki",
-    "name": "Трахея говяжья сушёная, ракушка",
-    "category": "Говядина",
-    "protein": "Говядина",
-    "purposes": [
-      "Длительное жевание",
-      "Для занятости"
-    ],
-    "dogSizes": [
-      "Малые",
-      "Средние",
-      "Крупные"
-    ],
-    "texture": "Волокнистое, упругое",
-    "hardness": "жевательное",
-    "format": "ракушка",
-    "unit": "weight",
-    "weight": "100 г",
-    "price": 208,
-    "price100g": 208,
-    "pricePerKg": 2080,
-    "status": "active",
-    "imagePaths": [
-      "/products/govyadina/traheya-rakushki/01.webp"
-    ],
-    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% говяжья трахея. Без добавок и консервантов.",
-    "tags": [
-      "Говядина",
-      "Натуральное"
-    ],
-    "isFeatured": false
-  },
-  {
-    "id": "traheya-govyazhya-kolechki",
-    "slug": "traheya-govyazhya-kolechki",
-    "name": "Трахея говяжья сушёная, колечки",
-    "category": "Говядина",
-    "protein": "Говядина",
-    "purposes": [
-      "Длительное жевание",
-      "Для занятости"
-    ],
-    "dogSizes": [
-      "Малые",
-      "Средние",
-      "Крупные"
-    ],
-    "texture": "Волокнистое, упругое",
-    "hardness": "жевательное",
-    "format": "колечки",
-    "unit": "weight",
-    "weight": "100 г",
-    "price": 208,
-    "price100g": 208,
-    "pricePerKg": 2080,
-    "status": "active",
-    "imagePaths": [
-      "/products/govyadina/traheya-govyazhya/01.webp"
-    ],
-    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% говяжья трахея. Без добавок и консервантов.",
-    "tags": [
-      "Говядина",
-      "Натуральное"
-    ],
-    "isFeatured": true
-  },
-  {
-    "id": "vymya-govyazhe-1x1",
-    "slug": "vymya-govyazhe-1x1",
-    "name": "Вымя говяжье сушёное, кубики 1×1",
-    "category": "Говядина",
-    "protein": "Говядина",
-    "purposes": [
-      "Длительное жевание"
-    ],
-    "dogSizes": [
-      "Малые",
-      "Средние",
-      "Крупные"
-    ],
-    "texture": "Плотное, хрустящее",
-    "hardness": "плотное",
-    "format": "кубики 1×1",
-    "unit": "weight",
-    "weight": "100 г",
-    "price": 169,
-    "price100g": 169,
-    "pricePerKg": 1690,
-    "status": "active",
-    "imagePaths": [
-      "/products/govyadina/vymya-govyazhe/01.webp"
-    ],
-    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% говяжье вымя. Без добавок и консервантов.",
-    "tags": [
-      "Говядина",
-      "Натуральное"
-    ],
-    "isFeatured": false
-  },
-  {
-    "id": "ushi-govyazhi",
-    "slug": "ushi-govyazhi",
-    "name": "Уши говяжьи сушёные",
-    "category": "Говядина",
-    "protein": "Говядина",
-    "purposes": [
-      "Длительное жевание",
-      "Для занятости",
       "Поощрение"
     ],
     "dogSizes": [
@@ -634,20 +333,20 @@ const RAW = [
       "Средние",
       "Крупные"
     ],
-    "texture": "Плотное, хрустящее",
-    "hardness": "плотное",
+    "texture": "Волокнистое, упругое",
+    "hardness": "жевательное",
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 221,
-    "price100g": 221,
-    "pricePerKg": 2210,
+    "price": 165,
+    "price100g": 165,
+    "pricePerKg": 1650,
     "status": "active",
     "imagePaths": [
-      "/products/govyadina/ushi-govyazhi/01.webp"
+      "/products/govyadina/kaltyk/01.webp"
     ],
     "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% говяжьи уши. Без добавок и консервантов.",
+    "composition": "Калтык. Без искусственных добавок, соли и консервантов.",
     "tags": [
       "Говядина",
       "Натуральное"
@@ -655,12 +354,47 @@ const RAW = [
     "isFeatured": false
   },
   {
-    "id": "semenniki-kusochki-sushenye",
-    "slug": "semenniki-kusochki-sushenye",
-    "name": "Семенники говяжьи сушёные, кусочки",
+    "id": "kolenki-govyazhi",
+    "slug": "kolenki-govyazhi",
+    "name": "Коленки говяжьи",
     "category": "Говядина",
     "protein": "Говядина",
     "purposes": [
+      "Длительное жевание",
+      "Для занятости"
+    ],
+    "dogSizes": [
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Плотное, твёрдое",
+    "hardness": "плотное",
+    "format": "",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 135,
+    "price100g": 135,
+    "pricePerKg": 1350,
+    "status": "active",
+    "imagePaths": [
+      "/products/govyadina/kolenki-govyazhi/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Коленки говяжьи. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Говядина",
+      "Натуральное"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "legkoe-krupnyy-kusok-plastiny",
+    "slug": "legkoe-krupnyy-kusok-plastiny",
+    "name": "Легкое крупный кусок пластины",
+    "category": "Говядина",
+    "protein": "Говядина",
+    "purposes": [
+      "Длительное жевание",
       "Поощрение"
     ],
     "dogSizes": [
@@ -670,18 +404,18 @@ const RAW = [
     ],
     "texture": "Плотное, мясное",
     "hardness": "среднее",
-    "format": "кусочки",
+    "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 221,
-    "price100g": 221,
-    "pricePerKg": 2210,
+    "price": 165,
+    "price100g": 165,
+    "pricePerKg": 1650,
     "status": "active",
     "imagePaths": [
-      "/products/govyadina/semenniki-kusochki-sushenye/01.webp"
+      "/products/govyadina/legkoe-krupnyy-kusok-plastiny/01.webp"
     ],
     "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% говяжьи семенники. Без добавок и консервантов.",
+    "composition": "Легкое крупный кусок пластины. Без искусственных добавок, соли и консервантов.",
     "tags": [
       "Говядина",
       "Натуральное"
@@ -689,9 +423,9 @@ const RAW = [
     "isFeatured": false
   },
   {
-    "id": "pechen-govyazhya-1x1",
-    "slug": "pechen-govyazhya-1x1",
-    "name": "Печень говяжья сушёная, кубики 1×1",
+    "id": "legkoe-melkoe-1x1",
+    "slug": "legkoe-melkoe-1x1",
+    "name": "Легкое мелкое",
     "category": "Говядина",
     "protein": "Говядина",
     "purposes": [
@@ -703,20 +437,20 @@ const RAW = [
       "Средние",
       "Крупные"
     ],
-    "texture": "Плотное, мясное",
-    "hardness": "среднее",
-    "format": "кубики 1×1",
+    "texture": "Лёгкое, хрустящее",
+    "hardness": "мягкое",
+    "format": "1×1",
     "unit": "weight",
     "weight": "100 г",
-    "price": 182,
-    "price100g": 182,
-    "pricePerKg": 1820,
+    "price": 165,
+    "price100g": 165,
+    "pricePerKg": 1650,
     "status": "active",
     "imagePaths": [
-      "/products/govyadina/pechen-govyazhya-1x1/01.webp"
+      "/products/govyadina/legkoe-melkoe-1x1/01.webp"
     ],
     "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% говяжья печень. Без добавок и консервантов.",
+    "composition": "Легкое мелкое. Без искусственных добавок, соли и консервантов.",
     "tags": [
       "Говядина",
       "Натуральное"
@@ -724,11 +458,11 @@ const RAW = [
     "isFeatured": false
   },
   {
-    "id": "rubec-baraniy",
-    "slug": "rubec-baraniy",
-    "name": "Рубец бараний сушёный",
-    "category": "Баранина",
-    "protein": "Баранина",
+    "id": "legkoe-sredniy-kusok-2-5x2-5",
+    "slug": "legkoe-sredniy-kusok-2-5x2-5",
+    "name": "Легкое средний кусок",
+    "category": "Говядина",
+    "protein": "Говядина",
     "purposes": [
       "Длительное жевание",
       "Поощрение"
@@ -738,134 +472,34 @@ const RAW = [
       "Средние",
       "Крупные"
     ],
-    "texture": "Волокнистое, упругое",
-    "hardness": "жевательное",
-    "format": "",
+    "texture": "Плотное, мясное",
+    "hardness": "среднее",
+    "format": "2,5×2,5",
     "unit": "weight",
     "weight": "100 г",
-    "price": 169,
-    "price100g": 169,
-    "pricePerKg": 1690,
+    "price": 165,
+    "price100g": 165,
+    "pricePerKg": 1650,
     "status": "active",
     "imagePaths": [
-      "/products/baranina/rubec-baraniy/01.webp"
+      "/products/govyadina/legkoe-sredniy-kusok-2-5x2-5/01.webp"
     ],
     "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% бараний рубец. Без добавок и консервантов.",
+    "composition": "Легкое средний кусок. Без искусственных добавок, соли и консервантов.",
     "tags": [
-      "Баранина",
-      "Натуральное"
-    ],
-    "isFeatured": true
-  },
-  {
-    "id": "myaso-pishchevoda-barane",
-    "slug": "myaso-pishchevoda-barane",
-    "name": "Мясо пищевода баранье сушёное",
-    "category": "Баранина",
-    "protein": "Баранина",
-    "purposes": [
-      "Длительное жевание"
-    ],
-    "dogSizes": [
-      "Малые",
-      "Средние",
-      "Крупные"
-    ],
-    "texture": "Волокнистое, упругое",
-    "hardness": "жевательное",
-    "format": "",
-    "unit": "weight",
-    "weight": "100 г",
-    "price": 208,
-    "price100g": 208,
-    "pricePerKg": 2080,
-    "status": "active",
-    "imagePaths": [],
-    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% бараний пищевод. Без добавок и консервантов.",
-    "tags": [
-      "Баранина",
+      "Говядина",
       "Натуральное"
     ],
     "isFeatured": false
   },
   {
-    "id": "legkoe-barane-plastiny",
-    "slug": "legkoe-barane-plastiny",
-    "name": "Лёгкое баранье сушёное, пластины",
-    "category": "Баранина",
-    "protein": "Баранина",
+    "id": "myaso-govyadina-1x1",
+    "slug": "myaso-govyadina-1x1",
+    "name": "Мясо говядина",
+    "category": "Говядина",
+    "protein": "Говядина",
     "purposes": [
-      "Поощрение",
-      "Дрессировка"
-    ],
-    "dogSizes": [
-      "Малые",
-      "Средние",
-      "Крупные"
-    ],
-    "texture": "Лёгкое, воздушное",
-    "hardness": "мягкое",
-    "format": "пластины",
-    "unit": "weight",
-    "weight": "100 г",
-    "price": 182,
-    "price100g": 182,
-    "pricePerKg": 1820,
-    "status": "active",
-    "imagePaths": [
-      "/products/baranina/legkoe-barane/01.webp"
-    ],
-    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% баранье лёгкое. Без добавок и консервантов.",
-    "tags": [
-      "Баранина",
-      "Натуральное"
-    ],
-    "isFeatured": false
-  },
-  {
-    "id": "legkoe-barane-2-5",
-    "slug": "legkoe-barane-2-5",
-    "name": "Лёгкое баранье сушёное, 2,5×2,5 см",
-    "category": "Баранина",
-    "protein": "Баранина",
-    "purposes": [
-      "Поощрение",
-      "Дрессировка"
-    ],
-    "dogSizes": [
-      "Малые",
-      "Средние",
-      "Крупные"
-    ],
-    "texture": "Лёгкое, воздушное",
-    "hardness": "мягкое",
-    "format": "2,5×2,5 см",
-    "unit": "weight",
-    "weight": "100 г",
-    "price": 182,
-    "price100g": 182,
-    "pricePerKg": 1820,
-    "status": "active",
-    "imagePaths": [],
-    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% баранье лёгкое. Без добавок и консервантов.",
-    "tags": [
-      "Баранина",
-      "Натуральное"
-    ],
-    "isFeatured": false
-  },
-  {
-    "id": "legkoe-barane-1x1",
-    "slug": "legkoe-barane-1x1",
-    "name": "Лёгкое баранье сушёное, кубики 1×1",
-    "category": "Баранина",
-    "protein": "Баранина",
-    "purposes": [
-      "Дрессировка",
+      "Длительное жевание",
       "Поощрение"
     ],
     "dogSizes": [
@@ -873,269 +507,34 @@ const RAW = [
       "Средние",
       "Крупные"
     ],
-    "texture": "Лёгкое, воздушное",
-    "hardness": "мягкое",
-    "format": "кубики 1×1",
+    "texture": "Плотное, мясное",
+    "hardness": "среднее",
+    "format": "1×1",
     "unit": "weight",
     "weight": "100 г",
-    "price": 182,
-    "price100g": 182,
-    "pricePerKg": 1820,
+    "price": 315,
+    "price100g": 315,
+    "pricePerKg": 3150,
     "status": "active",
-    "imagePaths": [],
+    "imagePaths": [
+      "/products/govyadina/myaso-govyadina-1x1/01.webp"
+    ],
     "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% баранье лёгкое. Без добавок и консервантов.",
+    "composition": "Мясо говядина. Без искусственных добавок, соли и консервантов.",
     "tags": [
-      "Баранина",
+      "Говядина",
       "Натуральное"
     ],
     "isFeatured": false
   },
   {
-    "id": "golovy-utinye-sushenye",
-    "slug": "golovy-utinye-sushenye",
-    "name": "Головы утиные сушёные",
-    "category": "Птица",
-    "protein": "Утка",
+    "id": "myaso-pishchevoda-govyazhe",
+    "slug": "myaso-pishchevoda-govyazhe",
+    "name": "Мясо пищевода говяжье",
+    "category": "Говядина",
+    "protein": "Говядина",
     "purposes": [
       "Длительное жевание",
-      "Для занятости"
-    ],
-    "dogSizes": [
-      "Средние",
-      "Крупные"
-    ],
-    "texture": "Плотное, хрустящее",
-    "hardness": "плотное",
-    "format": "",
-    "unit": "weight",
-    "weight": "100 г",
-    "price": 143,
-    "price100g": 143,
-    "pricePerKg": 1430,
-    "status": "active",
-    "imagePaths": [
-      "/products/ptica/golovy-utinye-sushenye/01.webp"
-    ],
-    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% утиные головы. Без добавок и консервантов.",
-    "tags": [
-      "Утка",
-      "Натуральное"
-    ],
-    "isFeatured": false
-  },
-  {
-    "id": "golovy-indeyki-sushenye",
-    "slug": "golovy-indeyki-sushenye",
-    "name": "Головы индейки сушёные",
-    "category": "Птица",
-    "protein": "Индейка",
-    "purposes": [
-      "Длительное жевание",
-      "Для занятости"
-    ],
-    "dogSizes": [
-      "Средние",
-      "Крупные"
-    ],
-    "texture": "Плотное, хрустящее",
-    "hardness": "плотное",
-    "format": "",
-    "unit": "weight",
-    "weight": "100 г",
-    "price": 143,
-    "price100g": 143,
-    "pricePerKg": 1430,
-    "status": "active",
-    "imagePaths": [
-      "/products/ptica/golovy-indeyki-sushenye/01.webp"
-    ],
-    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% головы индейки. Без добавок и консервантов.",
-    "tags": [
-      "Индейка",
-      "Натуральное"
-    ],
-    "isFeatured": false
-  },
-  {
-    "id": "myaso-indeyki-1x1",
-    "slug": "myaso-indeyki-1x1",
-    "name": "Мясо индейки сушёное, кубики 1×1",
-    "category": "Птица",
-    "protein": "Индейка",
-    "purposes": [
-      "Дрессировка",
-      "Поощрение",
-      "Ежедневное лакомство"
-    ],
-    "dogSizes": [
-      "Малые",
-      "Средние",
-      "Крупные"
-    ],
-    "texture": "Плотное, мясное",
-    "hardness": "среднее",
-    "format": "кубики 1×1",
-    "unit": "weight",
-    "weight": "100 г",
-    "price": 312,
-    "price100g": 312,
-    "pricePerKg": 3120,
-    "status": "active",
-    "imagePaths": [
-      "/products/ptica/myaso-indeyki-1x1/01.webp"
-    ],
-    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% мясо индейки. Без добавок и консервантов.",
-    "tags": [
-      "Индейка",
-      "Натуральное"
-    ],
-    "isFeatured": true
-  },
-  {
-    "id": "lapki-utinye",
-    "slug": "lapki-utinye",
-    "name": "Лапы утиные сушёные",
-    "category": "Птица",
-    "protein": "Утка",
-    "purposes": [
-      "Поощрение",
-      "Длительное жевание"
-    ],
-    "dogSizes": [
-      "Малые",
-      "Средние"
-    ],
-    "texture": "Плотное, мясное",
-    "hardness": "среднее",
-    "format": "",
-    "unit": "weight",
-    "weight": "100 г",
-    "price": 156,
-    "price100g": 156,
-    "pricePerKg": 1560,
-    "status": "active",
-    "imagePaths": [
-      "/products/ptica/lapki-utinye/01.webp"
-    ],
-    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% утиные лапы. Без добавок и консервантов.",
-    "tags": [
-      "Утка",
-      "Натуральное"
-    ],
-    "isFeatured": false
-  },
-  {
-    "id": "utinye-zheludki",
-    "slug": "utinye-zheludki",
-    "name": "Желудки утиные сушёные",
-    "category": "Птица",
-    "protein": "Утка",
-    "purposes": [
-      "Поощрение",
-      "Дрессировка"
-    ],
-    "dogSizes": [
-      "Малые",
-      "Средние",
-      "Крупные"
-    ],
-    "texture": "Плотное, мясное",
-    "hardness": "среднее",
-    "format": "",
-    "unit": "weight",
-    "weight": "100 г",
-    "price": 208,
-    "price100g": 208,
-    "pricePerKg": 2080,
-    "status": "active",
-    "imagePaths": [
-      "/products/ptica/utinye-zheludki/01.webp"
-    ],
-    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% утиные желудки. Без добавок и консервантов.",
-    "tags": [
-      "Утка",
-      "Натуральное"
-    ],
-    "isFeatured": false
-  },
-  {
-    "id": "sheya-utinaya-sushenaya",
-    "slug": "sheya-utinaya-sushenaya",
-    "name": "Шея утиная сушёная",
-    "category": "Птица",
-    "protein": "Утка",
-    "purposes": [
-      "Длительное жевание",
-      "Для занятости"
-    ],
-    "dogSizes": [
-      "Средние",
-      "Крупные"
-    ],
-    "texture": "Плотное, хрустящее",
-    "hardness": "плотное",
-    "format": "",
-    "unit": "weight",
-    "weight": "100 г",
-    "price": 182,
-    "price100g": 182,
-    "pricePerKg": 1820,
-    "status": "active",
-    "imagePaths": [],
-    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% утиная шея. Без добавок и консервантов.",
-    "tags": [
-      "Утка",
-      "Натуральное"
-    ],
-    "isFeatured": false
-  },
-  {
-    "id": "shei-kurinye-sushenye",
-    "slug": "shei-kurinye-sushenye",
-    "name": "Шеи куриные сушёные",
-    "category": "Птица",
-    "protein": "Курица",
-    "purposes": [
-      "Поощрение",
-      "Длительное жевание"
-    ],
-    "dogSizes": [
-      "Малые",
-      "Средние",
-      "Крупные"
-    ],
-    "texture": "Плотное, мясное",
-    "hardness": "среднее",
-    "format": "",
-    "unit": "weight",
-    "weight": "100 г",
-    "price": 169,
-    "price100g": 169,
-    "pricePerKg": 1690,
-    "status": "active",
-    "imagePaths": [],
-    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% куриные шеи. Без добавок и консервантов.",
-    "tags": [
-      "Курица",
-      "Натуральное"
-    ],
-    "isFeatured": false
-  },
-  {
-    "id": "grebeshki-kurinye-sushenye",
-    "slug": "grebeshki-kurinye-sushenye",
-    "name": "Гребешки куриные сушёные",
-    "category": "Птица",
-    "protein": "Курица",
-    "purposes": [
       "Поощрение"
     ],
     "dogSizes": [
@@ -1148,116 +547,15 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 247,
-    "price100g": 247,
-    "pricePerKg": 2470,
-    "status": "active",
-    "imagePaths": [],
-    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% куриные гребешки. Без добавок и консервантов.",
-    "tags": [
-      "Курица",
-      "Натуральное"
-    ],
-    "isFeatured": false
-  },
-  {
-    "id": "ushi-krolika",
-    "slug": "ushi-krolika",
-    "name": "Уши кролика сушёные",
-    "category": "Кролик",
-    "protein": "Кролик",
-    "purposes": [
-      "Поощрение",
-      "Длительное жевание"
-    ],
-    "dogSizes": [
-      "Малые",
-      "Средние"
-    ],
-    "texture": "Плотное, мясное",
-    "hardness": "среднее",
-    "format": "с ворсом",
-    "unit": "weight",
-    "weight": "100 г",
-    "price": 234,
-    "price100g": 234,
-    "pricePerKg": 2340,
+    "price": 240,
+    "price100g": 240,
+    "pricePerKg": 2400,
     "status": "active",
     "imagePaths": [
-      "/products/krolik/ushi-krolika/01.webp"
+      "/products/govyadina/myaso-pishchevoda-govyazhe/01.webp"
     ],
     "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% уши кролика с ворсом. Без добавок и консервантов.",
-    "tags": [
-      "Кролик",
-      "Натуральное"
-    ],
-    "isFeatured": false
-  },
-  {
-    "id": "pyataki-sushenye",
-    "slug": "pyataki-sushenye",
-    "name": "Пятаки свиные сушёные",
-    "category": "Свинина",
-    "protein": "Свинина",
-    "purposes": [
-      "Поощрение",
-      "Длительное жевание"
-    ],
-    "dogSizes": [
-      "Малые",
-      "Средние",
-      "Крупные"
-    ],
-    "texture": "Плотное, хрустящее",
-    "hardness": "плотное",
-    "format": "",
-    "unit": "weight",
-    "weight": "100 г",
-    "price": 182,
-    "price100g": 182,
-    "pricePerKg": 1820,
-    "status": "active",
-    "imagePaths": [],
-    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% свиные пятаки. Без добавок и консервантов.",
-    "tags": [
-      "Свинина",
-      "Натуральное"
-    ],
-    "isFeatured": false
-  },
-  {
-    "id": "aorta-govyazhya",
-    "slug": "aorta-govyazhya",
-    "name": "Аорта говяжья сушёная",
-    "category": "Говядина",
-    "protein": "Говядина",
-    "purposes": [
-      "Длительное жевание",
-      "Для занятости"
-    ],
-    "dogSizes": [
-      "Малые",
-      "Средние",
-      "Крупные"
-    ],
-    "texture": "Волокнистое, упругое",
-    "hardness": "жевательное",
-    "format": "",
-    "unit": "weight",
-    "weight": "100 г",
-    "price": 0,
-    "price100g": null,
-    "pricePerKg": null,
-    "status": "no_price",
-    "imagePaths": [
-      "/products/govyadina/aorta-govyazhya/01.webp",
-      "/products/govyadina/aorta-govyazhya/02.webp"
-    ],
-    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% говяжья аорта. Без добавок и консервантов.",
+    "composition": "Мясо пищевода говяжье. Без искусственных добавок, соли и консервантов.",
     "tags": [
       "Говядина",
       "Натуральное"
@@ -1265,9 +563,9 @@ const RAW = [
     "isFeatured": false
   },
   {
-    "id": "hvost-govyazhiy-sushenyy",
-    "slug": "hvost-govyazhiy-sushenyy",
-    "name": "Хвост говяжий сушёный",
+    "id": "noga-govyazhya",
+    "slug": "noga-govyazhya",
+    "name": "Нога говяжья",
     "category": "Говядина",
     "protein": "Говядина",
     "purposes": [
@@ -1278,44 +576,8 @@ const RAW = [
       "Средние",
       "Крупные"
     ],
-    "texture": "Плотное, хрустящее",
+    "texture": "Плотное, твёрдое",
     "hardness": "плотное",
-    "format": "",
-    "unit": "piece",
-    "weight": "1 шт",
-    "price": 0,
-    "price100g": null,
-    "pricePerKg": null,
-    "status": "no_price",
-    "imagePaths": [
-      "/products/govyadina/hvost-govyazhiy-sushenyy/01.webp",
-      "/products/govyadina/hvost-govyazhiy-sushenyy/02.webp"
-    ],
-    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% говяжий хвост. Без добавок и консервантов.",
-    "tags": [
-      "Говядина",
-      "Натуральное"
-    ],
-    "isFeatured": false
-  },
-  {
-    "id": "kaltyk-govyazhiy",
-    "slug": "kaltyk-govyazhiy",
-    "name": "Калтык говяжий сушёный",
-    "category": "Говядина",
-    "protein": "Говядина",
-    "purposes": [
-      "Длительное жевание",
-      "Для занятости"
-    ],
-    "dogSizes": [
-      "Малые",
-      "Средние",
-      "Крупные"
-    ],
-    "texture": "Волокнистое, упругое",
-    "hardness": "жевательное",
     "format": "",
     "unit": "weight",
     "weight": "100 г",
@@ -1324,44 +586,10 @@ const RAW = [
     "pricePerKg": null,
     "status": "no_price",
     "imagePaths": [
-      "/products/govyadina/kaltyk-govyazhiy/01.webp"
+      "/products/govyadina/noga-govyazhya/01.webp"
     ],
     "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% говяжий калтык. Без добавок и консервантов.",
-    "tags": [
-      "Говядина",
-      "Натуральное"
-    ],
-    "isFeatured": false
-  },
-  {
-    "id": "noga-govyazhya-sushenaya",
-    "slug": "noga-govyazhya-sushenaya",
-    "name": "Нога говяжья сушёная",
-    "category": "Говядина",
-    "protein": "Говядина",
-    "purposes": [
-      "Длительное жевание",
-      "Для занятости"
-    ],
-    "dogSizes": [
-      "Средние",
-      "Крупные"
-    ],
-    "texture": "Плотное, хрустящее",
-    "hardness": "плотное",
-    "format": "",
-    "unit": "piece",
-    "weight": "1 шт",
-    "price": 0,
-    "price100g": null,
-    "pricePerKg": null,
-    "status": "no_price",
-    "imagePaths": [
-      "/products/govyadina/noga-govyazhya-sushenaya/01.webp"
-    ],
-    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% говяжья нога. Без добавок и консервантов.",
+    "composition": "Нога говяжья. Без искусственных добавок, соли и консервантов.",
     "tags": [
       "Говядина",
       "Натуральное"
@@ -1371,32 +599,32 @@ const RAW = [
   {
     "id": "nosy-govyazhi",
     "slug": "nosy-govyazhi",
-    "name": "Носы говяжьи сушёные",
+    "name": "Носы говяжьи",
     "category": "Говядина",
     "protein": "Говядина",
     "purposes": [
       "Длительное жевание",
-      "Для занятости"
+      "Поощрение"
     ],
     "dogSizes": [
       "Малые",
       "Средние",
       "Крупные"
     ],
-    "texture": "Плотное, хрустящее",
-    "hardness": "плотное",
+    "texture": "Волокнистое, упругое",
+    "hardness": "жевательное",
     "format": "",
-    "unit": "piece",
-    "weight": "1 шт",
-    "price": 0,
-    "price100g": null,
-    "pricePerKg": null,
-    "status": "no_price",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 210,
+    "price100g": 210,
+    "pricePerKg": 2100,
+    "status": "active",
     "imagePaths": [
       "/products/govyadina/nosy-govyazhi/01.webp"
     ],
     "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% говяжьи носы. Без добавок и консервантов.",
+    "composition": "Носы говяжьи. Без искусственных добавок, соли и консервантов.",
     "tags": [
       "Говядина",
       "Натуральное"
@@ -1404,152 +632,14 @@ const RAW = [
     "isFeatured": false
   },
   {
-    "id": "nosy-govyazhi-s-sherstyu",
-    "slug": "nosy-govyazhi-s-sherstyu",
-    "name": "Носы говяжьи сушёные, с шерстью",
+    "id": "nosy-s-sherstyu",
+    "slug": "nosy-s-sherstyu",
+    "name": "Носы с шерстью",
     "category": "Говядина",
     "protein": "Говядина",
     "purposes": [
       "Длительное жевание",
-      "Для занятости"
-    ],
-    "dogSizes": [
-      "Малые",
-      "Средние",
-      "Крупные"
-    ],
-    "texture": "Плотное, хрустящее",
-    "hardness": "плотное",
-    "format": "с шерстью",
-    "unit": "piece",
-    "weight": "1 шт",
-    "price": 0,
-    "price100g": null,
-    "pricePerKg": null,
-    "status": "no_price",
-    "imagePaths": [
-      "/products/govyadina/nosy-govyazhi-s-sherstyu/01.webp"
-    ],
-    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% говяжьи носы с шерстью. Без добавок и консервантов.",
-    "tags": [
-      "Говядина",
-      "Натуральное"
-    ],
-    "isFeatured": false
-  },
-  {
-    "id": "pechen-govyazhya",
-    "slug": "pechen-govyazhya",
-    "name": "Печень говяжья сушёная, целиком",
-    "category": "Говядина",
-    "protein": "Говядина",
-    "purposes": [
-      "Поощрение",
-      "Дрессировка"
-    ],
-    "dogSizes": [
-      "Малые",
-      "Средние",
-      "Крупные"
-    ],
-    "texture": "Плотное, мясное",
-    "hardness": "среднее",
-    "format": "целиком",
-    "unit": "weight",
-    "weight": "100 г",
-    "price": 0,
-    "price100g": null,
-    "pricePerKg": null,
-    "status": "no_price",
-    "imagePaths": [
-      "/products/govyadina/pechen-govyazhya/01.webp"
-    ],
-    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% говяжья печень. Без добавок и консервантов.",
-    "tags": [
-      "Говядина",
-      "Натуральное"
-    ],
-    "isFeatured": false
-  },
-  {
-    "id": "vymya-sushenoe",
-    "slug": "vymya-sushenoe",
-    "name": "Вымя говяжье сушёное, пластины",
-    "category": "Говядина",
-    "protein": "Говядина",
-    "purposes": [
-      "Длительное жевание"
-    ],
-    "dogSizes": [
-      "Малые",
-      "Средние",
-      "Крупные"
-    ],
-    "texture": "Плотное, хрустящее",
-    "hardness": "плотное",
-    "format": "пластины",
-    "unit": "weight",
-    "weight": "100 г",
-    "price": 0,
-    "price100g": null,
-    "pricePerKg": null,
-    "status": "no_price",
-    "imagePaths": [
-      "/products/govyadina/vymya-sushenoe/01.webp"
-    ],
-    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% говяжье вымя. Без добавок и консервантов.",
-    "tags": [
-      "Говядина",
-      "Натуральное"
-    ],
-    "isFeatured": false
-  },
-  {
-    "id": "noga-baranya-sushenaya",
-    "slug": "noga-baranya-sushenaya",
-    "name": "Нога баранья сушёная",
-    "category": "Баранина",
-    "protein": "Баранина",
-    "purposes": [
-      "Длительное жевание",
-      "Для занятости"
-    ],
-    "dogSizes": [
-      "Средние",
-      "Крупные"
-    ],
-    "texture": "Плотное, хрустящее",
-    "hardness": "плотное",
-    "format": "",
-    "unit": "piece",
-    "weight": "1 шт",
-    "price": 0,
-    "price100g": null,
-    "pricePerKg": null,
-    "status": "no_price",
-    "imagePaths": [
-      "/products/baranina/noga-baranya-sushenaya/01.webp"
-    ],
-    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% баранья нога. Без добавок и консервантов.",
-    "tags": [
-      "Баранина",
-      "Натуральное"
-    ],
-    "isFeatured": false
-  },
-  {
-    "id": "traheya-baranya-sushenaya",
-    "slug": "traheya-baranya-sushenaya",
-    "name": "Трахея баранья сушёная",
-    "category": "Баранина",
-    "protein": "Баранина",
-    "purposes": [
-      "Длительное жевание",
-      "Для занятости"
+      "Поощрение"
     ],
     "dogSizes": [
       "Малые",
@@ -1566,10 +656,459 @@ const RAW = [
     "pricePerKg": null,
     "status": "no_price",
     "imagePaths": [
-      "/products/baranina/traheya-baranya-sushenaya/01.webp"
+      "/products/govyadina/nosy-s-sherstyu/01.webp"
     ],
     "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% баранья трахея. Без добавок и консервантов.",
+    "composition": "Носы с шерстью. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Говядина",
+      "Натуральное"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "pechen-govyazh",
+    "slug": "pechen-govyazh",
+    "name": "Печень говяж",
+    "category": "Говядина",
+    "protein": "Говядина",
+    "purposes": [
+      "Длительное жевание",
+      "Поощрение"
+    ],
+    "dogSizes": [
+      "Малые",
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Плотное, мясное",
+    "hardness": "среднее",
+    "format": "",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 165,
+    "price100g": 165,
+    "pricePerKg": 1650,
+    "status": "active",
+    "imagePaths": [],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Печень говяж. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Говядина",
+      "Натуральное"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "pechen-govyazhya-kusochki-1x1",
+    "slug": "pechen-govyazhya-kusochki-1x1",
+    "name": "Печень говяжья кусочки",
+    "category": "Говядина",
+    "protein": "Говядина",
+    "purposes": [
+      "Длительное жевание",
+      "Поощрение"
+    ],
+    "dogSizes": [
+      "Малые",
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Плотное, мясное",
+    "hardness": "среднее",
+    "format": "1×1",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 165,
+    "price100g": 165,
+    "pricePerKg": 1650,
+    "status": "active",
+    "imagePaths": [
+      "/products/govyadina/pechen-govyazhya-kusochki-1x1/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Печень говяжья кусочки. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Говядина",
+      "Натуральное"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "rubec-govyazhiy",
+    "slug": "rubec-govyazhiy",
+    "name": "Рубец говяжий",
+    "category": "Говядина",
+    "protein": "Говядина",
+    "purposes": [
+      "Длительное жевание",
+      "Поощрение"
+    ],
+    "dogSizes": [
+      "Малые",
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Плотное, мясное",
+    "hardness": "среднее",
+    "format": "",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 150,
+    "price100g": 150,
+    "pricePerKg": 1500,
+    "status": "active",
+    "imagePaths": [
+      "/products/govyadina/rubec-govyazhiy/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Рубец говяжий. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Говядина",
+      "Натуральное"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "semenniki-govyazh",
+    "slug": "semenniki-govyazh",
+    "name": "Семенники говяж",
+    "category": "Говядина",
+    "protein": "Говядина",
+    "purposes": [
+      "Длительное жевание",
+      "Поощрение"
+    ],
+    "dogSizes": [
+      "Малые",
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Плотное, мясное",
+    "hardness": "среднее",
+    "format": "",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 210,
+    "price100g": 210,
+    "pricePerKg": 2100,
+    "status": "active",
+    "imagePaths": [
+      "/products/govyadina/semenniki-govyazh/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Семенники говяж. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Говядина",
+      "Натуральное"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "semenniki-kusochki-1x1",
+    "slug": "semenniki-kusochki-1x1",
+    "name": "Семенники кусочки",
+    "category": "Говядина",
+    "protein": "Говядина",
+    "purposes": [
+      "Длительное жевание",
+      "Поощрение"
+    ],
+    "dogSizes": [
+      "Малые",
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Плотное, мясное",
+    "hardness": "среднее",
+    "format": "1×1",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 210,
+    "price100g": 210,
+    "pricePerKg": 2100,
+    "status": "active",
+    "imagePaths": [
+      "/products/govyadina/semenniki-kusochki-1x1/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Семенники кусочки. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Говядина",
+      "Натуральное"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "serdce-govyazhe",
+    "slug": "serdce-govyazhe",
+    "name": "Сердце говяжье",
+    "category": "Говядина",
+    "protein": "Говядина",
+    "purposes": [
+      "Длительное жевание",
+      "Поощрение"
+    ],
+    "dogSizes": [
+      "Малые",
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Плотное, мясное",
+    "hardness": "среднее",
+    "format": "",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 255,
+    "price100g": 255,
+    "pricePerKg": 2550,
+    "status": "active",
+    "imagePaths": [
+      "/products/govyadina/serdce-govyazhe/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Сердце говяжье. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Говядина",
+      "Натуральное"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "traheya-kolechki",
+    "slug": "traheya-kolechki",
+    "name": "Трахея колечки",
+    "category": "Говядина",
+    "protein": "Говядина",
+    "purposes": [
+      "Длительное жевание",
+      "Поощрение"
+    ],
+    "dogSizes": [
+      "Малые",
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Волокнистое, упругое",
+    "hardness": "жевательное",
+    "format": "",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 195,
+    "price100g": 195,
+    "pricePerKg": 1950,
+    "status": "active",
+    "imagePaths": [
+      "/products/govyadina/traheya-kolechki/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Трахея колечки. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Говядина",
+      "Натуральное"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "traheya-rakushka",
+    "slug": "traheya-rakushka",
+    "name": "Трахея ракушка",
+    "category": "Говядина",
+    "protein": "Говядина",
+    "purposes": [
+      "Длительное жевание",
+      "Поощрение"
+    ],
+    "dogSizes": [
+      "Малые",
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Волокнистое, упругое",
+    "hardness": "жевательное",
+    "format": "",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 195,
+    "price100g": 195,
+    "pricePerKg": 1950,
+    "status": "active",
+    "imagePaths": [
+      "/products/govyadina/traheya-rakushka/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Трахея ракушка. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Говядина",
+      "Натуральное"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "traheya-trubka",
+    "slug": "traheya-trubka",
+    "name": "Трахея трубка",
+    "category": "Говядина",
+    "protein": "Говядина",
+    "purposes": [
+      "Длительное жевание",
+      "Поощрение"
+    ],
+    "dogSizes": [
+      "Малые",
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Волокнистое, упругое",
+    "hardness": "жевательное",
+    "format": "",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 195,
+    "price100g": 195,
+    "pricePerKg": 1950,
+    "status": "active",
+    "imagePaths": [
+      "/products/govyadina/traheya-trubka/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Трахея трубка. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Говядина",
+      "Натуральное"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "ushi-govyazhi",
+    "slug": "ushi-govyazhi",
+    "name": "Уши говяжьи",
+    "category": "Говядина",
+    "protein": "Говядина",
+    "purposes": [
+      "Длительное жевание",
+      "Поощрение"
+    ],
+    "dogSizes": [
+      "Малые",
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Волокнистое, упругое",
+    "hardness": "жевательное",
+    "format": "",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 210,
+    "price100g": 210,
+    "pricePerKg": 2100,
+    "status": "active",
+    "imagePaths": [
+      "/products/govyadina/ushi-govyazhi/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Уши говяжьи. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Говядина",
+      "Натуральное"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "hvost-govyazhiy",
+    "slug": "hvost-govyazhiy",
+    "name": "Хвост говяжий",
+    "category": "Говядина",
+    "protein": "Говядина",
+    "purposes": [
+      "Длительное жевание",
+      "Для занятости"
+    ],
+    "dogSizes": [
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Плотное, твёрдое",
+    "hardness": "плотное",
+    "format": "",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 210,
+    "price100g": 210,
+    "pricePerKg": 2100,
+    "status": "active",
+    "imagePaths": [
+      "/products/govyadina/hvost-govyazhiy/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Хвост говяжий. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Говядина",
+      "Натуральное"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "hryashch-lopatochnyy",
+    "slug": "hryashch-lopatochnyy",
+    "name": "Хрящ лопаточный",
+    "category": "Говядина",
+    "protein": "Говядина",
+    "purposes": [
+      "Длительное жевание",
+      "Для занятости"
+    ],
+    "dogSizes": [
+      "Малые",
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Плотное, твёрдое",
+    "hardness": "плотное",
+    "format": "",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 165,
+    "price100g": 165,
+    "pricePerKg": 1650,
+    "status": "active",
+    "imagePaths": [
+      "/products/govyadina/hryashch-lopatochnyy/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Хрящ лопаточный. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Говядина",
+      "Натуральное"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "koren-baraniy",
+    "slug": "koren-baraniy",
+    "name": "Корень бараний",
+    "category": "Баранина",
+    "protein": "Баранина",
+    "purposes": [
+      "Длительное жевание",
+      "Для занятости"
+    ],
+    "dogSizes": [
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Плотное, твёрдое",
+    "hardness": "плотное",
+    "format": "",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 0,
+    "price100g": null,
+    "pricePerKg": null,
+    "status": "no_price",
+    "imagePaths": [],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Корень бараний. Без искусственных добавок, соли и консервантов.",
     "tags": [
       "Баранина",
       "Натуральное"
@@ -1577,51 +1116,294 @@ const RAW = [
     "isFeatured": false
   },
   {
-    "id": "golovy-perepelinye",
-    "slug": "golovy-perepelinye",
-    "name": "Головы перепелиные сушёные",
-    "category": "Птица",
-    "protein": "Перепел",
+    "id": "legkoe-barane-2-5x2-5",
+    "slug": "legkoe-barane-2-5x2-5",
+    "name": "Легкое баранье",
+    "category": "Баранина",
+    "protein": "Баранина",
     "purposes": [
-      "Поощрение",
-      "Для занятости"
+      "Длительное жевание",
+      "Поощрение"
     ],
     "dogSizes": [
       "Малые",
-      "Средние"
+      "Средние",
+      "Крупные"
     ],
     "texture": "Плотное, мясное",
     "hardness": "среднее",
-    "format": "",
-    "unit": "piece",
-    "weight": "1 шт",
-    "price": 0,
-    "price100g": null,
-    "pricePerKg": null,
-    "status": "no_price",
+    "format": "2,5×2,5",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 165,
+    "price100g": 165,
+    "pricePerKg": 1650,
+    "status": "active",
     "imagePaths": [
-      "/products/ptica/golovy-perepelinye/01.webp"
+      "/products/baranina/legkoe-barane-2-5x2-5/01.webp"
     ],
     "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% перепелиные головы. Без добавок и консервантов.",
+    "composition": "Легкое баранье. Без искусственных добавок, соли и консервантов.",
     "tags": [
-      "Перепел",
+      "Баранина",
       "Натуральное"
     ],
     "isFeatured": false
   },
   {
-    "id": "myaso-indeyki-sushenoe",
-    "slug": "myaso-indeyki-sushenoe",
-    "name": "Мясо индейки сушёное",
-    "category": "Птица",
-    "protein": "Индейка",
+    "id": "legkoe-barane-1x1",
+    "slug": "legkoe-barane-1x1",
+    "name": "Легкое баранье",
+    "category": "Баранина",
+    "protein": "Баранина",
     "purposes": [
-      "Поощрение",
-      "Ежедневное лакомство"
+      "Длительное жевание",
+      "Поощрение"
     ],
     "dogSizes": [
       "Малые",
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Плотное, мясное",
+    "hardness": "среднее",
+    "format": "1×1",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 165,
+    "price100g": 165,
+    "pricePerKg": 1650,
+    "status": "active",
+    "imagePaths": [
+      "/products/baranina/legkoe-barane-1x1/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Легкое баранье. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Баранина",
+      "Натуральное"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "legkoe-barane-plastiny",
+    "slug": "legkoe-barane-plastiny",
+    "name": "Легкое баранье пластины",
+    "category": "Баранина",
+    "protein": "Баранина",
+    "purposes": [
+      "Длительное жевание",
+      "Поощрение"
+    ],
+    "dogSizes": [
+      "Малые",
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Плотное, мясное",
+    "hardness": "среднее",
+    "format": "",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 165,
+    "price100g": 165,
+    "pricePerKg": 1650,
+    "status": "active",
+    "imagePaths": [
+      "/products/baranina/legkoe-barane-plastiny/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Легкое баранье пластины. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Баранина",
+      "Натуральное"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "myaso-pishchevoda-barane",
+    "slug": "myaso-pishchevoda-barane",
+    "name": "Мясо пищевода баранье",
+    "category": "Баранина",
+    "protein": "Баранина",
+    "purposes": [
+      "Длительное жевание",
+      "Поощрение"
+    ],
+    "dogSizes": [
+      "Малые",
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Плотное, мясное",
+    "hardness": "среднее",
+    "format": "",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 195,
+    "price100g": 195,
+    "pricePerKg": 1950,
+    "status": "active",
+    "imagePaths": [
+      "/products/baranina/myaso-pishchevoda-barane/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Мясо пищевода баранье. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Баранина",
+      "Натуральное"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "noga-baranya-sht",
+    "slug": "noga-baranya-sht",
+    "name": "Нога баранья, шт",
+    "category": "Баранина",
+    "protein": "Баранина",
+    "purposes": [
+      "Длительное жевание",
+      "Для занятости"
+    ],
+    "dogSizes": [
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Плотное, твёрдое",
+    "hardness": "плотное",
+    "format": "",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 0,
+    "price100g": null,
+    "pricePerKg": null,
+    "status": "no_price",
+    "imagePaths": [
+      "/products/baranina/noga-baranya-sht/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Нога баранья, шт. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Баранина",
+      "Натуральное"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "rubec-baraniy",
+    "slug": "rubec-baraniy",
+    "name": "Рубец бараний",
+    "category": "Баранина",
+    "protein": "Баранина",
+    "purposes": [
+      "Длительное жевание",
+      "Поощрение"
+    ],
+    "dogSizes": [
+      "Малые",
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Плотное, мясное",
+    "hardness": "среднее",
+    "format": "",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 150,
+    "price100g": 150,
+    "pricePerKg": 1500,
+    "status": "active",
+    "imagePaths": [
+      "/products/baranina/rubec-baraniy/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Рубец бараний. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Баранина",
+      "Натуральное"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "traheya-baranya",
+    "slug": "traheya-baranya",
+    "name": "Трахея баранья",
+    "category": "Баранина",
+    "protein": "Баранина",
+    "purposes": [
+      "Длительное жевание",
+      "Поощрение"
+    ],
+    "dogSizes": [
+      "Малые",
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Волокнистое, упругое",
+    "hardness": "жевательное",
+    "format": "",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 195,
+    "price100g": 195,
+    "pricePerKg": 1950,
+    "status": "active",
+    "imagePaths": [
+      "/products/baranina/traheya-baranya/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Трахея баранья. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Баранина",
+      "Натуральное"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "golovy-indeyki",
+    "slug": "golovy-indeyki",
+    "name": "Головы индейки",
+    "category": "Птица",
+    "protein": "Индейка",
+    "purposes": [
+      "Длительное жевание",
+      "Поощрение"
+    ],
+    "dogSizes": [
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Плотное, мясное",
+    "hardness": "среднее",
+    "format": "",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 120,
+    "price100g": 120,
+    "pricePerKg": 1200,
+    "status": "active",
+    "imagePaths": [
+      "/products/ptica/golovy-indeyki/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Головы индейки. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Индейка",
+      "Натуральное"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "golovy-perepelinye",
+    "slug": "golovy-perepelinye",
+    "name": "Головы перепелиные",
+    "category": "Птица",
+    "protein": "Перепел",
+    "purposes": [
+      "Длительное жевание",
+      "Поощрение"
+    ],
+    "dogSizes": [
       "Средние",
       "Крупные"
     ],
@@ -1635,10 +1417,184 @@ const RAW = [
     "pricePerKg": null,
     "status": "no_price",
     "imagePaths": [
-      "/products/ptica/myaso-indeyki-sushenoe/01.webp"
+      "/products/ptica/golovy-perepelinye/01.webp"
     ],
     "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% мясо индейки. Без добавок и консервантов.",
+    "composition": "Головы перепелиные. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Перепел",
+      "Натуральное"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "golovy-utinye",
+    "slug": "golovy-utinye",
+    "name": "Головы утиные",
+    "category": "Птица",
+    "protein": "Утка",
+    "purposes": [
+      "Длительное жевание",
+      "Поощрение"
+    ],
+    "dogSizes": [
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Плотное, мясное",
+    "hardness": "среднее",
+    "format": "",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 120,
+    "price100g": 120,
+    "pricePerKg": 1200,
+    "status": "active",
+    "imagePaths": [
+      "/products/ptica/golovy-utinye/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Головы утиные. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Утка",
+      "Натуральное"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "grebeshki-kurinye",
+    "slug": "grebeshki-kurinye",
+    "name": "Гребешки куриные",
+    "category": "Птица",
+    "protein": "Курица",
+    "purposes": [
+      "Длительное жевание",
+      "Поощрение"
+    ],
+    "dogSizes": [
+      "Малые",
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Волокнистое, упругое",
+    "hardness": "жевательное",
+    "format": "",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 240,
+    "price100g": 240,
+    "pricePerKg": 2400,
+    "status": "active",
+    "imagePaths": [
+      "/products/ptica/grebeshki-kurinye/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Гребешки куриные. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Курица",
+      "Натуральное"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "lapy-utinye",
+    "slug": "lapy-utinye",
+    "name": "Лапы утиные",
+    "category": "Птица",
+    "protein": "Утка",
+    "purposes": [
+      "Длительное жевание",
+      "Поощрение"
+    ],
+    "dogSizes": [
+      "Малые",
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Плотное, мясное",
+    "hardness": "среднее",
+    "format": "",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 135,
+    "price100g": 135,
+    "pricePerKg": 1350,
+    "status": "active",
+    "imagePaths": [
+      "/products/ptica/lapy-utinye/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Лапы утиные. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Утка",
+      "Натуральное"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "myaso-indeyki-1x1",
+    "slug": "myaso-indeyki-1x1",
+    "name": "Мясо индейки",
+    "category": "Птица",
+    "protein": "Индейка",
+    "purposes": [
+      "Длительное жевание",
+      "Поощрение"
+    ],
+    "dogSizes": [
+      "Малые",
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Плотное, мясное",
+    "hardness": "среднее",
+    "format": "1×1",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 315,
+    "price100g": 315,
+    "pricePerKg": 3150,
+    "status": "active",
+    "imagePaths": [
+      "/products/ptica/myaso-indeyki-1x1/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Мясо индейки. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Индейка",
+      "Натуральное"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "myaso-indeyki-plastiny",
+    "slug": "myaso-indeyki-plastiny",
+    "name": "Мясо индейки пластины",
+    "category": "Птица",
+    "protein": "Индейка",
+    "purposes": [
+      "Длительное жевание",
+      "Поощрение"
+    ],
+    "dogSizes": [
+      "Малые",
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Плотное, мясное",
+    "hardness": "среднее",
+    "format": "",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 315,
+    "price100g": 315,
+    "pricePerKg": 3150,
+    "status": "active",
+    "imagePaths": [
+      "/products/ptica/myaso-indeyki-plastiny/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Мясо индейки пластины. Без искусственных добавок, соли и консервантов.",
     "tags": [
       "Индейка",
       "Натуральное"
@@ -1648,9 +1604,289 @@ const RAW = [
   {
     "id": "serdechki-kurinye",
     "slug": "serdechki-kurinye",
-    "name": "Сердечки куриные сушёные",
+    "name": "Сердечки куриные",
     "category": "Птица",
     "protein": "Курица",
+    "purposes": [
+      "Длительное жевание",
+      "Поощрение"
+    ],
+    "dogSizes": [
+      "Малые",
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Плотное, мясное",
+    "hardness": "среднее",
+    "format": "",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 255,
+    "price100g": 255,
+    "pricePerKg": 2550,
+    "status": "active",
+    "imagePaths": [
+      "/products/ptica/serdechki-kurinye/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Сердечки куриные. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Курица",
+      "Натуральное"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "utinye-zheludki",
+    "slug": "utinye-zheludki",
+    "name": "Утиные желудки",
+    "category": "Птица",
+    "protein": "Утка",
+    "purposes": [
+      "Длительное жевание",
+      "Поощрение"
+    ],
+    "dogSizes": [
+      "Малые",
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Плотное, мясное",
+    "hardness": "среднее",
+    "format": "",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 195,
+    "price100g": 195,
+    "pricePerKg": 1950,
+    "status": "active",
+    "imagePaths": [
+      "/products/ptica/utinye-zheludki/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Утиные желудки. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Утка",
+      "Натуральное"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "shei-kurinye",
+    "slug": "shei-kurinye",
+    "name": "Шеи куриные",
+    "category": "Птица",
+    "protein": "Курица",
+    "purposes": [
+      "Длительное жевание",
+      "Поощрение"
+    ],
+    "dogSizes": [
+      "Малые",
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Плотное, мясное",
+    "hardness": "среднее",
+    "format": "",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 150,
+    "price100g": 150,
+    "pricePerKg": 1500,
+    "status": "active",
+    "imagePaths": [
+      "/products/ptica/shei-kurinye/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Шеи куриные. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Курица",
+      "Натуральное"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "sheya-indeyki",
+    "slug": "sheya-indeyki",
+    "name": "Шея индейки",
+    "category": "Птица",
+    "protein": "Индейка",
+    "purposes": [
+      "Длительное жевание",
+      "Поощрение"
+    ],
+    "dogSizes": [
+      "Малые",
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Плотное, мясное",
+    "hardness": "среднее",
+    "format": "",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 0,
+    "price100g": null,
+    "pricePerKg": null,
+    "status": "no_price",
+    "imagePaths": [
+      "/products/ptica/sheya-indeyki/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Шея индейки. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Индейка",
+      "Натуральное"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "sheya-utinaya",
+    "slug": "sheya-utinaya",
+    "name": "Шея утиная",
+    "category": "Птица",
+    "protein": "Утка",
+    "purposes": [
+      "Длительное жевание",
+      "Поощрение"
+    ],
+    "dogSizes": [
+      "Малые",
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Плотное, мясное",
+    "hardness": "среднее",
+    "format": "",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 165,
+    "price100g": 165,
+    "pricePerKg": 1650,
+    "status": "active",
+    "imagePaths": [
+      "/products/ptica/sheya-utinaya/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Шея утиная. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Утка",
+      "Натуральное"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "lapy-krolika",
+    "slug": "lapy-krolika",
+    "name": "Лапы кролика",
+    "category": "Кролик",
+    "protein": "Кролик",
+    "purposes": [
+      "Длительное жевание",
+      "Поощрение"
+    ],
+    "dogSizes": [
+      "Малые",
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Плотное, мясное",
+    "hardness": "среднее",
+    "format": "",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 135,
+    "price100g": 135,
+    "pricePerKg": 1350,
+    "status": "active",
+    "imagePaths": [
+      "/products/krolik/lapy-krolika/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Лапы кролика. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Кролик",
+      "Натуральное"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "ushi-krolika",
+    "slug": "ushi-krolika",
+    "name": "Уши кролика",
+    "category": "Кролик",
+    "protein": "Кролик",
+    "purposes": [
+      "Длительное жевание",
+      "Поощрение"
+    ],
+    "dogSizes": [
+      "Малые",
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Волокнистое, упругое",
+    "hardness": "жевательное",
+    "format": "",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 225,
+    "price100g": 225,
+    "pricePerKg": 2250,
+    "status": "active",
+    "imagePaths": [
+      "/products/krolik/ushi-krolika/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Уши кролика. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Кролик",
+      "Натуральное"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "pyataki-svinye",
+    "slug": "pyataki-svinye",
+    "name": "Пятаки свиные",
+    "category": "Свинина",
+    "protein": "Свинина",
+    "purposes": [
+      "Длительное жевание",
+      "Поощрение"
+    ],
+    "dogSizes": [
+      "Малые",
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Волокнистое, упругое",
+    "hardness": "жевательное",
+    "format": "",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 165,
+    "price100g": 165,
+    "pricePerKg": 1650,
+    "status": "active",
+    "imagePaths": [
+      "/products/svinina/pyataki-svinye/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Пятаки свиные. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Свинина",
+      "Натуральное"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "pechene-iz-indeyki",
+    "slug": "pechene-iz-indeyki",
+    "name": "Печенье из индейки",
+    "category": "Печенье",
+    "protein": "Индейка",
     "purposes": [
       "Дрессировка",
       "Поощрение"
@@ -1660,8 +1896,8 @@ const RAW = [
       "Средние",
       "Крупные"
     ],
-    "texture": "Плотное, мясное",
-    "hardness": "среднее",
+    "texture": "Лёгкое, хрустящее",
+    "hardness": "мягкое",
     "format": "",
     "unit": "weight",
     "weight": "100 г",
@@ -1670,44 +1906,10 @@ const RAW = [
     "pricePerKg": null,
     "status": "no_price",
     "imagePaths": [
-      "/products/ptica/serdechki-kurinye/01.webp"
+      "/products/pechenye/pechene-iz-indeyki/01.webp"
     ],
     "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% куриные сердечки. Без добавок и консервантов.",
-    "tags": [
-      "Курица",
-      "Натуральное"
-    ],
-    "isFeatured": false
-  },
-  {
-    "id": "sheya-indeyki-sushenaya",
-    "slug": "sheya-indeyki-sushenaya",
-    "name": "Шея индейки сушёная",
-    "category": "Птица",
-    "protein": "Индейка",
-    "purposes": [
-      "Длительное жевание",
-      "Для занятости"
-    ],
-    "dogSizes": [
-      "Средние",
-      "Крупные"
-    ],
-    "texture": "Плотное, хрустящее",
-    "hardness": "плотное",
-    "format": "",
-    "unit": "piece",
-    "weight": "1 шт",
-    "price": 0,
-    "price100g": null,
-    "pricePerKg": null,
-    "status": "no_price",
-    "imagePaths": [
-      "/products/ptica/sheya-indeyki-sushenaya/01.webp"
-    ],
-    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% шея индейки. Без добавок и консервантов.",
+    "composition": "Печенье из индейки. Без искусственных добавок, соли и консервантов.",
     "tags": [
       "Индейка",
       "Натуральное"
@@ -1715,118 +1917,13 @@ const RAW = [
     "isFeatured": false
   },
   {
-    "id": "lapy-krolika",
-    "slug": "lapy-krolika",
-    "name": "Лапы кролика сушёные",
-    "category": "Кролик",
-    "protein": "Кролик",
-    "purposes": [
-      "Поощрение",
-      "Длительное жевание"
-    ],
-    "dogSizes": [
-      "Малые",
-      "Средние"
-    ],
-    "texture": "Плотное, хрустящее",
-    "hardness": "плотное",
-    "format": "с ворсом",
-    "unit": "weight",
-    "weight": "100 г",
-    "price": 0,
-    "price100g": null,
-    "pricePerKg": null,
-    "status": "no_price",
-    "imagePaths": [
-      "/products/krolik/lapy-krolika/01.webp"
-    ],
-    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% лапы кролика. Без добавок и консервантов.",
-    "tags": [
-      "Кролик",
-      "Натуральное"
-    ],
-    "isFeatured": false
-  },
-  {
-    "id": "pechenye-iz-indeyki",
-    "slug": "pechenye-iz-indeyki",
-    "name": "Печенье из индейки",
-    "category": "Печенье",
-    "protein": "Индейка",
-    "purposes": [
-      "Поощрение",
-      "Ежедневное лакомство"
-    ],
-    "dogSizes": [
-      "Малые",
-      "Средние",
-      "Крупные"
-    ],
-    "texture": "Плотное, мясное",
-    "hardness": "среднее",
-    "format": "",
-    "unit": "weight",
-    "weight": "100 г",
-    "price": 0,
-    "price100g": null,
-    "pricePerKg": null,
-    "status": "no_price",
-    "imagePaths": [
-      "/products/pechenye/pechenye-iz-indeyki/01.webp"
-    ],
-    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "Мясо индейки, мука. Без искусственных красителей и консервантов.",
-    "tags": [
-      "Индейка",
-      "Натуральное"
-    ],
-    "isFeatured": false
-  },
-  {
-    "id": "pechenye-iz-krolika",
-    "slug": "pechenye-iz-krolika",
+    "id": "pechene-iz-krolika",
+    "slug": "pechene-iz-krolika",
     "name": "Печенье из кролика",
     "category": "Печенье",
-    "protein": "Кролик",
+    "protein": "Птица",
     "purposes": [
-      "Поощрение",
-      "Ежедневное лакомство"
-    ],
-    "dogSizes": [
-      "Малые",
-      "Средние",
-      "Крупные"
-    ],
-    "texture": "Плотное, мясное",
-    "hardness": "среднее",
-    "format": "",
-    "unit": "weight",
-    "weight": "100 г",
-    "price": 0,
-    "price100g": null,
-    "pricePerKg": null,
-    "status": "no_price",
-    "imagePaths": [
-      "/products/pechenye/pechenye-iz-krolika/01.webp"
-    ],
-    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "Мясо кролика, мука. Без искусственных красителей и консервантов.",
-    "tags": [
-      "Кролик",
-      "Натуральное"
-    ],
-    "isFeatured": false
-  },
-  {
-    "id": "ushi-svinye",
-    "slug": "ushi-svinye",
-    "name": "Уши свиные сушёные",
-    "category": "Свинина",
-    "protein": "Свинина",
-    "purposes": [
-      "Длительное жевание",
-      "Для занятости",
+      "Дрессировка",
       "Поощрение"
     ],
     "dogSizes": [
@@ -1834,8 +1931,8 @@ const RAW = [
       "Средние",
       "Крупные"
     ],
-    "texture": "Плотное, хрустящее",
-    "hardness": "плотное",
+    "texture": "Лёгкое, хрустящее",
+    "hardness": "мягкое",
     "format": "",
     "unit": "weight",
     "weight": "100 г",
@@ -1844,12 +1941,12 @@ const RAW = [
     "pricePerKg": null,
     "status": "no_price",
     "imagePaths": [
-      "/products/svinina/ushi-svinye/01.webp"
+      "/products/pechenye/pechene-iz-krolika/01.webp"
     ],
     "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
-    "composition": "100% свиные уши. Без добавок и консервантов.",
+    "composition": "Печенье из кролика. Без искусственных добавок, соли и консервантов.",
     "tags": [
-      "Свинина",
+      "Птица",
       "Натуральное"
     ],
     "isFeatured": false

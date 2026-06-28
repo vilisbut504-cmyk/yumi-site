@@ -4,7 +4,7 @@ import { asset } from '@/lib/asset'
 import { IconCheck, IconHeart, IconPaw, IconStar } from '@/components/ui/Icons'
 
 const FEATURES = [
-  { icon: IconCheck, label: '100% натуральный состав' },
+  { icon: IconCheck, label: 'Натуральный состав без добавок' },
   { icon: IconStar, label: 'Сушка без соли и консервантов' },
   { icon: IconHeart, label: 'Для поощрения и жевания' },
   { icon: IconPaw, label: 'Доставка по Санкт-Петербургу' },
