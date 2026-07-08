@@ -9,6 +9,7 @@
     "prepare:images": "node scripts/prepare-product-images.mjs",
     "import:products": "node scripts/import-products-from-excel.mjs",
     "import:yuma": "node scripts/import-yuma-catalog.mjs",
+    "qr:generate": "node scripts/generate-qr.mjs",
     "amocrm:inspect": "node scripts/amocrm-inspect.mjs",
     "deploy:pages": "node scripts/deploy-pages.mjs"
   },
@@ -21,6 +22,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "qrcode": "^1.5.4",
     "sharp": "^0.35.2",
     "typescript": "^5",
     "xlsx": "^0.18.5"
