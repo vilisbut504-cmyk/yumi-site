@@ -62,6 +62,17 @@ export function Hero() {
               <span key={chip} className="hero__trust-chip">{chip}</span>
             ))}
           </div>
+
+          <div className="hero__figure hero__figure--mobile">
+            <Image
+              src={HERO_MOBILE}
+              alt="Собака с натуральными лакомствами ЮМИ"
+              width={900}
+              height={507}
+              className="hero__figure-img"
+              priority
+            />
+          </div>
         </div>
       </div>
 
@@ -71,17 +82,6 @@ export function Hero() {
           alt="Собака с натуральными лакомствами ЮМИ"
           width={1280}
           height={720}
-          className="hero__figure-img"
-          priority
-        />
-      </div>
-
-      <div className="container hero__figure hero__figure--mobile">
-        <Image
-          src={HERO_MOBILE}
-          alt="Собака с натуральными лакомствами ЮМИ"
-          width={900}
-          height={1100}
           className="hero__figure-img"
           priority
         />

@@ -31,35 +31,12 @@ async function writeDesktopAndTablet(meta) {
     .toFile(path.join(OUT_DIR, 'yumi-hero-dog-tablet.webp'))
 }
 
-/** Портретный mobile: кремовый холст + собака целиком внизу (contain, без грубого crop). */
-async function writeMobilePortrait() {
+/** Mobile: landscape 900w без лишнего кремового холста — собака сразу под текстом. */
+async function writeMobileCompact() {
   const mobileW = 900
-  const mobileH = 1100
-
-  const fitted = await sharp(SRC)
+  await sharp(SRC)
     .rotate()
-    .resize({ width: mobileW, height: Math.round(mobileW * 0.72), fit: 'inside', withoutEnlargement: true })
-    .toBuffer({ resolveWithObject: true })
-
-  const imgW = fitted.info.width
-  const imgH = fitted.info.height
-  const topPad = Math.max(0, mobileH - imgH - 24)
-
-  await sharp({
-    create: {
-      width: mobileW,
-      height: mobileH,
-      channels: 3,
-      background: CREAM,
-    },
-  })
-    .composite([
-      {
-        input: fitted.data,
-        left: Math.round((mobileW - imgW) / 2),
-        top: topPad,
-      },
-    ])
+    .resize({ width: mobileW, withoutEnlargement: true })
     .webp({ quality: 85 })
     .toFile(path.join(OUT_DIR, 'yumi-hero-dog-mobile.webp'))
 }
@@ -77,7 +54,7 @@ async function main() {
   console.log(`   Размер: ${meta.width}×${meta.height}`)
 
   await writeDesktopAndTablet(meta)
-  await writeMobilePortrait()
+  await writeMobileCompact()
 
   for (const name of ['yumi-hero-dog.webp', 'yumi-hero-dog-tablet.webp', 'yumi-hero-dog-mobile.webp']) {
     const info = await sharp(path.join(OUT_DIR, name)).metadata()
