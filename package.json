@@ -10,6 +10,7 @@
     "import:products": "node scripts/import-products-from-excel.mjs",
     "import:yuma": "node scripts/import-yuma-catalog.mjs",
     "qr:generate": "node scripts/generate-qr.mjs",
+    "hero:optimize": "node scripts/optimize-hero-image.mjs",
     "amocrm:inspect": "node scripts/amocrm-inspect.mjs",
     "deploy:pages": "node scripts/deploy-pages.mjs"
   },

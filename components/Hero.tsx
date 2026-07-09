@@ -1,25 +1,35 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import { asset } from '@/lib/asset'
-import { IconCheck, IconHeart, IconPaw, IconStar } from '@/components/ui/Icons'
+import { IconPaw } from '@/components/ui/Icons'
 
-const FEATURES = [
-  { icon: IconCheck, label: 'Натуральный состав без добавок' },
-  { icon: IconStar, label: 'Сушка без соли и консервантов' },
-  { icon: IconHeart, label: 'Для поощрения и жевания' },
-  { icon: IconPaw, label: 'Доставка по Санкт-Петербургу' },
-]
+const HERO_DESKTOP = asset('/images/hero/yumi-hero-dog.webp')
+const HERO_TABLET = asset('/images/hero/yumi-hero-dog-tablet.webp')
+const HERO_MOBILE = asset('/images/hero/yumi-hero-dog-mobile.webp')
 
 export function Hero() {
   return (
     <section className="hero" id="top">
-      <div className="container hero__grid">
+      <picture className="hero__media">
+        <source media="(max-width: 600px)" srcSet={HERO_MOBILE} type="image/webp" />
+        <source media="(max-width: 1024px)" srcSet={HERO_TABLET} type="image/webp" />
+        <img
+          src={HERO_DESKTOP}
+          alt="Собака с натуральными лакомствами ЮМИ"
+          className="hero__media-img"
+          fetchPriority="high"
+          decoding="async"
+          width={1920}
+          height={1080}
+        />
+      </picture>
+      <div className="hero__overlay" aria-hidden />
+
+      <div className="container hero__inner">
         <div className="hero__content">
-          <p className="eyebrow">Натуральные лакомства · Санкт-Петербург</p>
-          <h1 className="hero__title">ЮМИ — натуральные сушёные лакомства для собак</h1>
+          <span className="hero__badge">Скидка первым клиентам — до 19% в корзине</span>
+          <h1 className="hero__title">Натуральные лакомства для собак</h1>
           <p className="hero__sub">
-            Сушёные мясные продукты и жевательные лакомства из качественного сырья.
-            Дополнение к основному рациону для поощрения, дрессировки и долгого жевания.
+            Сушёные мясные лакомства для прогулок, поощрения и заботы о питомце.
           </p>
           <div className="hero__btns">
             <Link href="/catalog" className="btn btn-primary">
@@ -30,27 +40,9 @@ export function Hero() {
               Подобрать лакомство
             </Link>
           </div>
-          <div className="hero__features">
-            {FEATURES.map(({ icon: Icon, label }) => (
-              <div key={label} className="hero__feature">
-                <span className="hero__feature-icon"><Icon /></span>
-                <span>{label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="hero__visual">
-          <div className="hero__arc" aria-hidden />
-          <div className="hero__glow" aria-hidden />
-          <Image
-            src={asset('/hero-dog.jpg')}
-            alt="Собака с натуральным лакомством ЮМИ"
-            width={700}
-            height={705}
-            className="hero__dog"
-            priority
-          />
+          <p className="hero__trust">
+            Оплата при получении · Самовывоз или курьер · Санкт-Петербург
+          </p>
         </div>
       </div>
     </section>

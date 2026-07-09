@@ -14,6 +14,13 @@ const NAV_LINKS = [
   { href: '/#faq', label: 'FAQ' },
 ]
 
+const MOBILE_NAV_LINKS = [
+  { href: '/', label: 'Главная' },
+  { href: '/catalog', label: 'Каталог' },
+  { href: '/knowledge', label: 'База знаний' },
+  { href: '/cart', label: 'Корзина' },
+]
+
 function CartLink({ onClick, className = '' }: { onClick?: () => void; className?: string }) {
   const { count, mounted } = useCart()
   return (
@@ -38,7 +45,7 @@ export function Header() {
     <header className="header">
       <div className="container header__inner">
         <Link href="/" className="header__logo" onClick={closeMenu} aria-label="ЮМИ — на главную">
-          <BrandLogo variant="mark" height={44} priority />
+          <BrandLogo variant="mark" height={40} priority />
           <span className="header__wordmark">ЮМИ</span>
         </Link>
 
@@ -64,13 +71,28 @@ export function Header() {
         </div>
       </div>
 
-      <nav className={`header__mobile${menuOpen ? ' open' : ''}`} hidden={!menuOpen}>
-        {NAV_LINKS.map((link) => (
+      {menuOpen && (
+        <button
+          type="button"
+          className="header__backdrop"
+          aria-label="Закрыть меню"
+          onClick={closeMenu}
+        />
+      )}
+
+      <nav
+        className={`header__mobile${menuOpen ? ' open' : ''}`}
+        aria-label="Мобильное меню"
+        aria-hidden={!menuOpen}
+      >
+        {MOBILE_NAV_LINKS.map((link) => (
           <Link key={link.href} href={link.href} className="header__mobile-link" onClick={closeMenu}>
             {link.label}
           </Link>
         ))}
-        <CartLink className="header__mobile-link" onClick={closeMenu} />
+        <Link href="/catalog" className="btn btn-gold header__mobile-cta" onClick={closeMenu}>
+          Перейти в каталог
+        </Link>
       </nav>
     </header>
   )
