@@ -13,11 +13,56 @@ const ROOT = path.resolve(__dirname, '..')
 const SRC = path.join(ROOT, 'public', 'Собака на первую страницу.png')
 const OUT_DIR = path.join(ROOT, 'public', 'images', 'hero')
 
-const VARIANTS = [
-  { name: 'yumi-hero-dog.webp', width: 1920, quality: 85 },
-  { name: 'yumi-hero-dog-tablet.webp', width: 1400, quality: 85 },
-  { name: 'yumi-hero-dog-mobile.webp', width: 900, quality: 85 },
-]
+const CREAM = { r: 255, g: 248, b: 237 }
+
+async function writeDesktopAndTablet(meta) {
+  const desktopW = Math.min(1920, meta.width ?? 1920)
+  await sharp(SRC)
+    .rotate()
+    .resize({ width: desktopW, withoutEnlargement: true })
+    .webp({ quality: 85 })
+    .toFile(path.join(OUT_DIR, 'yumi-hero-dog.webp'))
+
+  const tabletW = Math.min(1280, meta.width ?? 1280)
+  await sharp(SRC)
+    .rotate()
+    .resize({ width: tabletW, withoutEnlargement: true })
+    .webp({ quality: 85 })
+    .toFile(path.join(OUT_DIR, 'yumi-hero-dog-tablet.webp'))
+}
+
+/** Портретный mobile: кремовый холст + собака целиком внизу (contain, без грубого crop). */
+async function writeMobilePortrait() {
+  const mobileW = 900
+  const mobileH = 1100
+
+  const fitted = await sharp(SRC)
+    .rotate()
+    .resize({ width: mobileW, height: Math.round(mobileW * 0.72), fit: 'inside', withoutEnlargement: true })
+    .toBuffer({ resolveWithObject: true })
+
+  const imgW = fitted.info.width
+  const imgH = fitted.info.height
+  const topPad = Math.max(0, mobileH - imgH - 24)
+
+  await sharp({
+    create: {
+      width: mobileW,
+      height: mobileH,
+      channels: 3,
+      background: CREAM,
+    },
+  })
+    .composite([
+      {
+        input: fitted.data,
+        left: Math.round((mobileW - imgW) / 2),
+        top: topPad,
+      },
+    ])
+    .webp({ quality: 85 })
+    .toFile(path.join(OUT_DIR, 'yumi-hero-dog-mobile.webp'))
+}
 
 async function main() {
   if (!existsSync(SRC)) {
@@ -31,16 +76,12 @@ async function main() {
   console.log(`📷 Исходник: ${SRC}`)
   console.log(`   Размер: ${meta.width}×${meta.height}`)
 
-  for (const v of VARIANTS) {
-    const out = path.join(OUT_DIR, v.name)
-    const targetWidth = Math.min(v.width, meta.width ?? v.width)
-    await sharp(SRC)
-      .rotate()
-      .resize({ width: targetWidth, withoutEnlargement: true })
-      .webp({ quality: v.quality })
-      .toFile(out)
-    const info = await sharp(out).metadata()
-    console.log(`   ✅ ${v.name} → ${info.width}×${info.height}`)
+  await writeDesktopAndTablet(meta)
+  await writeMobilePortrait()
+
+  for (const name of ['yumi-hero-dog.webp', 'yumi-hero-dog-tablet.webp', 'yumi-hero-dog-mobile.webp']) {
+    const info = await sharp(path.join(OUT_DIR, name)).metadata()
+    console.log(`   ✅ ${name} → ${info.width}×${info.height}`)
   }
 
   console.log('\nГотово. Файлы в public/images/hero/')
