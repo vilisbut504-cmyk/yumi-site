@@ -80,9 +80,16 @@ export default async function ProductPage({
                 ) : null}
               </div>
 
+              <p className={`pdp__availability pdp__availability--${product.availability ?? 'preorder'}`}>
+                {product.availability === 'in_stock'
+                  ? 'В наличии — доставка в течение 1 дня'
+                  : 'Предзаказ — доставка в течение 3 дней с момента оформления заявки'}
+              </p>
+
               <ProductDetailActions product={product} />
 
               <ul className="pdp__specs">
+                <li><span>Наличие</span><strong>{product.availability === 'in_stock' ? 'В наличии' : 'Предзаказ'}</strong></li>
                 <li><span>Категория</span><strong>{product.category}</strong></li>
                 <li><span>Белок</span><strong>{product.protein}</strong></li>
                 {product.format ? (

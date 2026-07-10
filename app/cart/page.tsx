@@ -7,9 +7,14 @@ import { ProductImage } from '@/components/ProductImage'
 import { useCart } from '@/components/CartProvider'
 import { formatPrice, packLabel } from '@/lib/cart'
 import { calculateStarterDiscount, STARTER_DISCOUNT_NOTE } from '@/src/lib/pricing'
+import {
+  getAvailabilityLabel,
+  getCartDeliveryEstimate,
+} from '@/src/lib/availability'
 
 export default function CartPage() {
   const { items, subtotal, mounted, setQty, removeItem } = useCart()
+  const deliveryEstimate = getCartDeliveryEstimate(items)
 
   return (
     <>
@@ -34,26 +39,32 @@ export default function CartPage() {
             ) : (
               <div className="cart">
                 <div className="cart__list">
-                  {items.map((item) => (
-                    <div key={item.id} className="cart__row">
-                      <Link href={`/catalog/${item.slug}`} className="cart__media">
-                        <ProductImage imagePaths={item.image ? [item.image] : []} alt={item.name} />
-                      </Link>
-                      <div className="cart__info">
-                        <Link href={`/catalog/${item.slug}`} className="cart__name">{item.name}</Link>
-                        <p className="cart__weight">{packLabel(item)} · {formatPrice(item.price)} / {item.weight}</p>
-                        <button type="button" className="cart__remove" onClick={() => removeItem(item.id)}>
-                          Удалить
-                        </button>
+                  {items.map((item) => {
+                    const availability = item.availability ?? 'preorder'
+                    return (
+                      <div key={item.id} className="cart__row">
+                        <Link href={`/catalog/${item.slug}`} className="cart__media">
+                          <ProductImage imagePaths={item.image ? [item.image] : []} alt={item.name} />
+                        </Link>
+                        <div className="cart__info">
+                          <Link href={`/catalog/${item.slug}`} className="cart__name">{item.name}</Link>
+                          <p className="cart__weight">{packLabel(item)} · {formatPrice(item.price)} / {item.weight}</p>
+                          <p className={`cart__availability cart__availability--${availability}`}>
+                            {getAvailabilityLabel(availability, 'cart')}
+                          </p>
+                          <button type="button" className="cart__remove" onClick={() => removeItem(item.id)}>
+                            Удалить
+                          </button>
+                        </div>
+                        <div className="qty">
+                          <button type="button" className="qty__btn" onClick={() => setQty(item.id, item.qty - 1)} aria-label="Меньше">−</button>
+                          <span className="qty__val">{item.qty}</span>
+                          <button type="button" className="qty__btn" onClick={() => setQty(item.id, item.qty + 1)} aria-label="Больше">+</button>
+                        </div>
+                        <div className="cart__sum">{formatPrice(item.price * item.qty)}</div>
                       </div>
-                      <div className="qty">
-                        <button type="button" className="qty__btn" onClick={() => setQty(item.id, item.qty - 1)} aria-label="Меньше">−</button>
-                        <span className="qty__val">{item.qty}</span>
-                        <button type="button" className="qty__btn" onClick={() => setQty(item.id, item.qty + 1)} aria-label="Больше">+</button>
-                      </div>
-                      <div className="cart__sum">{formatPrice(item.price * item.qty)}</div>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
 
                 <aside className="cart__summary">
@@ -79,9 +90,12 @@ export default function CartPage() {
                           </>
                         )}
                         <div className="cart__summary-row cart__summary-row--muted">
-                          <span>Доставка</span>
+                          <span>Стоимость доставки</span>
                           <span>рассчитывается при оформлении</span>
                         </div>
+                        <p className={`cart__eta cart__eta--${deliveryEstimate.availability}`}>
+                          {deliveryEstimate.label}
+                        </p>
                         {d.percent > 0 && (
                           <p className="cart__note">{STARTER_DISCOUNT_NOTE}</p>
                         )}

@@ -11,6 +11,7 @@
     "import:yuma": "node scripts/import-yuma-catalog.mjs",
     "qr:generate": "node scripts/generate-qr.mjs",
     "hero:optimize": "node scripts/optimize-hero-image.mjs",
+    "sync:availability": "node scripts/sync-availability.mjs",
     "amocrm:inspect": "node scripts/amocrm-inspect.mjs",
     "deploy:pages": "node scripts/deploy-pages.mjs"
   },

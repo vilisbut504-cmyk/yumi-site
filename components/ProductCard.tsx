@@ -5,11 +5,13 @@ import { useState } from 'react'
 import { ProductImage } from '@/components/ProductImage'
 import { useCart } from '@/components/CartProvider'
 import { formatPrice } from '@/lib/cart'
+import { getAvailabilityLabel } from '@/src/lib/availability'
 import type { Product } from '@/src/lib/products'
 
 export function ProductCard({ product }: { product: Product }) {
   const { addItem } = useCart()
   const [added, setAdded] = useState(false)
+  const availability = product.availability ?? 'preorder'
 
   const handleAdd = () => {
     addItem(product, 1)
@@ -31,6 +33,11 @@ export function ProductCard({ product }: { product: Product }) {
         <h3 className="pcard__name">
           <Link href={`/catalog/${product.slug}`}>{product.name}</Link>
         </h3>
+        <p
+          className={`pcard__availability pcard__availability--${availability}`}
+        >
+          {getAvailabilityLabel(availability, 'short')}
+        </p>
         <p className="pcard__desc">{product.shortDescription}</p>
         <p className="pcard__pack">Фасовка: {product.weight}</p>
         <div className="pcard__meta">

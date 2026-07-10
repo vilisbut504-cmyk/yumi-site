@@ -17,6 +17,7 @@ import {
   isCourier,
   STARTER_DISCOUNT_NOTE,
 } from '@/src/lib/pricing'
+import { getCartDeliveryEstimate, getPickupMapsLink } from '@/src/lib/availability'
 
 interface FormState {
   name: string
@@ -121,6 +122,7 @@ export default function CheckoutPage() {
     subtotal,
     deliveryPrice: getDeliveryPrice(form.delivery),
   })
+  const deliveryEstimate = getCartDeliveryEstimate(items)
 
   return (
     <>
@@ -266,6 +268,17 @@ export default function CheckoutPage() {
                       <span>{totals.deliveryPrice === 0 ? 'бесплатно' : formatPrice(totals.deliveryPrice)}</span>
                     </div>
                   </div>
+                  <p className={`cart__eta cart__eta--${deliveryEstimate.availability}`}>
+                    {deliveryEstimate.label}
+                  </p>
+                  {form.delivery === 'pickup' && (
+                    <p className="checkout__discount-note">
+                      Самовывоз:{' '}
+                      <a href={getPickupMapsLink()} target="_blank" rel="noopener noreferrer">
+                        точка на карте
+                      </a>
+                    </p>
+                  )}
                   <div className="checkout__total">
                     <span>Итого к оплате</span>
                     <strong>{formatPrice(totals.total)}</strong>

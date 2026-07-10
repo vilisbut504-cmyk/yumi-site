@@ -12,7 +12,7 @@ export interface DeliveryOption {
 }
 
 export const DELIVERY_OPTIONS: DeliveryOption[] = [
-  { method: 'pickup', label: 'Самовывоз', hint: 'По согласованию', price: 0 },
+  { method: 'pickup', label: 'Самовывоз', hint: 'Санкт-Петербург, по согласованию', price: 0 },
   {
     method: 'courier_kad',
     label: 'Курьер внутри КАД',

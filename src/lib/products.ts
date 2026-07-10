@@ -1,4 +1,9 @@
-import { products, type Product, type ProductUnit } from '../data/products'
+import {
+  products,
+  type Product,
+  type ProductAvailability,
+  type ProductUnit,
+} from '../data/products'
 
 export function getAllProducts(): Product[] {
   return products
@@ -55,4 +60,4 @@ export function getRelatedProducts(product: Product, limit = 4): Product[] {
   return combined
 }
 
-export type { Product, ProductUnit }
+export type { Product, ProductAvailability, ProductUnit }

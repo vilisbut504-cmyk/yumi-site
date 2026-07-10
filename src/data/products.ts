@@ -4,10 +4,15 @@
 // Публичные цены сайта (за 100 г и за 1 кг) импортированы из data/import/Проект ЮМА.xlsx
 // (колонки G и H). Закупочные/внутренние цены (колонки D/E) НЕ импортируются
 // и нигде в проекте не хранятся.
+//
+// Наличие/предзаказ: src/data/product-availability.generated.json
+// (цвета колонки A в Excel). Обновить: npm run sync:availability
 
 export type ProductHardness = 'мягкое' | 'среднее' | 'плотное' | 'жевательное'
 export type ProductUnit = 'weight' | 'piece'
 export type ProductStatus = 'active' | 'draft' | 'no_price'
+/** Зелёный в Excel = in_stock, красный = preorder */
+export type ProductAvailability = 'in_stock' | 'preorder'
 
 export type Product = {
   id: string
@@ -26,6 +31,7 @@ export type Product = {
   price100g: number | null
   pricePerKg: number | null
   status: ProductStatus
+  availability: ProductAvailability
   imagePaths: string[]
   shortDescription: string
   composition: string
@@ -36,11 +42,15 @@ export type Product = {
   isFeatured: boolean
 }
 
+import availabilityBySlug from './product-availability.generated.json'
+
 const NOT_A_MEAL = 'Не является заменой основного рациона.'
 const STORAGE_DEFAULT =
   'Хранить в сухом прохладном месте, в закрытой упаковке, вдали от прямых солнечных лучей.'
 const USE_DEFAULT =
   'Давайте как дополнение к основному рациону. Вводите постепенно и следите за реакцией собаки. Обеспечьте доступ к свежей воде.'
+
+const AVAILABILITY_MAP = availabilityBySlug as Record<string, ProductAvailability>
 
 const RAW = [
   {
@@ -1959,6 +1969,7 @@ export const products: Product[] = RAW.map((p) => ({
   dogSizes: [...p.dogSizes],
   tags: [...p.tags],
   imagePaths: [...p.imagePaths],
+  availability: AVAILABILITY_MAP[p.slug] ?? 'preorder',
   howToUse: USE_DEFAULT,
   storage: STORAGE_DEFAULT,
   warning: NOT_A_MEAL,

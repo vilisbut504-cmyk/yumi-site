@@ -1,4 +1,4 @@
-import type { Product, ProductUnit } from '@/src/lib/products'
+import type { Product, ProductAvailability, ProductUnit } from '@/src/lib/products'
 import type { DeliveryMethod } from '@/src/lib/pricing'
 
 export interface CartItem {
@@ -10,6 +10,7 @@ export interface CartItem {
   unit: ProductUnit
   image: string
   qty: number
+  availability: ProductAvailability
 }
 
 export interface CartLineForPayload {
@@ -82,6 +83,7 @@ export function cartItemFromProduct(product: Product, qty = 1): CartItem {
     unit: product.unit,
     image: product.imagePaths[0] ?? '',
     qty,
+    availability: product.availability ?? 'preorder',
   }
 }
 

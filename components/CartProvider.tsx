@@ -15,8 +15,19 @@ import {
   type CartItem,
 } from '@/lib/cart'
 import type { Product } from '@/src/lib/products'
+import { getProductBySlug } from '@/src/lib/products'
 
 const STORAGE_KEY = 'yumi-cart-v1'
+
+function hydrateCartItems(parsed: CartItem[]): CartItem[] {
+  return parsed.map((item) => {
+    const product = getProductBySlug(item.slug)
+    return {
+      ...item,
+      availability: product?.availability ?? item.availability ?? 'preorder',
+    }
+  })
+}
 
 interface CartContextValue {
   items: CartItem[]
@@ -40,7 +51,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       const raw = localStorage.getItem(STORAGE_KEY)
       if (raw) {
         const parsed = JSON.parse(raw) as CartItem[]
-        if (Array.isArray(parsed)) setItems(parsed)
+        if (Array.isArray(parsed)) setItems(hydrateCartItems(parsed))
       }
     } catch {
       // ignore malformed storage
@@ -62,7 +73,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       const existing = prev.find((i) => i.id === product.id)
       if (existing) {
         return prev.map((i) =>
-          i.id === product.id ? { ...i, qty: i.qty + qty } : i,
+          i.id === product.id
+            ? {
+                ...i,
+                qty: i.qty + qty,
+                availability: product.availability ?? i.availability ?? 'preorder',
+              }
+            : i,
         )
       }
       return [...prev, cartItemFromProduct(product, qty)]
