@@ -183,16 +183,13 @@ function parsePriceFile() {
 
     const format = row[2] != null ? String(row[2]).trim() : ''
     const g = row[6] // цена сайта за 100 г
-    const h = row[7] // цена сайта за 1 кг
-    const price100g = typeof g === 'number' && g > 0 ? Math.round(g) : null
-    const pricePerKg = typeof h === 'number' && h > 0 ? Math.round(h) : null
+    const price100g = typeof g === 'number' && g > 0 ? Math.round(g * 100) / 100 : null
 
     items.push({
       category: currentCategory,
       name,
       format,
       price100g,
-      pricePerKg,
     })
   }
   return items
@@ -355,7 +352,7 @@ async function main() {
       weight,
       price: hasPrice ? item.price100g : 0,
       price100g: item.price100g,
-      pricePerKg: item.pricePerKg,
+      pricePerKg: null,
       status,
       imagePaths,
       shortDescription:

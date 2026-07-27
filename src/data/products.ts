@@ -1,17 +1,13 @@
-// ВНИМАНИЕ: файл сгенерирован scripts/import-yuma-catalog.mjs.
-// Не редактируйте вручную — запустите: npm run import:yuma
+// ВНИМАНИЕ: файл сгенерирован scripts/apply-yumi-catalog-v3.mjs / import-yuma-catalog.mjs.
+// Не редактируйте вручную — запустите: node scripts/apply-yumi-catalog-v3.mjs
 //
-// Публичные цены сайта (за 100 г и за 1 кг) импортированы из data/import/Проект ЮМА.xlsx
-// (колонки G и H). Закупочные/внутренние цены (колонки D/E) НЕ импортируются
-// и нигде в проекте не хранятся.
-//
-// Наличие/предзаказ: src/data/product-availability.generated.json
-// (цвета колонки A в Excel). Обновить: npm run sync:availability
+// Публичные цены сайта — только за 100 г (блок «в сайт ЮМИ»).
+// Закупочные/внутренние цены нигде не хранятся.
 
 export type ProductHardness = 'мягкое' | 'среднее' | 'плотное' | 'жевательное'
 export type ProductUnit = 'weight' | 'piece'
 export type ProductStatus = 'active' | 'draft' | 'no_price'
-/** Зелёный в Excel = in_stock, красный = preorder */
+/** Внутреннее поле; публично не отображается */
 export type ProductAvailability = 'in_stock' | 'preorder'
 
 export type Product = {
@@ -31,7 +27,7 @@ export type Product = {
   price100g: number | null
   pricePerKg: number | null
   status: ProductStatus
-  availability: ProductAvailability
+  availability?: ProductAvailability
   imagePaths: string[]
   shortDescription: string
   composition: string
@@ -42,15 +38,11 @@ export type Product = {
   isFeatured: boolean
 }
 
-import availabilityBySlug from './product-availability.generated.json'
-
 const NOT_A_MEAL = 'Не является заменой основного рациона.'
 const STORAGE_DEFAULT =
   'Хранить в сухом прохладном месте, в закрытой упаковке, вдали от прямых солнечных лучей.'
 const USE_DEFAULT =
   'Давайте как дополнение к основному рациону. Вводите постепенно и следите за реакцией собаки. Обеспечьте доступ к свежей воде.'
-
-const AVAILABILITY_MAP = availabilityBySlug as Record<string, ProductAvailability>
 
 const RAW = [
   {
@@ -73,9 +65,9 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 195,
-    "price100g": 195,
-    "pricePerKg": 1950,
+    "price": 200,
+    "price100g": 200,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/govyadina/aorta-trubka/01.webp"
@@ -108,10 +100,10 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 0,
-    "price100g": null,
+    "price": 200,
+    "price100g": 200,
     "pricePerKg": null,
-    "status": "no_price",
+    "status": "active",
     "imagePaths": [
       "/products/govyadina/aorta-chipsy/01.webp"
     ],
@@ -121,7 +113,7 @@ const RAW = [
       "Говядина",
       "Натуральное"
     ],
-    "isFeatured": false
+    "isFeatured": true
   },
   {
     "id": "bychiy-koren-10-15",
@@ -142,9 +134,9 @@ const RAW = [
     "format": "10-15",
     "unit": "weight",
     "weight": "100 г",
-    "price": 450,
-    "price100g": 450,
-    "pricePerKg": 4500,
+    "price": 425,
+    "price100g": 425,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/govyadina/bychiy-koren-10-15/01.webp"
@@ -176,9 +168,9 @@ const RAW = [
     "format": "20-25",
     "unit": "weight",
     "weight": "100 г",
-    "price": 450,
-    "price100g": 450,
-    "pricePerKg": 4500,
+    "price": 425,
+    "price100g": 425,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/govyadina/bychiy-koren-20-25/01.webp"
@@ -210,9 +202,9 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 450,
-    "price100g": 450,
-    "pricePerKg": 4500,
+    "price": 425,
+    "price100g": 425,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [],
     "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
@@ -243,9 +235,9 @@ const RAW = [
     "format": "1×1",
     "unit": "weight",
     "weight": "100 г",
-    "price": 150,
-    "price100g": 150,
-    "pricePerKg": 1500,
+    "price": 162.5,
+    "price100g": 162.5,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/govyadina/vymya-kusochki-1x1/01.webp"
@@ -280,7 +272,7 @@ const RAW = [
     "weight": "100 г",
     "price": 150,
     "price100g": 150,
-    "pricePerKg": 1500,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/govyadina/vymya-sushenoe-plastiny/01.webp"
@@ -291,7 +283,7 @@ const RAW = [
       "Говядина",
       "Натуральное"
     ],
-    "isFeatured": true
+    "isFeatured": false
   },
   {
     "id": "zhilka-govyazhya",
@@ -313,9 +305,9 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 180,
-    "price100g": 180,
-    "pricePerKg": 1800,
+    "price": 200,
+    "price100g": 200,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/govyadina/zhilka-govyazhya/01.webp"
@@ -348,9 +340,9 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 165,
-    "price100g": 165,
-    "pricePerKg": 1650,
+    "price": 200,
+    "price100g": 200,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/govyadina/kaltyk/01.webp"
@@ -382,9 +374,9 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 135,
-    "price100g": 135,
-    "pricePerKg": 1350,
+    "price": 137.5,
+    "price100g": 137.5,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/govyadina/kolenki-govyazhi/01.webp"
@@ -417,9 +409,9 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 165,
-    "price100g": 165,
-    "pricePerKg": 1650,
+    "price": 162.5,
+    "price100g": 162.5,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/govyadina/legkoe-krupnyy-kusok-plastiny/01.webp"
@@ -452,9 +444,9 @@ const RAW = [
     "format": "1×1",
     "unit": "weight",
     "weight": "100 г",
-    "price": 165,
-    "price100g": 165,
-    "pricePerKg": 1650,
+    "price": 175,
+    "price100g": 175,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/govyadina/legkoe-melkoe-1x1/01.webp"
@@ -487,9 +479,9 @@ const RAW = [
     "format": "2,5×2,5",
     "unit": "weight",
     "weight": "100 г",
-    "price": 165,
-    "price100g": 165,
-    "pricePerKg": 1650,
+    "price": 162.5,
+    "price100g": 162.5,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/govyadina/legkoe-sredniy-kusok-2-5x2-5/01.webp"
@@ -522,10 +514,10 @@ const RAW = [
     "format": "1×1",
     "unit": "weight",
     "weight": "100 г",
-    "price": 315,
-    "price100g": 315,
-    "pricePerKg": 3150,
-    "status": "active",
+    "price": 0,
+    "price100g": null,
+    "pricePerKg": null,
+    "status": "no_price",
     "imagePaths": [
       "/products/govyadina/myaso-govyadina-1x1/01.webp"
     ],
@@ -557,9 +549,9 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 240,
-    "price100g": 240,
-    "pricePerKg": 2400,
+    "price": 225,
+    "price100g": 225,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/govyadina/myaso-pishchevoda-govyazhe/01.webp"
@@ -626,9 +618,9 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 210,
-    "price100g": 210,
-    "pricePerKg": 2100,
+    "price": 200,
+    "price100g": 200,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/govyadina/nosy-govyazhi/01.webp"
@@ -696,9 +688,9 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 165,
-    "price100g": 165,
-    "pricePerKg": 1650,
+    "price": 162.5,
+    "price100g": 162.5,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [],
     "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
@@ -729,9 +721,9 @@ const RAW = [
     "format": "1×1",
     "unit": "weight",
     "weight": "100 г",
-    "price": 165,
-    "price100g": 165,
-    "pricePerKg": 1650,
+    "price": 175,
+    "price100g": 175,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/govyadina/pechen-govyazhya-kusochki-1x1/01.webp"
@@ -764,9 +756,9 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 150,
-    "price100g": 150,
-    "pricePerKg": 1500,
+    "price": 162.5,
+    "price100g": 162.5,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/govyadina/rubec-govyazhiy/01.webp"
@@ -799,9 +791,9 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 210,
-    "price100g": 210,
-    "pricePerKg": 2100,
+    "price": 200,
+    "price100g": 200,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/govyadina/semenniki-govyazh/01.webp"
@@ -834,9 +826,9 @@ const RAW = [
     "format": "1×1",
     "unit": "weight",
     "weight": "100 г",
-    "price": 210,
-    "price100g": 210,
-    "pricePerKg": 2100,
+    "price": 200,
+    "price100g": 200,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/govyadina/semenniki-kusochki-1x1/01.webp"
@@ -869,9 +861,9 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 255,
-    "price100g": 255,
-    "pricePerKg": 2550,
+    "price": 237.5,
+    "price100g": 237.5,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/govyadina/serdce-govyazhe/01.webp"
@@ -904,9 +896,9 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 195,
-    "price100g": 195,
-    "pricePerKg": 1950,
+    "price": 187.5,
+    "price100g": 187.5,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/govyadina/traheya-kolechki/01.webp"
@@ -939,9 +931,9 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 195,
-    "price100g": 195,
-    "pricePerKg": 1950,
+    "price": 187.5,
+    "price100g": 187.5,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/govyadina/traheya-rakushka/01.webp"
@@ -974,9 +966,9 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 195,
-    "price100g": 195,
-    "pricePerKg": 1950,
+    "price": 187.5,
+    "price100g": 187.5,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/govyadina/traheya-trubka/01.webp"
@@ -1009,9 +1001,9 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 210,
-    "price100g": 210,
-    "pricePerKg": 2100,
+    "price": 212.5,
+    "price100g": 212.5,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/govyadina/ushi-govyazhi/01.webp"
@@ -1043,9 +1035,9 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 210,
-    "price100g": 210,
-    "pricePerKg": 2100,
+    "price": 225,
+    "price100g": 225,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/govyadina/hvost-govyazhiy/01.webp"
@@ -1078,9 +1070,9 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 165,
-    "price100g": 165,
-    "pricePerKg": 1650,
+    "price": 162.5,
+    "price100g": 162.5,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/govyadina/hryashch-lopatochnyy/01.webp"
@@ -1145,9 +1137,9 @@ const RAW = [
     "format": "2,5×2,5",
     "unit": "weight",
     "weight": "100 г",
-    "price": 165,
-    "price100g": 165,
-    "pricePerKg": 1650,
+    "price": 175,
+    "price100g": 175,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/baranina/legkoe-barane-2-5x2-5/01.webp"
@@ -1180,9 +1172,9 @@ const RAW = [
     "format": "1×1",
     "unit": "weight",
     "weight": "100 г",
-    "price": 165,
-    "price100g": 165,
-    "pricePerKg": 1650,
+    "price": 175,
+    "price100g": 175,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/baranina/legkoe-barane-1x1/01.webp"
@@ -1215,9 +1207,9 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 165,
-    "price100g": 165,
-    "pricePerKg": 1650,
+    "price": 162.5,
+    "price100g": 162.5,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/baranina/legkoe-barane-plastiny/01.webp"
@@ -1250,9 +1242,9 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 195,
-    "price100g": 195,
-    "pricePerKg": 1950,
+    "price": 200,
+    "price100g": 200,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/baranina/myaso-pishchevoda-barane/01.webp"
@@ -1319,9 +1311,9 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 150,
-    "price100g": 150,
-    "pricePerKg": 1500,
+    "price": 162.5,
+    "price100g": 162.5,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/baranina/rubec-baraniy/01.webp"
@@ -1354,9 +1346,9 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 195,
-    "price100g": 195,
-    "pricePerKg": 1950,
+    "price": 175,
+    "price100g": 175,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/baranina/traheya-baranya/01.webp"
@@ -1388,9 +1380,9 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 120,
-    "price100g": 120,
-    "pricePerKg": 1200,
+    "price": 118.75,
+    "price100g": 118.75,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/ptica/golovy-indeyki/01.webp"
@@ -1456,9 +1448,9 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 120,
-    "price100g": 120,
-    "pricePerKg": 1200,
+    "price": 118.75,
+    "price100g": 118.75,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/ptica/golovy-utinye/01.webp"
@@ -1491,9 +1483,9 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 240,
-    "price100g": 240,
-    "pricePerKg": 2400,
+    "price": 237.5,
+    "price100g": 237.5,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/ptica/grebeshki-kurinye/01.webp"
@@ -1526,9 +1518,9 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 135,
-    "price100g": 135,
-    "pricePerKg": 1350,
+    "price": 137.5,
+    "price100g": 137.5,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/ptica/lapy-utinye/01.webp"
@@ -1561,9 +1553,9 @@ const RAW = [
     "format": "1×1",
     "unit": "weight",
     "weight": "100 г",
-    "price": 315,
-    "price100g": 315,
-    "pricePerKg": 3150,
+    "price": 318.75,
+    "price100g": 318.75,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/ptica/myaso-indeyki-1x1/01.webp"
@@ -1596,9 +1588,9 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 315,
-    "price100g": 315,
-    "pricePerKg": 3150,
+    "price": 306.25,
+    "price100g": 306.25,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/ptica/myaso-indeyki-plastiny/01.webp"
@@ -1631,9 +1623,9 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 255,
-    "price100g": 255,
-    "pricePerKg": 2550,
+    "price": 237.5,
+    "price100g": 237.5,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/ptica/serdechki-kurinye/01.webp"
@@ -1666,9 +1658,9 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 195,
-    "price100g": 195,
-    "pricePerKg": 1950,
+    "price": 162.5,
+    "price100g": 162.5,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/ptica/utinye-zheludki/01.webp"
@@ -1701,9 +1693,9 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 150,
-    "price100g": 150,
-    "pricePerKg": 1500,
+    "price": 137.5,
+    "price100g": 137.5,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/ptica/shei-kurinye/01.webp"
@@ -1771,9 +1763,9 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 165,
-    "price100g": 165,
-    "pricePerKg": 1650,
+    "price": 162.5,
+    "price100g": 162.5,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/ptica/sheya-utinaya/01.webp"
@@ -1806,9 +1798,9 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 135,
-    "price100g": 135,
-    "pricePerKg": 1350,
+    "price": 118.75,
+    "price100g": 118.75,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/krolik/lapy-krolika/01.webp"
@@ -1843,7 +1835,7 @@ const RAW = [
     "weight": "100 г",
     "price": 225,
     "price100g": 225,
-    "pricePerKg": 2250,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/krolik/ushi-krolika/01.webp"
@@ -1876,9 +1868,9 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 165,
-    "price100g": 165,
-    "pricePerKg": 1650,
+    "price": 162.5,
+    "price100g": 162.5,
+    "pricePerKg": null,
     "status": "active",
     "imagePaths": [
       "/products/svinina/pyataki-svinye/01.webp"
@@ -1911,10 +1903,10 @@ const RAW = [
     "format": "",
     "unit": "weight",
     "weight": "100 г",
-    "price": 0,
-    "price100g": null,
+    "price": 231.25,
+    "price100g": 231.25,
     "pricePerKg": null,
-    "status": "no_price",
+    "status": "active",
     "imagePaths": [
       "/products/pechenye/pechene-iz-indeyki/01.webp"
     ],
@@ -1960,6 +1952,110 @@ const RAW = [
       "Натуральное"
     ],
     "isFeatured": false
+  },
+  {
+    "id": "rubec-baraniy-kusochki",
+    "slug": "rubec-baraniy-kusochki",
+    "name": "Рубец бараний кусочки",
+    "category": "Баранина",
+    "protein": "Баранина",
+    "purposes": [
+      "Длительное жевание",
+      "Поощрение"
+    ],
+    "dogSizes": [
+      "Малые",
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Плотное, мясное",
+    "hardness": "среднее",
+    "format": "1×1 см",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 175,
+    "price100g": 175,
+    "pricePerKg": null,
+    "status": "active",
+    "imagePaths": [
+      "/products/baranina/rubec-baraniy/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Рубец бараний. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Баранина",
+      "Натуральное"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "rubec-govyazhiy-kusochki",
+    "slug": "rubec-govyazhiy-kusochki",
+    "name": "Рубец говяжий кусочки",
+    "category": "Говядина",
+    "protein": "Говядина",
+    "purposes": [
+      "Длительное жевание",
+      "Поощрение"
+    ],
+    "dogSizes": [
+      "Малые",
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Плотное, мясное",
+    "hardness": "среднее",
+    "format": "1×1 см",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 175,
+    "price100g": 175,
+    "pricePerKg": null,
+    "status": "active",
+    "imagePaths": [
+      "/products/govyadina/rubec-govyazhiy/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Рубец говяжий. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Говядина",
+      "Натуральное"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "hvost-govyazhiy-2-3-sm",
+    "slug": "hvost-govyazhiy-2-3-sm",
+    "name": "Хвост говяжий",
+    "category": "Говядина",
+    "protein": "Говядина",
+    "purposes": [
+      "Длительное жевание",
+      "Для занятости"
+    ],
+    "dogSizes": [
+      "Средние",
+      "Крупные"
+    ],
+    "texture": "Плотное, твёрдое",
+    "hardness": "плотное",
+    "format": "2–3 см",
+    "unit": "weight",
+    "weight": "100 г",
+    "price": 225,
+    "price100g": 225,
+    "pricePerKg": null,
+    "status": "active",
+    "imagePaths": [
+      "/products/govyadina/hvost-govyazhiy/01.webp"
+    ],
+    "shortDescription": "Натуральное сушёное лакомство для собак — дополнение к основному рациону.",
+    "composition": "Хвост говяжий. Без искусственных добавок, соли и консервантов.",
+    "tags": [
+      "Говядина",
+      "Натуральное"
+    ],
+    "isFeatured": false
   }
 ] as const
 
@@ -1969,7 +2065,6 @@ export const products: Product[] = RAW.map((p) => ({
   dogSizes: [...p.dogSizes],
   tags: [...p.tags],
   imagePaths: [...p.imagePaths],
-  availability: AVAILABILITY_MAP[p.slug] ?? 'preorder',
   howToUse: USE_DEFAULT,
   storage: STORAGE_DEFAULT,
   warning: NOT_A_MEAL,

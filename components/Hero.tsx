@@ -31,10 +31,10 @@ export function Hero() {
       <div className="container hero__inner">
         <div className="hero__content">
           <span className="hero__badge hero__badge--full">
-            Скидка первым клиентам — до 19% в корзине
+            Скидка первым клиентам — до 10% в корзине
           </span>
           <span className="hero__badge hero__badge--short">
-            Скидка первым клиентам — до 19%
+            Скидка первым клиентам — до 10%
           </span>
 
           <h1 className="hero__title">Натуральные лакомства для собак</h1>

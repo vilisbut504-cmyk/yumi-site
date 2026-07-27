@@ -9,6 +9,7 @@
     "prepare:images": "node scripts/prepare-product-images.mjs",
     "import:products": "node scripts/import-products-from-excel.mjs",
     "import:yuma": "node scripts/import-yuma-catalog.mjs",
+    "catalog:apply-v3": "node scripts/apply-yumi-catalog-v3.mjs",
     "qr:generate": "node scripts/generate-qr.mjs",
     "hero:optimize": "node scripts/optimize-hero-image.mjs",
     "sync:availability": "node scripts/sync-availability.mjs",

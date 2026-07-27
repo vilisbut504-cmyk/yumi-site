@@ -8,7 +8,7 @@ import { useCart } from '@/components/CartProvider'
 import { validateName, validatePhone } from '@/lib/quiz'
 import { PhoneInput } from '@/components/PhoneInput'
 import { PHONE_INITIAL } from '@/lib/phone'
-import { formatPrice, packLabel, type DeliveryMethod, type PaymentMethod } from '@/lib/cart'
+import { formatPrice, formatUnitPrice, packLabel, type DeliveryMethod, type PaymentMethod } from '@/lib/cart'
 import { buildOrderPayloadFromCheckout, submitOrder } from '@/lib/orderSubmit'
 import {
   DELIVERY_OPTIONS,
@@ -17,7 +17,7 @@ import {
   isCourier,
   STARTER_DISCOUNT_NOTE,
 } from '@/src/lib/pricing'
-import { getCartDeliveryEstimate, getPickupMapsLink } from '@/src/lib/availability'
+import { getPickupMapsLink } from '@/src/lib/availability'
 
 interface FormState {
   name: string
@@ -122,7 +122,6 @@ export default function CheckoutPage() {
     subtotal,
     deliveryPrice: getDeliveryPrice(form.delivery),
   })
-  const deliveryEstimate = getCartDeliveryEstimate(items)
 
   return (
     <>
@@ -241,7 +240,7 @@ export default function CheckoutPage() {
                   <ul className="checkout__items">
                     {items.map((item) => (
                       <li key={item.id}>
-                        <span>{item.name} · {packLabel(item)}</span>
+                        <span>{item.name} · {packLabel(item)} · {formatUnitPrice(item.price, item.weight)}</span>
                         <strong>{formatPrice(item.price * item.qty)}</strong>
                       </li>
                     ))}
@@ -268,9 +267,6 @@ export default function CheckoutPage() {
                       <span>{totals.deliveryPrice === 0 ? 'бесплатно' : formatPrice(totals.deliveryPrice)}</span>
                     </div>
                   </div>
-                  <p className={`cart__eta cart__eta--${deliveryEstimate.availability}`}>
-                    {deliveryEstimate.label}
-                  </p>
                   {form.delivery === 'pickup' && (
                     <p className="checkout__discount-note">
                       Самовывоз:{' '}

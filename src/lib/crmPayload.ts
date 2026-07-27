@@ -59,7 +59,11 @@ function line(value: string | undefined | null): string {
 }
 
 function formatMoney(value: number): string {
-  return `${value.toLocaleString('ru-RU')} ₽`
+  const kopecks = Math.round(Math.max(0, value) * 100)
+  const rubles = Math.floor(kopecks / 100)
+  const kop = kopecks % 100
+  if (kop === 0) return `${rubles.toLocaleString('ru-RU')} ₽`
+  return `${rubles.toLocaleString('ru-RU')},${String(kop).padStart(2, '0')} ₽`
 }
 
 export function buildLeadNote(payload: OrderPayload): string {
@@ -71,7 +75,7 @@ export function buildLeadNote(payload: OrderPayload): string {
       ? items
           .map((item, i) => {
             const sum = item.price * item.quantity
-            return `${i + 1}. ${item.name} — ${item.quantity} × ${item.weight} — ${formatMoney(item.price)} — ${formatMoney(sum)}`
+            return `${i + 1}. ${item.name} — ${item.quantity} × ${item.weight} — ${formatMoney(item.price)} / ${item.weight} — ${formatMoney(sum)}`
           })
           .join('\n')
       : '— (заявка без корзины)'
@@ -154,7 +158,11 @@ export function sanitizeOrderPayload(raw: unknown): OrderPayload | null {
 
   // Итоги ВСЕГДА пересчитываем на сервере из состава корзины и способа доставки,
   // чтобы клиент не мог прислать произвольную сумму.
-  const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0)
+  const subtotalK = items.reduce(
+    (sum, i) => sum + Math.round(i.price * 100) * i.quantity,
+    0,
+  )
+  const subtotal = subtotalK / 100
   const deliveryPrice = getDeliveryPrice(deliveryMethod)
   const totals = calculateOrderTotal({ subtotal, deliveryPrice })
 

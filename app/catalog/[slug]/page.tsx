@@ -6,7 +6,7 @@ import { Footer } from '@/components/Footer'
 import { ProductImage } from '@/components/ProductImage'
 import { ProductCard } from '@/components/ProductCard'
 import { ProductDetailActions } from '@/components/ProductDetailActions'
-import { formatPrice } from '@/lib/cart'
+import { formatUnitPrice } from '@/lib/cart'
 import {
   getActiveProducts,
   getProductBySlug,
@@ -68,28 +68,18 @@ export default async function ProductPage({
             </div>
 
             <div className="pdp__info">
-              <p className="eyebrow">{product.category} · {product.protein}</p>
+              <p className="eyebrow">{product.category}</p>
               <h1 className="pdp__title">{product.name}</h1>
-              <p className="pdp__short">{product.shortDescription}</p>
 
               <div className="pdp__price">
-                <span className="pdp__price-now">{formatPrice(product.price)}</span>
-                <span className="pdp__weight">/ {product.weight}</span>
-                {product.unit === 'weight' && product.pricePerKg ? (
-                  <span className="pdp__price-kg">{formatPrice(product.pricePerKg)} / кг</span>
-                ) : null}
+                <span className="pdp__price-now">{formatUnitPrice(product.price, product.weight)}</span>
               </div>
 
-              <p className={`pdp__availability pdp__availability--${product.availability ?? 'preorder'}`}>
-                {product.availability === 'in_stock'
-                  ? 'В наличии — доставка в течение 1 дня'
-                  : 'Предзаказ — доставка в течение 3 дней с момента оформления заявки'}
-              </p>
+              <p className="pdp__pack">Фасовка: {product.weight}</p>
 
               <ProductDetailActions product={product} />
 
               <ul className="pdp__specs">
-                <li><span>Наличие</span><strong>{product.availability === 'in_stock' ? 'В наличии' : 'Предзаказ'}</strong></li>
                 <li><span>Категория</span><strong>{product.category}</strong></li>
                 <li><span>Белок</span><strong>{product.protein}</strong></li>
                 {product.format ? (
@@ -99,7 +89,6 @@ export default async function ProductPage({
                 <li><span>Твёрдость</span><strong>{product.hardness}</strong></li>
                 <li><span>Размер собаки</span><strong>{product.dogSizes.join(', ')}</strong></li>
                 <li><span>Назначение</span><strong>{product.purposes.join(', ')}</strong></li>
-                <li><span>Фасовка</span><strong>{product.weight}</strong></li>
               </ul>
 
               <div className="pdp__warning">{FULL_WARNING}</div>

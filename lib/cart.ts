@@ -88,7 +88,11 @@ export function cartItemFromProduct(product: Product, qty = 1): CartItem {
 }
 
 export function cartSubtotal(items: CartItem[]): number {
-  return items.reduce((sum, item) => sum + item.price * item.qty, 0)
+  const kopecks = items.reduce(
+    (sum, item) => sum + Math.round(item.price * 100) * item.qty,
+    0,
+  )
+  return kopecks / 100
 }
 
 export function cartCount(items: CartItem[]): number {
@@ -96,7 +100,18 @@ export function cartCount(items: CartItem[]): number {
 }
 
 export function formatPrice(value: number): string {
-  return `${value.toLocaleString('ru-RU')} ₽`
+  const kopecks = Math.round(Math.max(0, value) * 100)
+  const rubles = Math.floor(kopecks / 100)
+  const kop = kopecks % 100
+  if (kop === 0) {
+    return `${rubles.toLocaleString('ru-RU')} ₽`
+  }
+  return `${rubles.toLocaleString('ru-RU')},${String(kop).padStart(2, '0')} ₽`
+}
+
+/** «200 ₽ / 100 г» или «162,50 ₽ / 100 г» */
+export function formatUnitPrice(price: number, weight = '100 г'): string {
+  return `${formatPrice(price)} / ${weight}`
 }
 
 export function buildCheckoutPayload(

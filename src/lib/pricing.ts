@@ -41,12 +41,20 @@ export function isCourier(method: DeliveryMethod): boolean {
 
 // Стартовая скидка для первых клиентов — зависит от суммы товаров (без доставки).
 export const STARTER_DISCOUNT_TIERS = [
-  { minSubtotal: 12000, percent: 19 },
-  { minSubtotal: 11999, percent: 15 },
-  { minSubtotal: 5999, percent: 11 },
-  { minSubtotal: 2999, percent: 7 },
-  { minSubtotal: 999, percent: 4 },
+  { minSubtotal: 17999, percent: 10 },
+  { minSubtotal: 11999, percent: 8 },
+  { minSubtotal: 5999, percent: 6 },
+  { minSubtotal: 2999, percent: 4 },
+  { minSubtotal: 999, percent: 2 },
 ] as const
+
+function toKopecks(rubles: number): number {
+  return Math.round(Math.max(0, rubles) * 100)
+}
+
+function fromKopecks(kopecks: number): number {
+  return kopecks / 100
+}
 
 export function getStarterDiscountPercent(subtotal: number): number {
   for (const tier of STARTER_DISCOUNT_TIERS) {
@@ -62,13 +70,13 @@ export interface StarterDiscount {
 }
 
 export function calculateStarterDiscount(subtotal: number): StarterDiscount {
-  const safeSubtotal = Math.max(0, Math.round(subtotal))
-  const percent = getStarterDiscountPercent(safeSubtotal)
-  const discountAmount = Math.round((safeSubtotal * percent) / 100)
+  const subK = toKopecks(subtotal)
+  const percent = getStarterDiscountPercent(fromKopecks(subK))
+  const discountK = Math.round((subK * percent) / 100)
   return {
     percent,
-    discountAmount,
-    subtotalAfterDiscount: safeSubtotal - discountAmount,
+    discountAmount: fromKopecks(discountK),
+    subtotalAfterDiscount: fromKopecks(subK - discountK),
   }
 }
 
@@ -90,14 +98,15 @@ export function calculateOrderTotal({
 }): OrderTotalBreakdown {
   const { percent, discountAmount, subtotalAfterDiscount } =
     calculateStarterDiscount(subtotal)
-  const safeDelivery = Math.max(0, Math.round(deliveryPrice))
+  const deliveryK = toKopecks(deliveryPrice)
+  const subAfterK = toKopecks(subtotalAfterDiscount)
   return {
-    subtotal: Math.max(0, Math.round(subtotal)),
+    subtotal: fromKopecks(toKopecks(subtotal)),
     discountPercent: percent,
     discountAmount,
     subtotalAfterDiscount,
-    deliveryPrice: safeDelivery,
-    total: subtotalAfterDiscount + safeDelivery,
+    deliveryPrice: fromKopecks(deliveryK),
+    total: fromKopecks(subAfterK + deliveryK),
   }
 }
 
