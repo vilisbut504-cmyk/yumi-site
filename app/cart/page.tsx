@@ -7,7 +7,6 @@ import { ProductImage } from '@/components/ProductImage'
 import { QtyInput } from '@/components/QtyInput'
 import { useCart } from '@/components/CartProvider'
 import {
-  formatPackLine,
   formatPrice,
   formatTotalWeight,
   formatUnitPrice,
@@ -45,25 +44,28 @@ export default function CartPage() {
                     const total = lineTotal(item.price, item.qty)
                     return (
                       <div key={item.id} className="cart__row">
-                        <Link href={`/catalog/${item.slug}`} className="cart__media">
-                          <ProductImage imagePaths={item.image ? [item.image] : []} alt={item.name} />
-                        </Link>
-                        <div className="cart__info">
-                          <Link href={`/catalog/${item.slug}`} className="cart__name">{item.name}</Link>
-                          <p className="cart__weight">{formatPackLine(item.qty, item.weight)}</p>
-                          <p className="cart__pack-meta">
-                            Упаковок по 100 г · {item.qty} × 100 г = {formatTotalWeight(item.qty)}
-                          </p>
-                          <p className="cart__unit-price">{formatUnitPrice(item.price, item.weight)}</p>
-                          <button type="button" className="cart__remove" onClick={() => removeItem(item.id)}>
-                            Удалить
-                          </button>
+                        <div className="cart__row-main">
+                          <Link href={`/catalog/${item.slug}`} className="cart__media">
+                            <ProductImage imagePaths={item.image ? [item.image] : []} alt={item.name} />
+                          </Link>
+                          <div className="cart__info">
+                            <Link href={`/catalog/${item.slug}`} className="cart__name">{item.name}</Link>
+                            <p className="cart__weight">
+                              {item.qty} × 100 г = {formatTotalWeight(item.qty)}
+                            </p>
+                            <p className="cart__unit-price">{formatUnitPrice(item.price, item.weight)}</p>
+                            <button type="button" className="cart__remove" onClick={() => removeItem(item.id)}>
+                              Удалить
+                            </button>
+                          </div>
                         </div>
-                        <div className="cart__qty-block">
+                        <div className="cart__footer">
                           <QtyInput value={item.qty} onChange={(q) => setQty(item.id, q)} />
-                          <p className="cart__line-total">Итого позиции: {formatPrice(total)}</p>
+                          <div className="cart__line-total">
+                            <span className="cart__line-total-label">Итого</span>
+                            <strong className="cart__sum">{formatPrice(total)}</strong>
+                          </div>
                         </div>
-                        <div className="cart__sum">{formatPrice(total)}</div>
                       </div>
                     )
                   })}
