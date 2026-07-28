@@ -12,21 +12,30 @@ import {
   cartCount,
   cartSubtotal,
   cartItemFromProduct,
+  normalizePackQty,
   type CartItem,
 } from '@/lib/cart'
 import type { Product } from '@/src/lib/products'
-import { getProductBySlug } from '@/src/lib/products'
+import { getProductBySlug, isPublicProduct } from '@/src/lib/products'
 
 const STORAGE_KEY = 'yumi-cart-v1'
 
 function hydrateCartItems(parsed: CartItem[]): CartItem[] {
-  return parsed.map((item) => {
-    const product = getProductBySlug(item.slug)
-    return {
-      ...item,
-      availability: product?.availability ?? item.availability ?? 'preorder',
-    }
-  })
+  return parsed
+    .map((item) => {
+      const product = getProductBySlug(item.slug)
+      if (!product || !isPublicProduct(product)) return null
+      return {
+        ...item,
+        qty: normalizePackQty(item.qty),
+        price: product.price,
+        name: product.name,
+        weight: product.weight,
+        image: product.imagePaths[0] ?? item.image,
+        availability: product.availability ?? item.availability ?? 'preorder',
+      }
+    })
+    .filter(Boolean) as CartItem[]
 }
 
 interface CartContextValue {
@@ -69,6 +78,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [items, mounted])
 
   const addItem = useCallback((product: Product, qty = 1) => {
+    if (!isPublicProduct(product)) return
+    const addQty = normalizePackQty(qty)
     setItems((prev) => {
       const existing = prev.find((i) => i.id === product.id)
       if (existing) {
@@ -76,13 +87,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           i.id === product.id
             ? {
                 ...i,
-                qty: i.qty + qty,
+                qty: normalizePackQty(i.qty + addQty),
                 availability: product.availability ?? i.availability ?? 'preorder',
               }
             : i,
         )
       }
-      return [...prev, cartItemFromProduct(product, qty)]
+      return [...prev, cartItemFromProduct(product, addQty)]
     })
   }, [])
 
@@ -91,10 +102,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const setQty = useCallback((id: string, qty: number) => {
+    if (qty <= 0) {
+      setItems((prev) => prev.filter((i) => i.id !== id))
+      return
+    }
+    const next = normalizePackQty(qty)
     setItems((prev) =>
-      prev
-        .map((i) => (i.id === id ? { ...i, qty: Math.max(0, qty) } : i))
-        .filter((i) => i.qty > 0),
+      prev.map((i) => (i.id === id ? { ...i, qty: next } : i)),
     )
   }, [])
 

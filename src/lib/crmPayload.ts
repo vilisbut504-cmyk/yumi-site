@@ -1,16 +1,18 @@
 import { canonicalPhone, isCompletePhone } from '@/lib/phone'
+import { formatPackLine, formatPrice as formatCartPrice, normalizePackQty } from '@/lib/cart'
 import type {
   OrderPayload,
   OrderItem,
   OrderSource,
-  PaymentMethod,
   DeliveryMethod,
 } from './orderPayload'
 import {
   calculateOrderTotal,
-  getDeliveryLabel,
   getDeliveryPrice,
+  getDeliverySummaryLabel,
   isCourier,
+  isOutsideKad,
+  OUTSIDE_KAD_PER_KM,
 } from './pricing'
 
 export function normalizePhone(phone: string): string {
@@ -43,11 +45,6 @@ export function validateOrderPayload(payload: OrderPayload): string | null {
   return null
 }
 
-const PAYMENT_LABELS: Record<PaymentMethod, string> = {
-  cash_on_delivery: 'Наличными при получении',
-  bank_transfer_on_delivery: 'Переводом на карту при получении',
-}
-
 const SOURCE_LABELS: Record<OrderSource, string> = {
   checkout: 'Оформление заказа',
   lead_form: 'Форма заявки',
@@ -59,41 +56,107 @@ function line(value: string | undefined | null): string {
 }
 
 function formatMoney(value: number): string {
-  const kopecks = Math.round(Math.max(0, value) * 100)
-  const rubles = Math.floor(kopecks / 100)
-  const kop = kopecks % 100
-  if (kop === 0) return `${rubles.toLocaleString('ru-RU')} ₽`
-  return `${rubles.toLocaleString('ru-RU')},${String(kop).padStart(2, '0')} ₽`
+  return formatCartPrice(value)
+}
+
+function buildSpeakToClientBlock(
+  method: DeliveryMethod,
+  total: number,
+): string[] {
+  const money = formatMoney(total)
+  if (method === 'pickup') {
+    return [
+      'К ОЗВУЧИВАНИЮ КЛИЕНТУ:',
+      `Просим вас подготовить наличными ${money} при получении заказа.`,
+    ]
+  }
+  if (isOutsideKad(method)) {
+    return [
+      'К ОЗВУЧИВАНИЮ КЛИЕНТУ:',
+      `Базовая сумма к оплате: ${money}.`,
+      `Дополнительно рассчитать доставку за КАД: ${OUTSIDE_KAD_PER_KM} ₽/км.`,
+      'После проверки адреса озвучить клиенту окончательную сумму наличными.',
+      '',
+      'Проверить адрес и километраж за КАД, рассчитать доплату 25 ₽/км и только после этого озвучить клиенту окончательную сумму наличными.',
+    ]
+  }
+  return [
+    'К ОЗВУЧИВАНИЮ КЛИЕНТУ:',
+    `Просим вас подготовить наличными ${money} при получении товара от курьера.`,
+  ]
+}
+
+function buildDeliveryNoteLines(
+  method: DeliveryMethod,
+  totals: OrderPayload['totals'],
+  address: string,
+): string[] {
+  if (method === 'pickup') {
+    return [
+      `Доставка: ${getDeliverySummaryLabel(method)}`,
+      `Стоимость доставки: ${formatMoney(0)}`,
+    ]
+  }
+  if (isOutsideKad(method)) {
+    return [
+      'Доставка: за пределами КАД',
+      `Базовая стоимость: ${formatMoney(totals.delivery)}`,
+      `Доплата: ${OUTSIDE_KAD_PER_KM} ₽/км за пределами КАД`,
+      'Точный километраж и окончательную сумму уточнить менеджеру',
+      `Адрес клиента: ${line(address)}`,
+    ]
+  }
+  return [
+    `Доставка: ${getDeliverySummaryLabel(method)}`,
+    `Стоимость доставки: ${formatMoney(totals.delivery)}`,
+  ]
 }
 
 export function buildLeadNote(payload: OrderPayload): string {
-  const { customer, delivery, payment, items, totals, utm, page, source } = payload
+  const { customer, delivery, items, totals, utm, page, source } = payload
   const phone = normalizePhone(customer.phone)
-
-  const itemLines =
-    items.length > 0
-      ? items
-          .map((item, i) => {
-            const sum = item.price * item.quantity
-            return `${i + 1}. ${item.name} — ${item.quantity} × ${item.weight} — ${formatMoney(item.price)} / ${item.weight} — ${formatMoney(sum)}`
-          })
-          .join('\n')
-      : '— (заявка без корзины)'
-
   const deliveryAddr =
     delivery.address || customer.address || (delivery.method === 'pickup' ? 'Самовывоз' : '—')
 
-  const discountLine =
+  const itemBlocks =
+    items.length > 0
+      ? items
+          .map((item) => {
+            const sum = (Math.round(item.price * 100) * item.quantity) / 100
+            return [
+              item.name,
+              formatPackLine(item.quantity, item.weight),
+              `Итого позиции: ${formatMoney(sum)}`,
+            ].join('\n')
+          })
+          .join('\n\n')
+      : '— (заявка без корзины)'
+
+  const discountLines =
     totals.discountPercent > 0
       ? [
-          `Скидка первым клиентам: ${totals.discountPercent}%`,
-          `Сумма скидки: −${formatMoney(totals.discountAmount)}`,
-          `Итого товары со скидкой: ${formatMoney(totals.subtotalAfterDiscount)}`,
+          `Скидка ${totals.discountPercent}%: −${formatMoney(totals.discountAmount)}`,
+          `Итого товаров со скидкой: ${formatMoney(totals.subtotalAfterDiscount)}`,
         ]
-      : ['Скидка первым клиентам: 0%']
+      : ['Скидка: 0%']
+
+  const totalsBlock = isOutsideKad(delivery.method)
+    ? [
+        `Стоимость товаров: ${formatMoney(totals.subtotal)}`,
+        ...discountLines,
+        `Базовая доставка за КАД: ${formatMoney(totals.delivery)}`,
+        `Доплата: ${OUTSIDE_KAD_PER_KM} ₽/км`,
+        `Предварительная сумма: ${formatMoney(totals.total)}`,
+      ]
+    : [
+        `Стоимость товаров: ${formatMoney(totals.subtotal)}`,
+        ...discountLines,
+        `${getDeliverySummaryLabel(delivery.method)}: ${formatMoney(totals.delivery)}`,
+        `Итого к оплате: ${formatMoney(totals.total)}`,
+      ]
 
   return [
-    'Новый заказ с сайта ЮМИ',
+    'ЗАКАЗ YUMI',
     '',
     `Источник: ${SOURCE_LABELS[source]}`,
     '',
@@ -104,24 +167,16 @@ export function buildLeadNote(payload: OrderPayload): string {
     `Город: ${line(customer.city)}`,
     `Адрес: ${line(customer.address)}`,
     '',
-    'Доставка:',
-    `Способ: ${getDeliveryLabel(delivery.method)}`,
-    `Адрес: ${line(deliveryAddr)}`,
+    ...buildDeliveryNoteLines(delivery.method, totals, deliveryAddr),
     `Желаемое время: ${line(delivery.preferredTime)}`,
-    '',
-    'Оплата:',
-    `Способ: ${PAYMENT_LABELS[payment.method]}`,
-    'Статус: онлайн-оплата не проводилась',
     '',
     'Состав заказа:',
     '',
-    itemLines,
+    itemBlocks,
     '',
-    'Итого:',
-    `Стоимость товаров: ${formatMoney(totals.subtotal)}`,
-    ...discountLine,
-    `Доставка: ${formatMoney(totals.delivery)}`,
-    `Итого к оплате: ${formatMoney(totals.total)}`,
+    ...totalsBlock,
+    '',
+    ...buildSpeakToClientBlock(delivery.method, totals.total),
     '',
     'UTM:',
     `source: ${line(utm.source)}`,
@@ -144,7 +199,7 @@ const VALID_DELIVERY: DeliveryMethod[] = ['pickup', 'courier_kad', 'courier_outs
 export function sanitizeOrderPayload(raw: unknown): OrderPayload | null {
   if (!raw || typeof raw !== 'object') return null
   const p = raw as Partial<OrderPayload>
-  if (!p.customer || !p.delivery || !p.payment || !p.totals || !p.page) return null
+  if (!p.customer || !p.delivery || !p.totals || !p.page) return null
 
   const deliveryMethod: DeliveryMethod = VALID_DELIVERY.includes(
     p.delivery.method as DeliveryMethod,
@@ -156,15 +211,18 @@ export function sanitizeOrderPayload(raw: unknown): OrderPayload | null {
     ? (p.items.map((item) => sanitizeItem(item)).filter(Boolean) as OrderItem[])
     : []
 
-  // Итоги ВСЕГДА пересчитываем на сервере из состава корзины и способа доставки,
-  // чтобы клиент не мог прислать произвольную сумму.
+  // Итоги ВСЕГДА пересчитываем на сервере.
   const subtotalK = items.reduce(
     (sum, i) => sum + Math.round(i.price * 100) * i.quantity,
     0,
   )
   const subtotal = subtotalK / 100
   const deliveryPrice = getDeliveryPrice(deliveryMethod)
-  const totals = calculateOrderTotal({ subtotal, deliveryPrice })
+  const totals = calculateOrderTotal({
+    subtotal,
+    deliveryPrice,
+    deliveryMethod,
+  })
 
   return {
     source: (p.source as OrderSource) || 'checkout',
@@ -185,10 +243,7 @@ export function sanitizeOrderPayload(raw: unknown): OrderPayload | null {
     },
     payment: {
       online: false,
-      method:
-        p.payment.method === 'bank_transfer_on_delivery'
-          ? 'bank_transfer_on_delivery'
-          : 'cash_on_delivery',
+      method: 'cash_on_delivery',
       status: 'pending',
     },
     items,
@@ -221,7 +276,7 @@ function sanitizeItem(raw: unknown): OrderItem | null {
   return {
     slug: String(i.slug),
     name: String(i.name),
-    quantity: Math.max(1, Number(i.quantity) || 1),
+    quantity: normalizePackQty(i.quantity),
     unit: i.unit === 'piece' ? 'piece' : 'weight',
     weight: String(i.weight || '100 г'),
     price: Number(i.price) || 0,

@@ -1,5 +1,5 @@
-import type { CartItem, DeliveryMethod, PaymentMethod } from './cart'
-import { cartSubtotal } from './cart'
+import type { CartItem, DeliveryMethod } from './cart'
+import { DEFAULT_PAYMENT_METHOD, cartSubtotal, normalizePackQty } from './cart'
 import type { OrderPayload } from '@/src/lib/orderPayload'
 import { getUtmForPayload, getPageContext } from '@/src/lib/utm'
 import { calculateOrderTotal, getDeliveryPrice, isCourier } from '@/src/lib/pricing'
@@ -15,11 +15,14 @@ export function buildOrderPayloadFromCheckout(
     address: string
   },
   deliveryMethod: DeliveryMethod,
-  payment: PaymentMethod,
 ): OrderPayload {
   const subtotal = cartSubtotal(items)
   const deliveryPrice = getDeliveryPrice(deliveryMethod)
-  const totals = calculateOrderTotal({ subtotal, deliveryPrice })
+  const totals = calculateOrderTotal({
+    subtotal,
+    deliveryPrice,
+    deliveryMethod,
+  })
 
   return {
     source: 'checkout',
@@ -37,13 +40,13 @@ export function buildOrderPayloadFromCheckout(
     },
     payment: {
       online: false,
-      method: payment,
+      method: DEFAULT_PAYMENT_METHOD,
       status: 'pending',
     },
     items: items.map((item) => ({
       slug: item.slug,
       name: item.name,
-      quantity: item.qty,
+      quantity: normalizePackQty(item.qty),
       unit: item.unit,
       weight: item.weight,
       price: item.price,

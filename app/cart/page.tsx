@@ -4,9 +4,16 @@ import Link from 'next/link'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { ProductImage } from '@/components/ProductImage'
+import { QtyInput } from '@/components/QtyInput'
 import { useCart } from '@/components/CartProvider'
-import { formatPrice, formatUnitPrice, packLabel } from '@/lib/cart'
-import { calculateStarterDiscount, STARTER_DISCOUNT_NOTE } from '@/src/lib/pricing'
+import {
+  formatPackLine,
+  formatPrice,
+  formatTotalWeight,
+  formatUnitPrice,
+  lineTotal,
+} from '@/lib/cart'
+import { calculateStarterDiscount, DISCOUNT_NOTE } from '@/src/lib/pricing'
 
 export default function CartPage() {
   const { items, subtotal, mounted, setQty, removeItem } = useCart()
@@ -34,28 +41,32 @@ export default function CartPage() {
             ) : (
               <div className="cart">
                 <div className="cart__list">
-                  {items.map((item) => (
-                    <div key={item.id} className="cart__row">
-                      <Link href={`/catalog/${item.slug}`} className="cart__media">
-                        <ProductImage imagePaths={item.image ? [item.image] : []} alt={item.name} />
-                      </Link>
-                      <div className="cart__info">
-                        <Link href={`/catalog/${item.slug}`} className="cart__name">{item.name}</Link>
-                        <p className="cart__weight">
-                          {packLabel(item)} · {formatUnitPrice(item.price, item.weight)}
-                        </p>
-                        <button type="button" className="cart__remove" onClick={() => removeItem(item.id)}>
-                          Удалить
-                        </button>
+                  {items.map((item) => {
+                    const total = lineTotal(item.price, item.qty)
+                    return (
+                      <div key={item.id} className="cart__row">
+                        <Link href={`/catalog/${item.slug}`} className="cart__media">
+                          <ProductImage imagePaths={item.image ? [item.image] : []} alt={item.name} />
+                        </Link>
+                        <div className="cart__info">
+                          <Link href={`/catalog/${item.slug}`} className="cart__name">{item.name}</Link>
+                          <p className="cart__weight">{formatPackLine(item.qty, item.weight)}</p>
+                          <p className="cart__pack-meta">
+                            Упаковок по 100 г · {item.qty} × 100 г = {formatTotalWeight(item.qty)}
+                          </p>
+                          <p className="cart__unit-price">{formatUnitPrice(item.price, item.weight)}</p>
+                          <button type="button" className="cart__remove" onClick={() => removeItem(item.id)}>
+                            Удалить
+                          </button>
+                        </div>
+                        <div className="cart__qty-block">
+                          <QtyInput value={item.qty} onChange={(q) => setQty(item.id, q)} />
+                          <p className="cart__line-total">Итого позиции: {formatPrice(total)}</p>
+                        </div>
+                        <div className="cart__sum">{formatPrice(total)}</div>
                       </div>
-                      <div className="qty">
-                        <button type="button" className="qty__btn" onClick={() => setQty(item.id, item.qty - 1)} aria-label="Меньше">−</button>
-                        <span className="qty__val">{item.qty}</span>
-                        <button type="button" className="qty__btn" onClick={() => setQty(item.id, item.qty + 1)} aria-label="Больше">+</button>
-                      </div>
-                      <div className="cart__sum">{formatPrice(item.price * item.qty)}</div>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
 
                 <aside className="cart__summary">
@@ -71,11 +82,11 @@ export default function CartPage() {
                         {d.percent > 0 && (
                           <>
                             <div className="cart__summary-row cart__summary-row--discount">
-                              <span>Скидка первым клиентам {d.percent}%</span>
+                              <span>Скидка {d.percent}%</span>
                               <span>−{formatPrice(d.discountAmount)}</span>
                             </div>
                             <div className="cart__summary-row">
-                              <span>Итого товары со скидкой</span>
+                              <span>Итого товаров со скидкой</span>
                               <strong>{formatPrice(d.subtotalAfterDiscount)}</strong>
                             </div>
                           </>
@@ -85,14 +96,13 @@ export default function CartPage() {
                           <span>рассчитывается при оформлении</span>
                         </div>
                         {d.percent > 0 && (
-                          <p className="cart__note">{STARTER_DISCOUNT_NOTE}</p>
+                          <p className="cart__note">{DISCOUNT_NOTE}</p>
                         )}
                       </>
                     )
                   })()}
                   <Link href="/checkout" className="btn btn-primary btn-wide">Оформить заказ</Link>
                   <Link href="/catalog" className="btn btn-ghost btn-wide">Продолжить покупки</Link>
-                  <p className="cart__note">Онлайн-оплата не подключена. Оплата при получении.</p>
                 </aside>
               </div>
             )}

@@ -26,8 +26,13 @@ export interface CartLineForPayload {
 }
 
 export type { DeliveryMethod }
+/** Внутреннее значение для CRM; клиент оплату не выбирает. */
 export type PaymentMethod = 'cash_on_delivery' | 'bank_transfer_on_delivery'
 export type PaymentStatus = 'pending'
+
+export const DEFAULT_PAYMENT_METHOD: PaymentMethod = 'cash_on_delivery'
+
+export const MAX_PACK_QTY = 999
 
 export interface CheckoutCustomer {
   name: string
@@ -43,8 +48,8 @@ export interface CheckoutDelivery {
 }
 
 /**
- * Payload готовится для будущей интеграции (CRM / приём заказов).
- * Онлайн-оплата НЕ подключена: payment.online = false, status = 'pending'.
+ * Payload для CRM. Онлайн-оплата не подключена.
+ * Способ оплаты назначается сервером, не выбирается клиентом.
  */
 export interface CheckoutPayload {
   customer: CheckoutCustomer
@@ -63,12 +68,37 @@ export interface CheckoutPayload {
   createdAt: string
 }
 
-/** Подпись количества: «2 × 100 г» или «2 × 1 шт». */
+/** Нормализация количества упаковок: целое 1…MAX_PACK_QTY. */
+export function normalizePackQty(raw: unknown): number {
+  const n = typeof raw === 'number' ? raw : Number(raw)
+  if (!Number.isFinite(n) || Number.isNaN(n)) return 1
+  return Math.min(MAX_PACK_QTY, Math.max(1, Math.floor(n)))
+}
+
+/**
+ * Общий вес позиции: quantity упаковок по 100 г.
+ * 1 → 100 г, 5 → 500 г, 10 → 1 кг, 15 → 1,5 кг
+ */
+export function formatTotalWeight(quantity: number, gramsPerPack = 100): string {
+  const qty = Math.max(0, Math.floor(quantity))
+  const grams = qty * gramsPerPack
+  if (grams < 1000) return `${grams} г`
+  const kg = grams / 1000
+  if (Number.isInteger(kg)) return `${kg} кг`
+  return `${String(kg).replace('.', ',')} кг`
+}
+
+/** «5 × 100 г / 500 г» */
+export function formatPackLine(qty: number, weight = '100 г'): string {
+  const total = formatTotalWeight(qty)
+  return `${qty} × ${weight} / ${total}`
+}
+
+/** Подпись количества: «2 × 100 г». */
 export function packLabel(item: Pick<CartItem, 'qty' | 'weight'>): string {
   return `${item.qty} × ${item.weight}`
 }
 
-/** Подпись единицы фасовки: «100 г» или «1 шт». */
 export function unitLabel(weight: string): string {
   return weight
 }
@@ -82,7 +112,7 @@ export function cartItemFromProduct(product: Product, qty = 1): CartItem {
     weight: product.weight,
     unit: product.unit,
     image: product.imagePaths[0] ?? '',
-    qty,
+    qty: normalizePackQty(qty),
     availability: product.availability ?? 'preorder',
   }
 }
@@ -97,6 +127,10 @@ export function cartSubtotal(items: CartItem[]): number {
 
 export function cartCount(items: CartItem[]): number {
   return items.reduce((sum, item) => sum + item.qty, 0)
+}
+
+export function lineTotal(price: number, qty: number): number {
+  return (Math.round(price * 100) * qty) / 100
 }
 
 export function formatPrice(value: number): string {
@@ -118,7 +152,6 @@ export function buildCheckoutPayload(
   items: CartItem[],
   customer: CheckoutCustomer,
   delivery: CheckoutDelivery,
-  payment: PaymentMethod,
 ): CheckoutPayload {
   const lines: CartLineForPayload[] = items.map((item) => ({
     id: item.id,
@@ -126,16 +159,16 @@ export function buildCheckoutPayload(
     name: item.name,
     weight: item.weight,
     unit: item.unit,
-    qtyLabel: packLabel(item),
+    qtyLabel: formatPackLine(item.qty, item.weight),
     price: item.price,
     qty: item.qty,
-    total: item.price * item.qty,
+    total: lineTotal(item.price, item.qty),
   }))
 
   return {
     customer,
     delivery,
-    payment: { online: false, method: payment, status: 'pending' },
+    payment: { online: false, method: DEFAULT_PAYMENT_METHOD, status: 'pending' },
     items: lines,
     totals: {
       itemsCount: cartCount(items),

@@ -8,14 +8,22 @@ import { useCart } from '@/components/CartProvider'
 import { validateName, validatePhone } from '@/lib/quiz'
 import { PhoneInput } from '@/components/PhoneInput'
 import { PHONE_INITIAL } from '@/lib/phone'
-import { formatPrice, formatUnitPrice, packLabel, type DeliveryMethod, type PaymentMethod } from '@/lib/cart'
+import {
+  formatPackLine,
+  formatPrice,
+  lineTotal,
+  type DeliveryMethod,
+} from '@/lib/cart'
 import { buildOrderPayloadFromCheckout, submitOrder } from '@/lib/orderSubmit'
 import {
   DELIVERY_OPTIONS,
+  OUTSIDE_KAD_PER_KM,
   calculateOrderTotal,
   getDeliveryPrice,
+  getDeliverySummaryLabel,
   isCourier,
-  STARTER_DISCOUNT_NOTE,
+  isOutsideKad,
+  DISCOUNT_NOTE,
 } from '@/src/lib/pricing'
 import { getPickupMapsLink } from '@/src/lib/availability'
 
@@ -27,7 +35,6 @@ interface FormState {
   address: string
   comment: string
   delivery: DeliveryMethod
-  payment: PaymentMethod
   website: string
 }
 
@@ -39,7 +46,6 @@ const INITIAL: FormState = {
   address: '',
   comment: '',
   delivery: 'courier_kad',
-  payment: 'cash_on_delivery',
   website: '',
 }
 
@@ -81,7 +87,6 @@ export default function CheckoutPage() {
         address: form.address,
       },
       form.delivery,
-      form.payment,
     )
 
     setSubmitting(true)
@@ -105,10 +110,7 @@ export default function CheckoutPage() {
           <section className="section">
             <div className="container checkout-done">
               <h1>Заявка отправлена</h1>
-              <p>
-                Заявка отправлена. Менеджер свяжется с вами для подтверждения состава
-                заказа, доставки и способа оплаты.
-              </p>
+              <p>После оформления менеджер свяжется с вами для подтверждения заказа.</p>
               <Link href="/catalog" className="btn btn-primary">Вернуться в каталог</Link>
             </div>
           </section>
@@ -121,7 +123,9 @@ export default function CheckoutPage() {
   const totals = calculateOrderTotal({
     subtotal,
     deliveryPrice: getDeliveryPrice(form.delivery),
+    deliveryMethod: form.delivery,
   })
+  const outside = isOutsideKad(form.delivery)
 
   return (
     <>
@@ -173,7 +177,7 @@ export default function CheckoutPage() {
                   </fieldset>
 
                   <fieldset className="checkout__block">
-                    <legend>Доставка</legend>
+                    <legend>Способ получения</legend>
                     <div className="checkout__options">
                       {DELIVERY_OPTIONS.map((opt) => (
                         <label
@@ -188,11 +192,22 @@ export default function CheckoutPage() {
                           />
                           <span>
                             <strong>{opt.label}</strong>
-                            <small>{opt.hint} · {opt.price === 0 ? 'бесплатно' : formatPrice(opt.price)}</small>
+                            <small>
+                              {opt.method === 'pickup' && 'Бесплатно'}
+                              {opt.method === 'courier_kad' && `${formatPrice(opt.price)}`}
+                              {opt.method === 'courier_outside_kad' &&
+                                `${formatPrice(opt.price)} + ${OUTSIDE_KAD_PER_KM} ₽/км`}
+                            </small>
                           </span>
                         </label>
                       ))}
                     </div>
+                    {form.delivery === 'courier_outside_kad' && (
+                      <p className="checkout__hint">
+                        Доставка за КАД — 250 ₽ + 25 ₽/км.
+                        Точную стоимость подтвердит менеджер после проверки адреса.
+                      </p>
+                    )}
                     {isCourier(form.delivery) && (
                       <>
                         <div className="form-group">
@@ -206,25 +221,14 @@ export default function CheckoutPage() {
                         </div>
                       </>
                     )}
-                  </fieldset>
-
-                  <fieldset className="checkout__block">
-                    <legend>Оплата</legend>
-                    <div className="checkout__options">
-                      <label className={`checkout__option${form.payment === 'cash_on_delivery' ? ' selected' : ''}`}>
-                        <input type="radio" name="payment" checked={form.payment === 'cash_on_delivery'} onChange={() => update('payment', 'cash_on_delivery')} />
-                        <span><strong>Наличными при получении</strong></span>
-                      </label>
-                      <label className={`checkout__option${form.payment === 'bank_transfer_on_delivery' ? ' selected' : ''}`}>
-                        <input type="radio" name="payment" checked={form.payment === 'bank_transfer_on_delivery'} onChange={() => update('payment', 'bank_transfer_on_delivery')} />
-                        <span><strong>Переводом на карту при получении</strong></span>
-                      </label>
-                    </div>
-                    <p className="checkout__hint">
-                      Онлайн-оплаты на сайте пока нет. После оформления заказа менеджер
-                      свяжется с вами для подтверждения состава заказа, доставки и способа
-                      оплаты.
-                    </p>
+                    {form.delivery === 'pickup' && (
+                      <p className="checkout__discount-note">
+                        Самовывоз:{' '}
+                        <a href={getPickupMapsLink()} target="_blank" rel="noopener noreferrer">
+                          точка на карте
+                        </a>
+                      </p>
+                    )}
                   </fieldset>
 
                   <div className="form-group">
@@ -240,8 +244,11 @@ export default function CheckoutPage() {
                   <ul className="checkout__items">
                     {items.map((item) => (
                       <li key={item.id}>
-                        <span>{item.name} · {packLabel(item)} · {formatUnitPrice(item.price, item.weight)}</span>
-                        <strong>{formatPrice(item.price * item.qty)}</strong>
+                        <span>
+                          <strong className="checkout__item-name">{item.name}</strong>
+                          <small>{formatPackLine(item.qty, item.weight)}</small>
+                        </span>
+                        <strong>{formatPrice(lineTotal(item.price, item.qty))}</strong>
                       </li>
                     ))}
                   </ul>
@@ -253,39 +260,43 @@ export default function CheckoutPage() {
                     {totals.discountPercent > 0 && (
                       <>
                         <div className="checkout__summary-row checkout__summary-row--discount">
-                          <span>Скидка первым клиентам {totals.discountPercent}%</span>
+                          <span>Скидка {totals.discountPercent}%</span>
                           <span>−{formatPrice(totals.discountAmount)}</span>
                         </div>
                         <div className="checkout__summary-row">
-                          <span>Итого товары со скидкой</span>
+                          <span>Итого товаров со скидкой</span>
                           <span>{formatPrice(totals.subtotalAfterDiscount)}</span>
                         </div>
                       </>
                     )}
                     <div className="checkout__summary-row">
-                      <span>Доставка</span>
-                      <span>{totals.deliveryPrice === 0 ? 'бесплатно' : formatPrice(totals.deliveryPrice)}</span>
+                      <span>{getDeliverySummaryLabel(form.delivery)}</span>
+                      <span>
+                        {totals.deliveryPrice === 0
+                          ? 'бесплатно'
+                          : formatPrice(totals.deliveryPrice)}
+                      </span>
                     </div>
-                  </div>
-                  {form.delivery === 'pickup' && (
-                    <p className="checkout__discount-note">
-                      Самовывоз:{' '}
-                      <a href={getPickupMapsLink()} target="_blank" rel="noopener noreferrer">
-                        точка на карте
-                      </a>
-                    </p>
-                  )}
-                  <div className="checkout__total">
-                    <span>Итого к оплате</span>
-                    <strong>{formatPrice(totals.total)}</strong>
+                    {outside && (
+                      <div className="checkout__summary-row checkout__summary-row--muted">
+                        <span>Доплата за километры</span>
+                        <span>уточняется</span>
+                      </div>
+                    )}
                   </div>
                   {totals.discountPercent > 0 && (
-                    <p className="checkout__discount-note">{STARTER_DISCOUNT_NOTE}</p>
+                    <p className="checkout__discount-note">{DISCOUNT_NOTE}</p>
                   )}
+                  <div className="checkout__total">
+                    <span>{outside ? 'Предварительная сумма' : 'Итого к оплате'}</span>
+                    <strong>{formatPrice(totals.total)}</strong>
+                  </div>
                   <button type="submit" className="btn btn-primary btn-wide" disabled={submitting}>
                     {submitting ? 'Отправляем…' : 'Оформить заказ'}
                   </button>
-                  <p className="cart__note">Нажимая кнопку, вы оставляете заявку. Менеджер свяжется для подтверждения.</p>
+                  <p className="cart__note">
+                    После оформления менеджер свяжется с вами для подтверждения заказа.
+                  </p>
                 </aside>
               </form>
             )}

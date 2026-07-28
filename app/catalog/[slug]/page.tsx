@@ -11,6 +11,7 @@ import {
   getActiveProducts,
   getProductBySlug,
   getRelatedProducts,
+  isPublicProduct,
 } from '@/src/lib/products'
 
 export const dynamicParams = false
@@ -43,7 +44,7 @@ export default async function ProductPage({
 }) {
   const { slug } = await params
   const product = getProductBySlug(slug)
-  if (!product) notFound()
+  if (!product || !isPublicProduct(product)) notFound()
 
   const related = getRelatedProducts(product)
 
