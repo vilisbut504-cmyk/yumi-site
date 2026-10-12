@@ -123,9 +123,7 @@ function buildDeliveryNoteLines(
       regionLine,
       'Способ получения: Самовывоз',
       `Точка: ${opt?.pickupPoint ?? '«Сытый шарик», деревня Яковлева'}`,
-      opt?.priceConfirmed
-        ? `Стоимость самовывоза: ${formatMoney(totals.delivery)}`
-        : 'Стоимость самовывоза: уточнить менеджеру',
+      `Стоимость: ${formatMoney(0)}`,
     ]
   }
 

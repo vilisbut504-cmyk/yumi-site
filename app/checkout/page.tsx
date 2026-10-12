@@ -272,8 +272,7 @@ export default function CheckoutPage() {
                     )}
                     {form.delivery === 'moscow_pickup_yakovleva' && (
                       <p className="checkout__hint">
-                        Самовывоз — «Сытый шарик», деревня Яковлева.
-                        Стоимость самовывоза уточнит менеджер.
+                        Самовывоз — «Сытый шарик», деревня Яковлева. Бесплатно.
                       </p>
                     )}
                     {isCourier(form.delivery) && (

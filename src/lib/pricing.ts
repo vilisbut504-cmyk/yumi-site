@@ -39,12 +39,8 @@ export const DELIVERY_REGIONS: {
   { id: 'moscow', label: 'Москва и Московская область' },
 ]
 
-/**
- * Стоимость самовывоза в Москве («Сытый шарик», деревня Яковлева).
- * Пока не подтверждена — не показывать клиенту как 0 ₽ / бесплатно.
- * После подтверждения заменить на число и priceConfirmed: true.
- */
-export const MOSCOW_PICKUP_YAKOVLEVA_PRICE: number | null = null
+/** Самовывоз в Москве («Сытый шарик», деревня Яковлева) — бесплатно. */
+export const MOSCOW_PICKUP_YAKOVLEVA_PRICE = 0
 
 export const DELIVERY_OPTIONS: DeliveryOption[] = [
   {
@@ -97,9 +93,9 @@ export const DELIVERY_OPTIONS: DeliveryOption[] = [
     method: 'moscow_pickup_yakovleva',
     region: 'moscow',
     label: 'Самовывоз — «Сытый шарик»',
-    hint: 'деревня Яковлева. Стоимость самовывоза уточнит менеджер.',
-    price: MOSCOW_PICKUP_YAKOVLEVA_PRICE ?? 0,
-    priceConfirmed: MOSCOW_PICKUP_YAKOVLEVA_PRICE != null,
+    hint: 'деревня Яковлева',
+    price: MOSCOW_PICKUP_YAKOVLEVA_PRICE,
+    priceConfirmed: true,
     zoneLabel: 'Самовывоз',
     pickupPoint: '«Сытый шарик», деревня Яковлева',
   },
