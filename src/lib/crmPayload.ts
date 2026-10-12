@@ -7,11 +7,16 @@ import type {
   DeliveryMethod,
 } from './orderPayload'
 import {
+  ALL_DELIVERY_METHODS,
   calculateOrderTotal,
+  getDeliveryOption,
   getDeliveryPrice,
   getDeliverySummaryLabel,
+  getRegionForMethod,
+  getRegionLabel,
   isCourier,
   isOutsideKad,
+  isPickup,
   OUTSIDE_KAD_PER_KM,
 } from './pricing'
 
@@ -64,7 +69,16 @@ function buildSpeakToClientBlock(
   total: number,
 ): string[] {
   const money = formatMoney(total)
-  if (method === 'pickup') {
+  if (isPickup(method)) {
+    const opt = getDeliveryOption(method)
+    if (opt && !opt.priceConfirmed) {
+      return [
+        'К ОЗВУЧИВАНИЮ КЛИЕНТУ:',
+        `Базовая сумма за товары: ${money}.`,
+        'Стоимость самовывоза уточнить и озвучить клиенту отдельно.',
+        'После подтверждения озвучить клиенту окончательную сумму наличными.',
+      ]
+    }
     return [
       'К ОЗВУЧИВАНИЮ КЛИЕНТУ:',
       `Просим вас подготовить наличными ${money} при получении заказа.`,
@@ -91,24 +105,58 @@ function buildDeliveryNoteLines(
   totals: OrderPayload['totals'],
   address: string,
 ): string[] {
+  const region = getRegionForMethod(method)
+  const regionLine = `Регион: ${getRegionLabel(region)}`
+  const opt = getDeliveryOption(method)
+
   if (method === 'pickup') {
     return [
-      `Доставка: ${getDeliverySummaryLabel(method)}`,
+      regionLine,
+      'Способ получения: Самовывоз',
+      `Точка: ${opt?.pickupPoint ?? 'Санкт-Петербург, по согласованию'}`,
       `Стоимость доставки: ${formatMoney(0)}`,
     ]
   }
+
+  if (method === 'moscow_pickup_yakovleva') {
+    return [
+      regionLine,
+      'Способ получения: Самовывоз',
+      `Точка: ${opt?.pickupPoint ?? '«Сытый шарик», деревня Яковлева'}`,
+      opt?.priceConfirmed
+        ? `Стоимость самовывоза: ${formatMoney(totals.delivery)}`
+        : 'Стоимость самовывоза: уточнить менеджеру',
+    ]
+  }
+
   if (isOutsideKad(method)) {
     return [
-      'Доставка: за пределами КАД',
+      regionLine,
+      'Способ получения: Доставка',
+      'Зона: за пределами КАД',
       `Базовая стоимость: ${formatMoney(totals.delivery)}`,
       `Доплата: ${OUTSIDE_KAD_PER_KM} ₽/км за пределами КАД`,
       'Точный километраж и окончательную сумму уточнить менеджеру',
       `Адрес клиента: ${line(address)}`,
     ]
   }
+
+  if (method === 'moscow_odintsovo' || method === 'moscow_krasnogorsk') {
+    return [
+      regionLine,
+      'Способ получения: Доставка',
+      `Зона: ${opt?.zoneLabel ?? getDeliverySummaryLabel(method)}`,
+      `Стоимость доставки: ${formatMoney(totals.delivery)}`,
+      `Адрес клиента: ${line(address)}`,
+    ]
+  }
+
   return [
-    `Доставка: ${getDeliverySummaryLabel(method)}`,
+    regionLine,
+    'Способ получения: Доставка',
+    `Зона: ${opt?.zoneLabel ?? getDeliverySummaryLabel(method)}`,
     `Стоимость доставки: ${formatMoney(totals.delivery)}`,
+    `Адрес клиента: ${line(address)}`,
   ]
 }
 
@@ -116,7 +164,9 @@ export function buildLeadNote(payload: OrderPayload): string {
   const { customer, delivery, items, totals, utm, page, source } = payload
   const phone = normalizePhone(customer.phone)
   const deliveryAddr =
-    delivery.address || customer.address || (delivery.method === 'pickup' ? 'Самовывоз' : '—')
+    delivery.address ||
+    customer.address ||
+    (isPickup(delivery.method) ? 'Самовывоз' : '—')
 
   const itemBlocks =
     items.length > 0
@@ -140,6 +190,7 @@ export function buildLeadNote(payload: OrderPayload): string {
         ]
       : ['Скидка: 0%']
 
+  const opt = getDeliveryOption(delivery.method)
   const totalsBlock = isOutsideKad(delivery.method)
     ? [
         `Стоимость товаров: ${formatMoney(totals.subtotal)}`,
@@ -148,12 +199,19 @@ export function buildLeadNote(payload: OrderPayload): string {
         `Доплата: ${OUTSIDE_KAD_PER_KM} ₽/км`,
         `Предварительная сумма: ${formatMoney(totals.total)}`,
       ]
-    : [
-        `Стоимость товаров: ${formatMoney(totals.subtotal)}`,
-        ...discountLines,
-        `${getDeliverySummaryLabel(delivery.method)}: ${formatMoney(totals.delivery)}`,
-        `Итого к оплате: ${formatMoney(totals.total)}`,
-      ]
+    : opt && !opt.priceConfirmed
+      ? [
+          `Стоимость товаров: ${formatMoney(totals.subtotal)}`,
+          ...discountLines,
+          `${getDeliverySummaryLabel(delivery.method)}: уточняется`,
+          `Предварительная сумма (без самовывоза): ${formatMoney(totals.total)}`,
+        ]
+      : [
+          `Стоимость товаров: ${formatMoney(totals.subtotal)}`,
+          ...discountLines,
+          `${getDeliverySummaryLabel(delivery.method)}: ${formatMoney(totals.delivery)}`,
+          `Итого к оплате: ${formatMoney(totals.total)}`,
+        ]
 
   return [
     'ЗАКАЗ YUMI',
@@ -194,14 +252,12 @@ export function buildLeadNote(payload: OrderPayload): string {
   ].join('\n')
 }
 
-const VALID_DELIVERY: DeliveryMethod[] = ['pickup', 'courier_kad', 'courier_outside_kad']
-
 export function sanitizeOrderPayload(raw: unknown): OrderPayload | null {
   if (!raw || typeof raw !== 'object') return null
   const p = raw as Partial<OrderPayload>
   if (!p.customer || !p.delivery || !p.totals || !p.page) return null
 
-  const deliveryMethod: DeliveryMethod = VALID_DELIVERY.includes(
+  const deliveryMethod: DeliveryMethod = ALL_DELIVERY_METHODS.includes(
     p.delivery.method as DeliveryMethod,
   )
     ? (p.delivery.method as DeliveryMethod)
@@ -211,7 +267,7 @@ export function sanitizeOrderPayload(raw: unknown): OrderPayload | null {
     ? (p.items.map((item) => sanitizeItem(item)).filter(Boolean) as OrderItem[])
     : []
 
-  // Итоги ВСЕГДА пересчитываем на сервере.
+  // Итоги ВСЕГДА пересчитываем на сервере из method → getDeliveryPrice.
   const subtotalK = items.reduce(
     (sum, i) => sum + Math.round(i.price * 100) * i.quantity,
     0,

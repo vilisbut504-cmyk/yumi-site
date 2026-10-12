@@ -2,46 +2,142 @@
 // Используется в корзине, на checkout и в серверном API,
 // чтобы суммы нигде не расходились.
 
-export type DeliveryMethod = 'pickup' | 'courier_kad' | 'courier_outside_kad'
+export type DeliveryRegion = 'spb' | 'moscow'
+
+/** СПб-методы сохранены для совместимости payload. */
+export type DeliveryMethod =
+  | 'pickup'
+  | 'courier_kad'
+  | 'courier_outside_kad'
+  | 'moscow_odintsovo'
+  | 'moscow_krasnogorsk'
+  | 'moscow_pickup_yakovleva'
 
 export interface DeliveryOption {
   method: DeliveryMethod
+  region: DeliveryRegion
   label: string
   hint: string
   /** Базовая цена на сайте (₽). Для за КАД — только база, без км. */
   price: number
+  /**
+   * false — цена не подтверждена, пользователю не показывать «бесплатно» / ложную сумму.
+   * Расчёт totals использует price (обычно 0) до подтверждения.
+   */
+  priceConfirmed: boolean
+  /** Краткая зона для итогов и CRM */
+  zoneLabel?: string
+  /** Точка самовывоза (если есть) */
+  pickupPoint?: string
 }
+
+export const DELIVERY_REGIONS: {
+  id: DeliveryRegion
+  label: string
+}[] = [
+  { id: 'spb', label: 'Санкт-Петербург' },
+  { id: 'moscow', label: 'Москва и Московская область' },
+]
+
+/**
+ * Стоимость самовывоза в Москве («Сытый шарик», деревня Яковлева).
+ * Пока не подтверждена — не показывать клиенту как 0 ₽ / бесплатно.
+ * После подтверждения заменить на число и priceConfirmed: true.
+ */
+export const MOSCOW_PICKUP_YAKOVLEVA_PRICE: number | null = null
 
 export const DELIVERY_OPTIONS: DeliveryOption[] = [
   {
     method: 'pickup',
+    region: 'spb',
     label: 'Самовывоз',
     hint: 'Санкт-Петербург, по согласованию',
     price: 0,
+    priceConfirmed: true,
+    zoneLabel: 'Самовывоз',
+    pickupPoint: 'Санкт-Петербург, по согласованию',
   },
   {
     method: 'courier_kad',
+    region: 'spb',
     label: 'Доставка внутри КАД',
     hint: 'Санкт-Петербург в пределах КАД',
     price: 250,
+    priceConfirmed: true,
+    zoneLabel: 'Внутри КАД',
   },
   {
     method: 'courier_outside_kad',
+    region: 'spb',
     label: 'Доставка за КАД',
     hint: '250 ₽ + 25 ₽/км за пределами КАД. Точную стоимость подтвердит менеджер после проверки адреса.',
     price: 250,
+    priceConfirmed: true,
+    zoneLabel: 'За КАД',
+  },
+  {
+    method: 'moscow_odintsovo',
+    region: 'moscow',
+    label: 'Доставка — Одинцовский район',
+    hint: 'Москва и Московская область',
+    price: 400,
+    priceConfirmed: true,
+    zoneLabel: 'Одинцовский район',
+  },
+  {
+    method: 'moscow_krasnogorsk',
+    region: 'moscow',
+    label: 'Доставка — Красногорск',
+    hint: 'Москва и Московская область',
+    price: 400,
+    priceConfirmed: true,
+    zoneLabel: 'Красногорск',
+  },
+  {
+    method: 'moscow_pickup_yakovleva',
+    region: 'moscow',
+    label: 'Самовывоз — «Сытый шарик»',
+    hint: 'деревня Яковлева. Стоимость самовывоза уточнит менеджер.',
+    price: MOSCOW_PICKUP_YAKOVLEVA_PRICE ?? 0,
+    priceConfirmed: MOSCOW_PICKUP_YAKOVLEVA_PRICE != null,
+    zoneLabel: 'Самовывоз',
+    pickupPoint: '«Сытый шарик», деревня Яковлева',
   },
 ]
 
 /** Доплата за каждый км за пределами КАД (₽). Сайт не считает км — только информирует. */
 export const OUTSIDE_KAD_PER_KM = 25
 
+export const ALL_DELIVERY_METHODS: DeliveryMethod[] = DELIVERY_OPTIONS.map(
+  (o) => o.method,
+)
+
+export function getDeliveryOption(method: DeliveryMethod): DeliveryOption | undefined {
+  return DELIVERY_OPTIONS.find((o) => o.method === method)
+}
+
+export function getDeliveryOptionsForRegion(region: DeliveryRegion): DeliveryOption[] {
+  return DELIVERY_OPTIONS.filter((o) => o.region === region)
+}
+
+export function getRegionForMethod(method: DeliveryMethod): DeliveryRegion {
+  return getDeliveryOption(method)?.region ?? 'spb'
+}
+
+export function getDefaultMethodForRegion(region: DeliveryRegion): DeliveryMethod {
+  return region === 'moscow' ? 'moscow_odintsovo' : 'courier_kad'
+}
+
+export function getRegionLabel(region: DeliveryRegion): string {
+  return DELIVERY_REGIONS.find((r) => r.id === region)?.label ?? region
+}
+
 export function getDeliveryPrice(method: DeliveryMethod): number {
-  return DELIVERY_OPTIONS.find((o) => o.method === method)?.price ?? 0
+  return getDeliveryOption(method)?.price ?? 0
 }
 
 export function getDeliveryLabel(method: DeliveryMethod): string {
-  return DELIVERY_OPTIONS.find((o) => o.method === method)?.label ?? 'Доставка'
+  return getDeliveryOption(method)?.label ?? 'Доставка'
 }
 
 export function getDeliverySummaryLabel(method: DeliveryMethod): string {
@@ -52,22 +148,49 @@ export function getDeliverySummaryLabel(method: DeliveryMethod): string {
       return 'Доставка внутри КАД'
     case 'courier_outside_kad':
       return 'Базовая доставка за КАД'
+    case 'moscow_odintsovo':
+      return 'Доставка — Одинцовский район'
+    case 'moscow_krasnogorsk':
+      return 'Доставка — Красногорск'
+    case 'moscow_pickup_yakovleva':
+      return 'Самовывоз — «Сытый шарик»'
     default:
       return 'Доставка'
   }
 }
 
+/** Нужен ли адрес доставки (не самовывоз). */
 export function isCourier(method: DeliveryMethod): boolean {
-  return method === 'courier_kad' || method === 'courier_outside_kad'
+  return (
+    method === 'courier_kad' ||
+    method === 'courier_outside_kad' ||
+    method === 'moscow_odintsovo' ||
+    method === 'moscow_krasnogorsk'
+  )
+}
+
+export function isPickup(method: DeliveryMethod): boolean {
+  return method === 'pickup' || method === 'moscow_pickup_yakovleva'
 }
 
 export function isOutsideKad(method: DeliveryMethod): boolean {
   return method === 'courier_outside_kad'
 }
 
-/** Итог за КАД предварительный — километраж уточняет менеджер. */
+/** Итог предварительный — километраж или цена самовывоза уточняет менеджер. */
 export function isDeliveryEstimate(method: DeliveryMethod): boolean {
-  return method === 'courier_outside_kad'
+  if (method === 'courier_outside_kad') return true
+  const opt = getDeliveryOption(method)
+  return Boolean(opt && !opt.priceConfirmed)
+}
+
+export function formatDeliveryOptionPrice(opt: DeliveryOption): string {
+  if (!opt.priceConfirmed) return 'стоимость уточнит менеджер'
+  if (opt.price === 0) return 'Бесплатно'
+  if (opt.method === 'courier_outside_kad') {
+    return `${opt.price.toLocaleString('ru-RU')} ₽ + ${OUTSIDE_KAD_PER_KM} ₽/км`
+  }
+  return `${opt.price.toLocaleString('ru-RU')} ₽`
 }
 
 // Скидка от суммы товаров (без доставки). Пороги не менять без отдельной задачи.
@@ -118,7 +241,7 @@ export interface OrderTotalBreakdown {
   subtotalAfterDiscount: number
   deliveryPrice: number
   total: number
-  /** true — сумма предварительная (за КАД, без км) */
+  /** true — сумма предварительная (за КАД / неутверждённый самовывоз) */
   isEstimate: boolean
 }
 
