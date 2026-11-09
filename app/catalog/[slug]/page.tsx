@@ -8,8 +8,10 @@ import { ProductCard } from '@/components/ProductCard'
 import { ProductDetailActions } from '@/components/ProductDetailActions'
 import { formatUnitPrice } from '@/lib/cart'
 import {
+  formatProductFormatLabel,
   getActiveProducts,
   getProductBySlug,
+  getProductDisplayName,
   getRelatedProducts,
   isPublicProduct,
 } from '@/src/lib/products'
@@ -28,8 +30,9 @@ export async function generateMetadata({
   const { slug } = await params
   const product = getProductBySlug(slug)
   if (!product) return { title: 'Товар не найден — ЮМИ' }
+  const displayName = getProductDisplayName(product)
   return {
-    title: `${product.name} — ЮМИ`,
+    title: `${displayName} — ЮМИ`,
     description: product.shortDescription,
   }
 }
@@ -47,6 +50,8 @@ export default async function ProductPage({
   if (!product || !isPublicProduct(product)) notFound()
 
   const related = getRelatedProducts(product)
+  const displayName = getProductDisplayName(product)
+  const formatLabel = formatProductFormatLabel(product.format)
 
   return (
     <>
@@ -58,19 +63,19 @@ export default async function ProductPage({
             <span>/</span>
             <Link href="/catalog">Каталог</Link>
             <span>/</span>
-            <span>{product.name}</span>
+            <span>{displayName}</span>
           </nav>
         </div>
 
         <section className="section pdp-section">
           <div className="container pdp">
             <div className="pdp__media">
-              <ProductImage imagePaths={product.imagePaths} alt={product.name} className="pdp__image" />
+              <ProductImage imagePaths={product.imagePaths} alt={displayName} className="pdp__image" />
             </div>
 
             <div className="pdp__info">
               <p className="eyebrow">{product.category}</p>
-              <h1 className="pdp__title">{product.name}</h1>
+              <h1 className="pdp__title">{displayName}</h1>
 
               <div className="pdp__price">
                 <span className="pdp__price-now">{formatUnitPrice(product.price, product.weight)}</span>
@@ -83,8 +88,8 @@ export default async function ProductPage({
               <ul className="pdp__specs">
                 <li><span>Категория</span><strong>{product.category}</strong></li>
                 <li><span>Белок</span><strong>{product.protein}</strong></li>
-                {product.format ? (
-                  <li><span>Формат</span><strong>{product.format}</strong></li>
+                {formatLabel ? (
+                  <li><span>Формат</span><strong>{formatLabel}</strong></li>
                 ) : null}
                 <li><span>Текстура</span><strong>{product.texture}</strong></li>
                 <li><span>Твёрдость</span><strong>{product.hardness}</strong></li>

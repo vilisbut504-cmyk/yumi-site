@@ -79,4 +79,39 @@ export function getRelatedProducts(product: Product, limit = 4): Product[] {
   return combined
 }
 
+/**
+ * Человекочитаемый формат размера для UI.
+ * Внутренние ключи фильтров (product.format) не меняются.
+ */
+export function formatProductFormatLabel(format: string): string {
+  const raw = format?.trim()
+  if (!raw) return ''
+
+  let label = raw
+    .replace(/[xх]/gi, '×')
+    .replace(/\s*×\s*/g, ' × ')
+    .replace(/\s*-\s*/g, '–')
+    .replace(/\s*–\s*/g, '–')
+
+  if (/см/i.test(label)) return label
+  if (/^\d+[.,]?\d*\s*×\s*\d+[.,]?\d*$/.test(label)) return `${label} см`
+  if (/^\d+\s*–\s*\d+$/.test(label)) return `${label} см`
+  return label
+}
+
+/** Отображаемое название с размером, если он есть в данных и ещё не в имени. */
+export function getProductDisplayName(product: Product): string {
+  const formatLabel = formatProductFormatLabel(product.format)
+  if (!formatLabel) return product.name
+
+  const nameNorm = product.name.toLowerCase().replace(/\s+/g, '')
+  const formatNorm = formatLabel
+    .toLowerCase()
+    .replace(/\s+/g, '')
+    .replace(/см$/i, '')
+  if (nameNorm.includes(formatNorm)) return product.name
+
+  return `${product.name} ${formatLabel}`
+}
+
 export type { Product, ProductAvailability, ProductUnit }

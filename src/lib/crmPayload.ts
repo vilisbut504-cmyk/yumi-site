@@ -7,7 +7,6 @@ import type {
   DeliveryMethod,
 } from './orderPayload'
 import {
-  ALL_DELIVERY_METHODS,
   calculateOrderTotal,
   getDeliveryOption,
   getDeliveryPrice,
@@ -15,6 +14,8 @@ import {
   getRegionForMethod,
   getRegionLabel,
   isCourier,
+  isDeliveryMethodEnabled,
+  isKnownDeliveryMethod,
   isOutsideKad,
   isPickup,
   OUTSIDE_KAD_PER_KM,
@@ -40,6 +41,9 @@ export function validateOrderPayload(payload: OrderPayload): string | null {
     return 'Укажите корректный телефон'
   }
   if (payload.source === 'checkout') {
+    if (!isDeliveryMethodEnabled(payload.delivery.method)) {
+      return 'Выбранный способ получения недоступен. Сейчас принимаем заказы только по Санкт-Петербургу.'
+    }
     if (!payload.items.length) return 'Корзина пуста'
     if (payload.totals.total <= 0) return 'Сумма заказа должна быть больше 0'
     if (isCourier(payload.delivery.method)) {
@@ -255,17 +259,19 @@ export function sanitizeOrderPayload(raw: unknown): OrderPayload | null {
   const p = raw as Partial<OrderPayload>
   if (!p.customer || !p.delivery || !p.totals || !p.page) return null
 
-  const deliveryMethod: DeliveryMethod = ALL_DELIVERY_METHODS.includes(
-    p.delivery.method as DeliveryMethod,
-  )
-    ? (p.delivery.method as DeliveryMethod)
-    : 'pickup'
+  const methodRaw = p.delivery.method
+  if (typeof methodRaw !== 'string' || !isKnownDeliveryMethod(methodRaw)) {
+    return null
+  }
+  const deliveryMethod: DeliveryMethod = methodRaw
 
   const items = Array.isArray(p.items)
     ? (p.items.map((item) => sanitizeItem(item)).filter(Boolean) as OrderItem[])
     : []
 
   // Итоги ВСЕГДА пересчитываем на сервере из method → getDeliveryPrice.
+  // Отключённые (московские) методы не подменяем на СПб и не обнуляем тариф —
+  // validateOrderPayload отклонит заказ до CRM.
   const subtotalK = items.reduce(
     (sum, i) => sum + Math.round(i.price * 100) * i.quantity,
     0,

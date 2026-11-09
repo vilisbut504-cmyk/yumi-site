@@ -2,7 +2,11 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { ProductCard } from '@/components/ProductCard'
-import type { Product } from '@/src/lib/products'
+import { formatPrice } from '@/lib/cart'
+import {
+  formatProductFormatLabel,
+  type Product,
+} from '@/src/lib/products'
 
 type SortKey = 'popular' | 'price-asc' | 'price-desc'
 
@@ -169,11 +173,21 @@ export function CatalogClient({ products }: { products: Product[] }) {
         <ChipGroup label="Назначение" group="purposes" options={options.purposes} selected={selected.purposes} onToggle={toggle} />
         <ChipGroup label="Размер собаки" group="dogSizes" options={options.dogSizes} selected={selected.dogSizes} onToggle={toggle} />
         <ChipGroup label="Жёсткость" group="hardness" options={options.hardness} selected={selected.hardness} onToggle={toggle} />
-        <ChipGroup label="Формат" group="format" options={options.format} selected={selected.format} onToggle={toggle} />
+        <ChipGroup
+          label="Формат"
+          group="format"
+          options={options.format}
+          selected={selected.format}
+          onToggle={toggle}
+          formatLabel={formatProductFormatLabel}
+        />
 
         <div className="catalog__filter">
           <span className="form-label">
-            Цена, ₽ {priceBounds.max ? `(${priceBounds.min}–${priceBounds.max})` : ''}
+            Цена, ₽{' '}
+            {priceBounds.max
+              ? `(${formatPrice(priceBounds.min).replace(/\s*₽$/, '')}–${formatPrice(priceBounds.max)})`
+              : ''}
           </span>
           <div className="catalog__price">
             <input
@@ -244,12 +258,14 @@ function ChipGroup({
   options,
   selected,
   onToggle,
+  formatLabel,
 }: {
   label: string
   group: Group
   options: string[]
   selected: string[]
   onToggle: (group: Group, value: string) => void
+  formatLabel?: (value: string) => string
 }) {
   if (options.length === 0) return null
   return (
@@ -264,7 +280,7 @@ function ChipGroup({
             aria-pressed={selected.includes(opt)}
             onClick={() => onToggle(group, opt)}
           >
-            {opt}
+            {formatLabel ? formatLabel(opt) : opt}
           </button>
         ))}
       </div>

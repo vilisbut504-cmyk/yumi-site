@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { useCart } from '@/components/CartProvider'
@@ -16,18 +16,16 @@ import {
 } from '@/lib/cart'
 import { buildOrderPayloadFromCheckout, submitOrder } from '@/lib/orderSubmit'
 import {
-  DELIVERY_REGIONS,
   calculateOrderTotal,
   formatDeliveryOptionPrice,
   getDefaultMethodForRegion,
   getDeliveryOption,
-  getDeliveryOptionsForRegion,
   getDeliveryPrice,
   getDeliverySummaryLabel,
-  getRegionForMethod,
+  getEnabledDeliveryOptions,
   isCourier,
+  isDeliveryMethodEnabled,
   isOutsideKad,
-  type DeliveryRegion,
   DISCOUNT_NOTE,
 } from '@/src/lib/pricing'
 import { getPickupMapsLink } from '@/src/lib/availability'
@@ -39,10 +37,11 @@ interface FormState {
   city: string
   address: string
   comment: string
-  region: DeliveryRegion
   delivery: DeliveryMethod
   website: string
 }
+
+const DEFAULT_DELIVERY = getDefaultMethodForRegion('spb')
 
 const INITIAL: FormState = {
   name: '',
@@ -51,13 +50,8 @@ const INITIAL: FormState = {
   city: 'Санкт-Петербург',
   address: '',
   comment: '',
-  region: 'spb',
-  delivery: 'courier_kad',
+  delivery: DEFAULT_DELIVERY,
   website: '',
-}
-
-function defaultCityForRegion(region: DeliveryRegion): string {
-  return region === 'moscow' ? 'Москва' : 'Санкт-Петербург'
 }
 
 export default function CheckoutPage() {
@@ -68,10 +62,19 @@ export default function CheckoutPage() {
   const [submitting, setSubmitting] = useState(false)
   const [done, setDone] = useState(false)
 
-  const regionOptions = useMemo(
-    () => getDeliveryOptionsForRegion(form.region),
-    [form.region],
-  )
+  const deliveryOptions = useMemo(() => getEnabledDeliveryOptions(), [])
+
+  // Сброс устаревшего московского / недоступного способа (без очистки корзины).
+  useEffect(() => {
+    if (!isDeliveryMethodEnabled(form.delivery)) {
+      setForm((prev) => ({
+        ...prev,
+        delivery: DEFAULT_DELIVERY,
+        city: 'Санкт-Петербург',
+        address: '',
+      }))
+    }
+  }, [form.delivery])
 
   const update = (field: keyof FormState, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }))
@@ -79,24 +82,10 @@ export default function CheckoutPage() {
     if (submitError) setSubmitError('')
   }
 
-  const setRegion = (region: DeliveryRegion) => {
-    const nextMethod = getDefaultMethodForRegion(region)
-    setForm((prev) => ({
-      ...prev,
-      region,
-      delivery: nextMethod,
-      city: defaultCityForRegion(region),
-      address: '',
-    }))
-    if (errors.address) setErrors((prev) => ({ ...prev, address: undefined }))
-    if (submitError) setSubmitError('')
-  }
-
   const setDelivery = (method: DeliveryMethod) => {
-    const region = getRegionForMethod(method)
+    if (!isDeliveryMethodEnabled(method)) return
     setForm((prev) => ({
       ...prev,
-      region,
       delivery: method,
     }))
     if (errors.address) setErrors((prev) => ({ ...prev, address: undefined }))
@@ -106,6 +95,14 @@ export default function CheckoutPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (form.website || submitting) return
+
+    if (!isDeliveryMethodEnabled(form.delivery)) {
+      setSubmitError(
+        'Выбранный способ получения недоступен. Выберите доставку по Санкт-Петербургу.',
+      )
+      setForm((prev) => ({ ...prev, delivery: DEFAULT_DELIVERY }))
+      return
+    }
 
     const next: Partial<Record<keyof FormState, string>> = {}
     if (!validateName(form.name)) next.name = 'Введите имя'
@@ -219,31 +216,9 @@ export default function CheckoutPage() {
                   </fieldset>
 
                   <fieldset className="checkout__block">
-                    <legend>Регион</legend>
-                    <div className="checkout__options">
-                      {DELIVERY_REGIONS.map((region) => (
-                        <label
-                          key={region.id}
-                          className={`checkout__option${form.region === region.id ? ' selected' : ''}`}
-                        >
-                          <input
-                            type="radio"
-                            name="region"
-                            checked={form.region === region.id}
-                            onChange={() => setRegion(region.id)}
-                          />
-                          <span>
-                            <strong>{region.label}</strong>
-                          </span>
-                        </label>
-                      ))}
-                    </div>
-                  </fieldset>
-
-                  <fieldset className="checkout__block">
                     <legend>Способ получения</legend>
                     <div className="checkout__options">
-                      {regionOptions.map((opt) => (
+                      {deliveryOptions.map((opt) => (
                         <label
                           key={opt.method}
                           className={`checkout__option${form.delivery === opt.method ? ' selected' : ''}`}
@@ -257,9 +232,6 @@ export default function CheckoutPage() {
                           <span>
                             <strong>{opt.label}</strong>
                             <small>{formatDeliveryOptionPrice(opt)}</small>
-                            {opt.method === 'moscow_pickup_yakovleva' && (
-                              <small>деревня Яковлева</small>
-                            )}
                           </span>
                         </label>
                       ))}
@@ -268,11 +240,6 @@ export default function CheckoutPage() {
                       <p className="checkout__hint">
                         Доставка за КАД — 250 ₽ + 25 ₽/км.
                         Точную стоимость подтвердит менеджер после проверки адреса.
-                      </p>
-                    )}
-                    {form.delivery === 'moscow_pickup_yakovleva' && (
-                      <p className="checkout__hint">
-                        Самовывоз — «Сытый шарик», деревня Яковлева. Бесплатно.
                       </p>
                     )}
                     {isCourier(form.delivery) && (
@@ -337,15 +304,7 @@ export default function CheckoutPage() {
                       </>
                     )}
                     <div className="checkout__summary-row">
-                      <span>
-                        {getDeliverySummaryLabel(form.delivery)}
-                        {form.delivery === 'moscow_pickup_yakovleva' && (
-                          <>
-                            <br />
-                            <small className="checkout__delivery-sub">деревня Яковлева</small>
-                          </>
-                        )}
-                      </span>
+                      <span>{getDeliverySummaryLabel(form.delivery)}</span>
                       <span>
                         {pricePending
                           ? 'уточняется'

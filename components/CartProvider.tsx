@@ -16,22 +16,32 @@ import {
   type CartItem,
 } from '@/lib/cart'
 import type { Product } from '@/src/lib/products'
-import { getProductBySlug, isPublicProduct } from '@/src/lib/products'
+import {
+  getProductBySlug,
+  getProductDisplayName,
+  isPublicProduct,
+} from '@/src/lib/products'
 
 const STORAGE_KEY = 'yumi-cart-v1'
 
 function hydrateCartItems(parsed: CartItem[]): CartItem[] {
   return parsed
     .map((item) => {
-      const product = getProductBySlug(item.slug)
+      if (!item || typeof item !== 'object') return null
+      const slug = typeof item.slug === 'string' ? item.slug : ''
+      if (!slug) return null
+      const product = getProductBySlug(slug)
       if (!product || !isPublicProduct(product)) return null
+      const image = product.imagePaths[0] || item.image || ''
       return {
-        ...item,
-        qty: normalizePackQty(item.qty),
+        id: product.id,
+        slug: product.slug,
+        name: getProductDisplayName(product),
         price: product.price,
-        name: product.name,
         weight: product.weight,
-        image: product.imagePaths[0] ?? item.image,
+        unit: product.unit,
+        image,
+        qty: normalizePackQty(item.qty),
         availability: product.availability ?? item.availability ?? 'preorder',
       }
     })

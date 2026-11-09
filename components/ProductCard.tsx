@@ -6,11 +6,12 @@ import { ProductImage } from '@/components/ProductImage'
 import { useCart } from '@/components/CartProvider'
 import { formatPrice } from '@/lib/cart'
 import { DISCOUNT_BADGE } from '@/src/lib/pricing'
-import type { Product } from '@/src/lib/products'
+import { getProductDisplayName, type Product } from '@/src/lib/products'
 
 export function ProductCard({ product }: { product: Product }) {
   const { addItem } = useCart()
   const [added, setAdded] = useState(false)
+  const displayName = getProductDisplayName(product)
 
   const handleAdd = () => {
     addItem(product, 1)
@@ -20,14 +21,14 @@ export function ProductCard({ product }: { product: Product }) {
 
   return (
     <article className="pcard">
-      <Link href={`/catalog/${product.slug}`} className="pcard__media" aria-label={product.name}>
-        <ProductImage imagePaths={product.imagePaths} alt={product.name} />
+      <Link href={`/catalog/${product.slug}`} className="pcard__media" aria-label={displayName}>
+        <ProductImage imagePaths={product.imagePaths} alt={displayName} />
         <span className="pcard__badge">{DISCOUNT_BADGE}</span>
       </Link>
       <div className="pcard__body">
         <p className="pcard__cat">{product.category}</p>
         <h3 className="pcard__name">
-          <Link href={`/catalog/${product.slug}`}>{product.name}</Link>
+          <Link href={`/catalog/${product.slug}`}>{displayName}</Link>
         </h3>
         <p className="pcard__pack">Фасовка: {product.weight}</p>
         <div className="pcard__footer">

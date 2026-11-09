@@ -1,4 +1,5 @@
 import type { Product, ProductAvailability, ProductUnit } from '@/src/lib/products'
+import { getProductDisplayName } from '@/src/lib/products'
 import type { DeliveryMethod } from '@/src/lib/pricing'
 
 export interface CartItem {
@@ -107,7 +108,7 @@ export function cartItemFromProduct(product: Product, qty = 1): CartItem {
   return {
     id: product.id,
     slug: product.slug,
-    name: product.name,
+    name: getProductDisplayName(product),
     price: product.price,
     weight: product.weight,
     unit: product.unit,

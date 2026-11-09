@@ -4,7 +4,7 @@
 
 export type DeliveryRegion = 'spb' | 'moscow'
 
-/** СПб-методы сохранены для совместимости payload. */
+/** СПб-методы и архивные московские — для совместимости payload / типов. */
 export type DeliveryMethod =
   | 'pickup'
   | 'courier_kad'
@@ -31,6 +31,12 @@ export interface DeliveryOption {
   pickupPoint?: string
 }
 
+/** Единый источник доступных регионов для новых заказов. */
+export const ENABLED_DELIVERY_REGIONS = ['spb'] as const
+
+export type EnabledDeliveryRegion = (typeof ENABLED_DELIVERY_REGIONS)[number]
+
+/** Метаданные регионов (включая временно отключённые). */
 export const DELIVERY_REGIONS: {
   id: DeliveryRegion
   label: string
@@ -39,9 +45,7 @@ export const DELIVERY_REGIONS: {
   { id: 'moscow', label: 'Москва и Московская область' },
 ]
 
-/** Самовывоз в Москве («Сытый шарик», деревня Яковлева) — бесплатно. */
-export const MOSCOW_PICKUP_YAKOVLEVA_PRICE = 0
-
+/** Актуальные СПб-тарифы — единственный публичный список опций. */
 export const DELIVERY_OPTIONS: DeliveryOption[] = [
   {
     method: 'pickup',
@@ -71,6 +75,13 @@ export const DELIVERY_OPTIONS: DeliveryOption[] = [
     priceConfirmed: true,
     zoneLabel: 'За КАД',
   },
+]
+
+/**
+ * Архив московских тарифов — не публикуется в checkout.
+ * Сохранён для возможного возврата региона; новые заказы сервер отклоняет.
+ */
+export const ARCHIVED_MOSCOW_DELIVERY_OPTIONS: DeliveryOption[] = [
   {
     method: 'moscow_odintsovo',
     region: 'moscow',
@@ -94,25 +105,57 @@ export const DELIVERY_OPTIONS: DeliveryOption[] = [
     region: 'moscow',
     label: 'Самовывоз — «Сытый шарик»',
     hint: 'деревня Яковлева',
-    price: MOSCOW_PICKUP_YAKOVLEVA_PRICE,
+    price: 0,
     priceConfirmed: true,
     zoneLabel: 'Самовывоз',
     pickupPoint: '«Сытый шарик», деревня Яковлева',
   },
 ]
 
-/** Доплата за каждый км за пределами КАД (₽). Сайт не считает км — только информирует. */
-export const OUTSIDE_KAD_PER_KM = 25
+const ALL_KNOWN_DELIVERY_OPTIONS: DeliveryOption[] = [
+  ...DELIVERY_OPTIONS,
+  ...ARCHIVED_MOSCOW_DELIVERY_OPTIONS,
+]
 
-export const ALL_DELIVERY_METHODS: DeliveryMethod[] = DELIVERY_OPTIONS.map(
+/** Все известные методы (включая архивные). */
+export const ALL_DELIVERY_METHODS: DeliveryMethod[] = ALL_KNOWN_DELIVERY_OPTIONS.map(
   (o) => o.method,
 )
 
+/** Методы, допустимые для новых заказов. */
+export const ENABLED_DELIVERY_METHODS: DeliveryMethod[] = DELIVERY_OPTIONS.map(
+  (o) => o.method,
+)
+
+/** Доплата за каждый км за пределами КАД (₽). Сайт не считает км — только информирует. */
+export const OUTSIDE_KAD_PER_KM = 25
+
+export function isDeliveryRegionEnabled(region: DeliveryRegion): boolean {
+  return (ENABLED_DELIVERY_REGIONS as readonly string[]).includes(region)
+}
+
+export function isDeliveryMethodEnabled(method: DeliveryMethod): boolean {
+  return ENABLED_DELIVERY_METHODS.includes(method)
+}
+
+export function isKnownDeliveryMethod(value: string): value is DeliveryMethod {
+  return ALL_DELIVERY_METHODS.includes(value as DeliveryMethod)
+}
+
+export function getEnabledDeliveryRegions(): typeof DELIVERY_REGIONS {
+  return DELIVERY_REGIONS.filter((r) => isDeliveryRegionEnabled(r.id))
+}
+
+export function getEnabledDeliveryOptions(): DeliveryOption[] {
+  return DELIVERY_OPTIONS.filter((o) => isDeliveryRegionEnabled(o.region))
+}
+
 export function getDeliveryOption(method: DeliveryMethod): DeliveryOption | undefined {
-  return DELIVERY_OPTIONS.find((o) => o.method === method)
+  return ALL_KNOWN_DELIVERY_OPTIONS.find((o) => o.method === method)
 }
 
 export function getDeliveryOptionsForRegion(region: DeliveryRegion): DeliveryOption[] {
+  if (!isDeliveryRegionEnabled(region)) return []
   return DELIVERY_OPTIONS.filter((o) => o.region === region)
 }
 
@@ -121,7 +164,9 @@ export function getRegionForMethod(method: DeliveryMethod): DeliveryRegion {
 }
 
 export function getDefaultMethodForRegion(region: DeliveryRegion): DeliveryMethod {
-  return region === 'moscow' ? 'moscow_odintsovo' : 'courier_kad'
+  if (!isDeliveryRegionEnabled(region)) return 'courier_kad'
+  const first = getDeliveryOptionsForRegion(region)[0]
+  return first?.method ?? 'courier_kad'
 }
 
 export function getRegionLabel(region: DeliveryRegion): string {
@@ -268,6 +313,7 @@ export function calculateOrderTotal({
 export const DISCOUNT_NOTE =
   'Скидка рассчитывается автоматически от стоимости товаров.'
 
-export const DISCOUNT_BADGE = 'Скидка до 10% в корзине'
+/** Компактный бейдж на карточках каталога. */
+export const DISCOUNT_BADGE = 'до −10%'
 
 export const DISCOUNT_HERO = 'Скидка до 10% от суммы товаров'
