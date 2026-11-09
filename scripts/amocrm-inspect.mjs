@@ -95,10 +95,22 @@ async function main() {
   }
 
   console.log('')
-  console.log('Suggested ENV for Timeweb:')
-  console.log('  AMO_PIPELINE_ID=...')
-  console.log('  AMO_STATUS_NEW_ID=...')
-  console.log('  AMO_RESPONSIBLE_USER_ID=...')
+  console.log('Suggested ENV for Timeweb (проверено read-only по текущему аккаунту):')
+  console.log('  AMO_PIPELINE_ID=11044042')
+  console.log('  AMO_STATUS_NEW_ID=86769378')
+  console.log('  AMO_RESPONSIBLE_USER_ID=13963678')
+  console.log('  NEXT_PUBLIC_CRM_MODE=server')
+  console.log('')
+  console.log('Проверка типов ID в процессе:')
+  for (const key of ['AMO_PIPELINE_ID', 'AMO_STATUS_NEW_ID', 'AMO_RESPONSIBLE_USER_ID']) {
+    const raw = env[key]
+    if (raw == null || String(raw).trim() === '') {
+      console.log(`  ${key}: MISSING`)
+      continue
+    }
+    const n = Number(String(raw).trim())
+    console.log(`  ${key}: present looks_int=${Number.isFinite(n) && n > 0}`)
+  }
 }
 
 main().catch((err) => {

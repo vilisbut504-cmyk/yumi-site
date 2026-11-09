@@ -42,10 +42,21 @@ export async function POST(request: Request) {
       contactId,
     })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Ошибка сервера'
-    console.error('[YUMI CRM] order error:', message)
+    // Не отдаём клиенту detail/path amoCRM и PII — только безопасный лог на сервере.
+    if (err && typeof err === 'object' && 'summary' in err) {
+      // AmoRequestError уже залогирован в amoRequest
+    } else {
+      console.error(
+        '[YUMI CRM] order error:',
+        err instanceof Error ? err.name : 'unknown',
+      )
+    }
     return NextResponse.json<OrderApiResponse>(
-      { success: false, mode: 'server', error: message },
+      {
+        success: false,
+        mode: 'server',
+        error: 'Не удалось отправить заказ. Попробуйте ещё раз или напишите нам в Telegram.',
+      },
       { status: 500 },
     )
   }
