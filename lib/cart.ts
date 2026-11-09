@@ -138,10 +138,11 @@ export function formatPrice(value: number): string {
   const kopecks = Math.round(Math.max(0, value) * 100)
   const rubles = Math.floor(kopecks / 100)
   const kop = kopecks % 100
+  // NBSP перед ₽ — знак валюты не переносится отдельно от суммы
   if (kop === 0) {
-    return `${rubles.toLocaleString('ru-RU')} ₽`
+    return `${rubles.toLocaleString('ru-RU')} ₽`
   }
-  return `${rubles.toLocaleString('ru-RU')},${String(kop).padStart(2, '0')} ₽`
+  return `${rubles.toLocaleString('ru-RU')},${String(kop).padStart(2, '0')} ₽`
 }
 
 /** «200 ₽ / 100 г» или «162,50 ₽ / 100 г» */

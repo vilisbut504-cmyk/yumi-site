@@ -314,6 +314,6 @@ export const DISCOUNT_NOTE =
   'Скидка рассчитывается автоматически от стоимости товаров.'
 
 /** Компактный бейдж на карточках каталога. */
-export const DISCOUNT_BADGE = 'до −10%'
+export const DISCOUNT_BADGE = 'Скидка до 10%'
 
 export const DISCOUNT_HERO = 'Скидка до 10% от суммы товаров'

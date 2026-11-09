@@ -81,7 +81,7 @@ export function getRelatedProducts(product: Product, limit = 4): Product[] {
 
 /**
  * Человекочитаемый формат размера для UI.
- * Внутренние ключи фильтров (product.format) не меняются.
+ * Внутренние ключи фильтров (product.format) не меняются в данных.
  */
 export function formatProductFormatLabel(format: string): string {
   const raw = format?.trim()
@@ -92,11 +92,25 @@ export function formatProductFormatLabel(format: string): string {
     .replace(/\s*×\s*/g, ' × ')
     .replace(/\s*-\s*/g, '–')
     .replace(/\s*–\s*/g, '–')
+    .replace(/\s+/g, ' ')
+    .trim()
 
-  if (/см/i.test(label)) return label
-  if (/^\d+[.,]?\d*\s*×\s*\d+[.,]?\d*$/.test(label)) return `${label} см`
-  if (/^\d+\s*–\s*\d+$/.test(label)) return `${label} см`
+  // Унифицируем «1×1» и «1×1 см» → один лейбл.
+  if (!/см/i.test(label)) {
+    if (/^\d+[.,]?\d*\s*×\s*\d+[.,]?\d*$/.test(label)) return `${label} см`
+    if (/^\d+\s*–\s*\d+$/.test(label)) return `${label} см`
+  } else {
+    label = label.replace(/\s*см\s*$/i, ' см').trim()
+  }
   return label
+}
+
+/** Канонический ключ формата для дедупликации фильтров. */
+export function normalizeProductFormatKey(format: string): string {
+  return formatProductFormatLabel(format)
+    .toLowerCase()
+    .replace(/\s+/g, '')
+    .replace(/см$/i, '')
 }
 
 /** Отображаемое название с размером, если он есть в данных и ещё не в имени. */

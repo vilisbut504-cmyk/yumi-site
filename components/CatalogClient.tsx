@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useCallback } from 'react'
 import { ProductCard } from '@/components/ProductCard'
 import { formatPrice } from '@/lib/cart'
 import {
   formatProductFormatLabel,
+  normalizeProductFormatKey,
   type Product,
 } from '@/src/lib/products'
 
@@ -45,6 +46,9 @@ export function CatalogClient({ products }: { products: Product[] }) {
   const [priceMin, setPriceMin] = useState('')
   const [priceMax, setPriceMax] = useState('')
   const [sort, setSort] = useState<SortKey>('popular')
+  const [filtersOpen, setFiltersOpen] = useState(false)
+
+  const closeFilters = useCallback(() => setFiltersOpen(false), [])
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -57,17 +61,39 @@ export function CatalogClient({ products }: { products: Product[] }) {
     }))
   }, [])
 
-  const options = useMemo(
-    () => ({
+  useEffect(() => {
+    document.body.style.overflow = filtersOpen ? 'hidden' : ''
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [filtersOpen])
+
+  useEffect(() => {
+    if (!filtersOpen) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeFilters()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [filtersOpen, closeFilters])
+
+  const options = useMemo(() => {
+    // Дедуп форматов: «1×1» и «1×1 см» → один чип «1 × 1 см».
+    const formatByKey = new Map<string, string>()
+    for (const p of products) {
+      const key = normalizeProductFormatKey(p.format)
+      if (!key || formatByKey.has(key)) continue
+      formatByKey.set(key, formatProductFormatLabel(p.format))
+    }
+    return {
       category: uniqueSorted(products.map((p) => p.category)),
       protein: uniqueSorted(products.map((p) => p.protein)),
       purposes: uniqueSorted(products.flatMap((p) => p.purposes)),
       dogSizes: uniqueSorted(products.flatMap((p) => p.dogSizes)),
       hardness: uniqueSorted(products.map((p) => p.hardness)),
-      format: uniqueSorted(products.map((p) => p.format)),
-    }),
-    [products],
-  )
+      format: uniqueSorted([...formatByKey.values()]),
+    }
+  }, [products])
 
   const priceBounds = useMemo(() => {
     const prices = products.map((p) => p.price).filter((n) => n > 0)
@@ -95,7 +121,6 @@ export function CatalogClient({ products }: { products: Product[] }) {
     const max = priceMax ? Number(priceMax) : null
 
     const result = products.filter((p) => {
-      // поиск: все токены должны встретиться (название, slug, белок, формат, назначение)
       if (tokens.length) {
         const haystack = norm(
           [p.name, p.slug, p.protein, p.format, p.category, ...p.purposes, ...p.tags].join(
@@ -104,11 +129,17 @@ export function CatalogClient({ products }: { products: Product[] }) {
         )
         if (!tokens.every((t) => haystack.includes(t))) return false
       }
-      // OR внутри группы, AND между группами
       if (selected.category.length && !selected.category.includes(p.category)) return false
       if (selected.protein.length && !selected.protein.includes(p.protein)) return false
       if (selected.hardness.length && !selected.hardness.includes(p.hardness)) return false
-      if (selected.format.length && !selected.format.includes(p.format)) return false
+      if (
+        selected.format.length &&
+        !selected.format.some(
+          (v) => normalizeProductFormatKey(v) === normalizeProductFormatKey(p.format),
+        )
+      ) {
+        return false
+      }
       if (
         selected.purposes.length &&
         !selected.purposes.some((v) => p.purposes.includes(v))
@@ -145,72 +176,100 @@ export function CatalogClient({ products }: { products: Product[] }) {
     setSort('popular')
   }
 
-  return (
-    <div className="catalog">
-      <aside className="catalog__filters">
-        <div className="catalog__filters-head">
-          <h2 className="catalog__filters-title">Фильтры</h2>
+  const filtersPanel = (
+    <>
+      <div className="catalog__filters-head">
+        <h2 className="catalog__filters-title">Фильтры</h2>
+        <div className="catalog__filters-head-actions">
           {activeCount > 0 && (
             <button type="button" className="catalog__reset" onClick={reset}>
               Сбросить
             </button>
           )}
+          <button
+            type="button"
+            className="catalog__filters-close"
+            aria-label="Закрыть фильтры"
+            onClick={closeFilters}
+          >
+            Закрыть
+          </button>
         </div>
+      </div>
 
-        <div className="catalog__filter">
-          <span className="form-label">Поиск</span>
+      <div className="catalog__filter">
+        <span className="form-label">Поиск</span>
+        <input
+          className="form-input"
+          type="search"
+          placeholder="Название, белок, формат…"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </div>
+
+      <ChipGroup label="Категория" group="category" options={options.category} selected={selected.category} onToggle={toggle} />
+      <ChipGroup label="Белок" group="protein" options={options.protein} selected={selected.protein} onToggle={toggle} />
+      <ChipGroup label="Назначение" group="purposes" options={options.purposes} selected={selected.purposes} onToggle={toggle} />
+      <ChipGroup label="Размер собаки" group="dogSizes" options={options.dogSizes} selected={selected.dogSizes} onToggle={toggle} />
+      <ChipGroup label="Жёсткость" group="hardness" options={options.hardness} selected={selected.hardness} onToggle={toggle} />
+      <ChipGroup
+        label="Формат"
+        group="format"
+        options={options.format}
+        selected={selected.format}
+        onToggle={toggle}
+        formatLabel={formatProductFormatLabel}
+      />
+
+      <div className="catalog__filter">
+        <span className="form-label">
+          Цена, ₽{' '}
+          {priceBounds.max
+            ? `(${formatPrice(priceBounds.min).replace(/\s*₽$/, '')}–${formatPrice(priceBounds.max)})`
+            : ''}
+        </span>
+        <div className="catalog__price">
           <input
             className="form-input"
-            type="search"
-            placeholder="Название, белок, формат…"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            type="number"
+            inputMode="numeric"
+            placeholder="от"
+            min={0}
+            value={priceMin}
+            onChange={(e) => setPriceMin(e.target.value)}
+          />
+          <span>—</span>
+          <input
+            className="form-input"
+            type="number"
+            inputMode="numeric"
+            placeholder="до"
+            min={0}
+            value={priceMax}
+            onChange={(e) => setPriceMax(e.target.value)}
           />
         </div>
+      </div>
+    </>
+  )
 
-        <ChipGroup label="Категория" group="category" options={options.category} selected={selected.category} onToggle={toggle} />
-        <ChipGroup label="Белок" group="protein" options={options.protein} selected={selected.protein} onToggle={toggle} />
-        <ChipGroup label="Назначение" group="purposes" options={options.purposes} selected={selected.purposes} onToggle={toggle} />
-        <ChipGroup label="Размер собаки" group="dogSizes" options={options.dogSizes} selected={selected.dogSizes} onToggle={toggle} />
-        <ChipGroup label="Жёсткость" group="hardness" options={options.hardness} selected={selected.hardness} onToggle={toggle} />
-        <ChipGroup
-          label="Формат"
-          group="format"
-          options={options.format}
-          selected={selected.format}
-          onToggle={toggle}
-          formatLabel={formatProductFormatLabel}
+  return (
+    <div className="catalog">
+      {filtersOpen && (
+        <button
+          type="button"
+          className="catalog__filters-backdrop"
+          aria-label="Закрыть фильтры"
+          onClick={closeFilters}
         />
+      )}
 
-        <div className="catalog__filter">
-          <span className="form-label">
-            Цена, ₽{' '}
-            {priceBounds.max
-              ? `(${formatPrice(priceBounds.min).replace(/\s*₽$/, '')}–${formatPrice(priceBounds.max)})`
-              : ''}
-          </span>
-          <div className="catalog__price">
-            <input
-              className="form-input"
-              type="number"
-              inputMode="numeric"
-              placeholder="от"
-              min={0}
-              value={priceMin}
-              onChange={(e) => setPriceMin(e.target.value)}
-            />
-            <span>—</span>
-            <input
-              className="form-input"
-              type="number"
-              inputMode="numeric"
-              placeholder="до"
-              min={0}
-              value={priceMax}
-              onChange={(e) => setPriceMax(e.target.value)}
-            />
-          </div>
-        </div>
+      <aside
+        className={`catalog__filters${filtersOpen ? ' is-open' : ''}`}
+        id="catalog-filters"
+      >
+        {filtersPanel}
       </aside>
 
       <div className="catalog__main">
@@ -218,18 +277,28 @@ export function CatalogClient({ products }: { products: Product[] }) {
           <p className="catalog__count">
             Показано {filtered.length} из {products.length} товаров
           </p>
-          <label className="catalog__sort">
-            <span>Сортировка</span>
-            <select
-              className="form-input"
-              value={sort}
-              onChange={(e) => setSort(e.target.value as SortKey)}
+          <div className="catalog__bar-actions">
+            <button
+              type="button"
+              className="btn btn-secondary catalog__filters-toggle"
+              aria-expanded={filtersOpen}
+              onClick={() => setFiltersOpen(true)}
             >
-              <option value="popular">Сначала популярные</option>
-              <option value="price-asc">Сначала дешевле</option>
-              <option value="price-desc">Сначала дороже</option>
-            </select>
-          </label>
+              Фильтры{activeCount > 0 ? ` · ${activeCount}` : ''}
+            </button>
+            <label className="catalog__sort">
+              <span>Сортировка</span>
+              <select
+                className="form-input"
+                value={sort}
+                onChange={(e) => setSort(e.target.value as SortKey)}
+              >
+                <option value="popular">Сначала популярные</option>
+                <option value="price-asc">Сначала дешевле</option>
+                <option value="price-desc">Сначала дороже</option>
+              </select>
+            </label>
+          </div>
         </div>
 
         {filtered.length > 0 ? (

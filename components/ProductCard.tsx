@@ -33,7 +33,7 @@ export function ProductCard({ product }: { product: Product }) {
         <p className="pcard__pack">Фасовка: {product.weight}</p>
         <div className="pcard__footer">
           <div className="pcard__price">
-            <span className="pcard__price-now">{formatPrice(product.price)}</span>
+            <strong className="pcard__price-now">{formatPrice(product.price)}</strong>
             <span className="pcard__price-unit">/ {product.weight}</span>
           </div>
           <button
